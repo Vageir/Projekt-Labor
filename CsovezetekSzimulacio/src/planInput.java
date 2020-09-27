@@ -23,5 +23,6 @@ public class planInput extends JFrame{
     private JButton newPlanButton;
     private JButton submitButton;
 
+    #komment
 
 }
