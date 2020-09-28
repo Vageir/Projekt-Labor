@@ -48,7 +48,19 @@ public class planInput extends JFrame{
         submitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new DataBaseHandler().insertRecord();
+                String startDate = kezdEvComboBox.getSelectedItem().toString()+"-"
+                        +kezdHonapComboBox.getSelectedItem().toString()+"-"
+                        +kezdNapComboBox.getSelectedItem().toString()+" "
+                        +kezdOraTextField.getText()+":"+kezdPercTextField.getText();
+                String endDate = vegEvComboBox.getSelectedItem().toString()+"-"
+                        +vegHonapComboBox.getSelectedItem().toString()+"-"
+                        +vegNapComboBox.getSelectedItem().toString()+" "
+                        +vegOraTextField.getText()+":"+vegPercTextField.getText();
+                System.out.println(endDate);
+                new DataBaseHandler().insertRecord("qweqweqwe",
+                        honnanField.getText(),hovaField.getText(),anyagComboBox.getSelectedItem().toString(),
+                        Integer.parseInt(mennyisegField.getText()),startDate,endDate,azonTextField.getText(),
+                        nevTextField.getText());
             }
         });
     }
