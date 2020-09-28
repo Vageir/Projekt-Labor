@@ -1,4 +1,6 @@
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class planInput extends JFrame{
     private JPanel mainPanel;
@@ -9,19 +11,24 @@ public class planInput extends JFrame{
     private JTextField hovaField;
     private JTextField honnanField;
     private JTextField mennyisegField;
-    private JComboBox anyagBox;
-    private JComboBox comboBox1;
-    private JComboBox comboBox2;
-    private JTextField a500TextField;
-    private JTextField a50TextField;
-    private JComboBox comboBox3;
-    private JTextField textField3;
-    private JTextField textField4;
+    private JComboBox anyagComboBox;
+    private JComboBox kezdEvComboBox;
+    private JComboBox kezdHonapComboBox;
+    private JTextField csohosszTextField;
+    private JTextField atmeroTextField;
+    private JComboBox kezdNapComboBox;
+    private JTextField kezdOraTextField;
+    private JTextField kezdPercTextField;
     private JPanel vegeDatumPanel;
-    private JTextField textField5;
-    private JTextField textField6;
-    private JButton newPlanButton;
+    private JTextField nevTextField;
+    private JTextField azonTextField;
+    private JButton clearButton;
     private JButton submitButton;
+    private JTextField vegOraTextField;
+    private JTextField vegPercTextField;
+    private JComboBox vegEvComboBox;
+    private JComboBox vegHonapComboBox;
+    private JComboBox vegNapComboBox;
 
     public planInput(String title) {
         super(title);
@@ -29,6 +36,14 @@ public class planInput extends JFrame{
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setContentPane(mainPanel);
         this.pack();
+        clearButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                csohosszTextField.setText("500"); atmeroTextField.setText("50");
+                honnanField.setText(""); hovaField.setText(""); mennyisegField.setText(""); kezdOraTextField.setText(""); kezdPercTextField.setText("");
+                vegOraTextField.setText(""); vegPercTextField.setText(""); nevTextField.setText(""); azonTextField.setText("");
+            }
+        });
     }
 
 
