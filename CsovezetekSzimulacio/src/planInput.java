@@ -23,6 +23,13 @@ public class planInput extends JFrame{
     private JButton newPlanButton;
     private JButton submitButton;
 
-    #komment
+    public planInput(String title) {
+        super(title);
+
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setContentPane(mainPanel);
+        this.pack();
+    }
+
 
 }
