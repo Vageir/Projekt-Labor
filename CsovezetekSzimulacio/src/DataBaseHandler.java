@@ -4,10 +4,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class DataBaseHandler {
-    static final String JDBC_DRIVER = "org.h2.Driver";
-    static final String DB_URL = "jdbc:h2:file:./database/test";
-    static final String USER = "pl";
-    static final String PASS = "pl";
+    static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
+    static final String DB_URL = "jdbc:mysql://localhost:3306/test?useSSL=false&serverTimezone=UTC";
+    static final String USER = "root";
+    static final String PASS = "test";
 
     public void insertRecord(){
         Connection conn = null;
@@ -18,7 +18,7 @@ public class DataBaseHandler {
             conn = DriverManager.getConnection(DB_URL,USER,PASS);
             System.out.println("Connected database successfully...");
             stmt = conn.createStatement();
-            String sql = "INSERT INTO TEST VALUES (0000000,5351231312321)";
+            String sql = "INSERT INTO cars VALUES (23,'asd')";
 
             stmt.executeUpdate(sql);
 
