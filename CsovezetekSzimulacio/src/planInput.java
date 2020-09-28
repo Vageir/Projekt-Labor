@@ -45,6 +45,12 @@ public class planInput extends JFrame{
                 anyagComboBox.setSelectedIndex(0);
             }
         });
+        submitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new DataBaseHandler().insertRecord();
+            }
+        });
     }
 
 
