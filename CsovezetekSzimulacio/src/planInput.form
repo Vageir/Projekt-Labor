@@ -180,7 +180,6 @@
               <model>
                 <item value="Dízel"/>
                 <item value="Gázolaj"/>
-                <item value="Fos"/>
               </model>
             </properties>
           </component>
