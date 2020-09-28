@@ -42,6 +42,7 @@ public class planInput extends JFrame{
                 csohosszTextField.setText("500"); atmeroTextField.setText("50");
                 honnanField.setText(""); hovaField.setText(""); mennyisegField.setText(""); kezdOraTextField.setText(""); kezdPercTextField.setText("");
                 vegOraTextField.setText(""); vegPercTextField.setText(""); nevTextField.setText(""); azonTextField.setText("");
+                anyagComboBox.setSelectedIndex(0);
             }
         });
     }
