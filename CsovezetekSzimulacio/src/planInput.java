@@ -48,22 +48,28 @@ public class planInput extends JFrame{
         submitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                int month = kezdHonapComboBox.getSelectedIndex()+1;
                 String startDate = kezdEvComboBox.getSelectedItem().toString()+"-"
-                        +kezdHonapComboBox.getSelectedItem().toString()+"-"
+                        +month+"-"
                         +kezdNapComboBox.getSelectedItem().toString()+" "
                         +kezdOraTextField.getText()+":"+kezdPercTextField.getText();
+                month = vegHonapComboBox.getSelectedIndex()+1;
                 String endDate = vegEvComboBox.getSelectedItem().toString()+"-"
-                        +vegHonapComboBox.getSelectedItem().toString()+"-"
+                        +month+"-"
                         +vegNapComboBox.getSelectedItem().toString()+" "
                         +vegOraTextField.getText()+":"+vegPercTextField.getText();
                 System.out.println(endDate);
-                new DataBaseHandler().insertRecord("qweqweqwe",
+                new DataBaseHandler().insertRecord(azonTextField.getText()+honnanField.getText()+hovaField.getText()
+                                +kezdHonapComboBox.getSelectedItem().toString()+kezdNapComboBox.getSelectedItem().toString()
+                                +vegHonapComboBox.getSelectedItem().toString()+vegNapComboBox.getSelectedItem().toString(),
                         honnanField.getText(),hovaField.getText(),anyagComboBox.getSelectedItem().toString(),
                         Integer.parseInt(mennyisegField.getText()),startDate,endDate,azonTextField.getText(),
                         nevTextField.getText());
+
             }
         });
     }
+
 
 
 }

@@ -2,7 +2,7 @@ import java.sql.*;
 
 public class DataBaseHandler {
     static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
-    static final String DB_URL = "jdbc:mysql://localhost:3306/test?useSSL=false&serverTimezone=UTC";
+    static final String DB_URL = "jdbc:mysql://localhost:3306/projektlabor?useSSL=false&serverTimezone=UTC";
     static final String USER = "root";
     static final String PASS = "test";
 
@@ -18,7 +18,8 @@ public class DataBaseHandler {
             con = DriverManager.getConnection(DB_URL,USER,PASS);
             System.out.println("Connected database successfully...");
             stmt = con.createStatement();
-            String sql = "INSERT INTO TRANSPORTATIONPLAN VALUES ("+tID+","+startDepoID+","+endDepoID+","+fuelType+","+fuelAmount+","+startDate+","+endDate+","+operatorID+","+operatorName+")";
+
+            String sql = "INSERT INTO TRANSPORTATIONPLAN VALUES ('"+tID+"','"+startDepoID+"','"+endDepoID+"','"+fuelType+"',"+fuelAmount+",'"+startDate+"','"+endDate+"','"+operatorID+"','"+operatorName+"')";
             System.out.println(sql);
 //            PreparedStatement pstmt = new con.prepareStatement(sql);
 //            pstmt.setString(1,tID);
