@@ -53,22 +53,23 @@ public class planInput extends JFrame{
         submitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int month = kezdHonapComboBox.getSelectedIndex()+1;
+                int monthStart = kezdHonapComboBox.getSelectedIndex()+1;
+                int monthEnd = vegHonapComboBox.getSelectedIndex()+1;
 
                 String startDate = kezdEvComboBox.getSelectedItem().toString()+"-"
-                        +month+"-"
+                        +monthStart+"-"
                         +kezdNapComboBox.getSelectedItem().toString()+" "
                         +kezdOraTextField.getText()+":"+kezdPercTextField.getText();
-                month = vegHonapComboBox.getSelectedIndex()+1;
+
                 String endDate = vegEvComboBox.getSelectedItem().toString()+"-"
-                        +month+"-"
+                        +monthEnd+"-"
                         +vegNapComboBox.getSelectedItem().toString()+" "
                         +vegOraTextField.getText()+":"+vegPercTextField.getText();
                 System.out.println(endDate);
                 new DataBaseHandler().insertRecord(operatorIDComboBox.getSelectedItem().toString()
                                 +startDepoComboBox.getSelectedItem().toString()+endDepoComboBox.getSelectedItem().toString()
-                                +kezdHonapComboBox.getSelectedItem().toString()+kezdNapComboBox.getSelectedItem().toString()
-                                +vegHonapComboBox.getSelectedItem().toString()+vegNapComboBox.getSelectedItem().toString(),
+                                +monthStart+kezdNapComboBox.getSelectedItem().toString()
+                                +monthEnd+vegNapComboBox.getSelectedItem().toString(),
                         startDepoComboBox.getSelectedItem().toString(),endDepoComboBox.getSelectedItem().toString(),anyagComboBox.getSelectedIndex(),
                         Integer.parseInt(mennyisegField.getText()),startDate,endDate,operatorIDComboBox.getSelectedItem().toString());
 

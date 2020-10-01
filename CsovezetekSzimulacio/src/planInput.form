@@ -177,7 +177,7 @@
             <properties>
               <font size="14"/>
               <foreground color="-12500671"/>
-              <text value="m^3"/>
+              <text value="l"/>
             </properties>
           </component>
           <hspacer id="c6c5f">
