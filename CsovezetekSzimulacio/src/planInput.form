@@ -41,6 +41,7 @@
               </grid>
             </constraints>
             <properties>
+              <editable value="false"/>
               <text value="500"/>
             </properties>
           </component>
@@ -51,6 +52,7 @@
               </grid>
             </constraints>
             <properties>
+              <editable value="false"/>
               <text value="50"/>
             </properties>
           </component>
@@ -385,7 +387,10 @@
                 <preferred-size width="150" height="-1"/>
               </grid>
             </constraints>
-            <properties/>
+            <properties>
+              <editable value="false"/>
+              <text value="Joseph"/>
+            </properties>
           </component>
           <component id="eb871" class="javax.swing.JLabel">
             <constraints>
@@ -403,7 +408,10 @@
                 <preferred-size width="150" height="-1"/>
               </grid>
             </constraints>
-            <properties/>
+            <properties>
+              <editable value="false"/>
+              <text value="054"/>
+            </properties>
           </component>
         </children>
       </grid>
