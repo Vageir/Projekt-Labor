@@ -150,22 +150,6 @@
               <text value="Anyag:"/>
             </properties>
           </component>
-          <component id="2839f" class="javax.swing.JTextField" binding="hovaField">
-            <constraints>
-              <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                <preferred-size width="150" height="-1"/>
-              </grid>
-            </constraints>
-            <properties/>
-          </component>
-          <component id="97d2e" class="javax.swing.JTextField" binding="honnanField">
-            <constraints>
-              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                <preferred-size width="150" height="-1"/>
-              </grid>
-            </constraints>
-            <properties/>
-          </component>
           <component id="1e4d2" class="javax.swing.JTextField" binding="mennyisegField">
             <constraints>
               <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
@@ -200,6 +184,20 @@
               <grid row="3" column="3" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
           </hspacer>
+          <component id="81700" class="javax.swing.JComboBox" binding="startDepoComboBox">
+            <constraints>
+              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties/>
+          </component>
+          <component id="9707e" class="javax.swing.JComboBox" binding="endDepoComboBox">
+            <constraints>
+              <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <model/>
+            </properties>
+          </component>
         </children>
       </grid>
       <grid id="6404a" binding="kezdoDatumPanel" layout-manager="GridLayoutManager" row-count="2" column-count="6" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
@@ -378,18 +376,7 @@
             <properties>
               <font size="14"/>
               <foreground color="-16777216"/>
-              <text value="Operátor neve:"/>
-            </properties>
-          </component>
-          <component id="1e245" class="javax.swing.JTextField" binding="nevTextField">
-            <constraints>
-              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                <preferred-size width="150" height="-1"/>
-              </grid>
-            </constraints>
-            <properties>
-              <editable value="false"/>
-              <text value="Joseph"/>
+              <text value="Azonosító:"/>
             </properties>
           </component>
           <component id="eb871" class="javax.swing.JLabel">
@@ -399,18 +386,21 @@
             <properties>
               <font size="14"/>
               <foreground color="-16777216"/>
-              <text value="Azon:"/>
+              <text value="Operátor neve:"/>
             </properties>
           </component>
-          <component id="1b0ab" class="javax.swing.JTextField" binding="azonTextField">
+          <component id="478e2" class="javax.swing.JComboBox" binding="operatorIDComboBox">
             <constraints>
-              <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                <preferred-size width="150" height="-1"/>
-              </grid>
+              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties/>
+          </component>
+          <component id="abd71" class="javax.swing.JLabel" binding="operatorNameLable">
+            <constraints>
+              <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <editable value="false"/>
-              <text value="054"/>
+              <text value=""/>
             </properties>
           </component>
         </children>

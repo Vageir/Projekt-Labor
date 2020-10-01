@@ -29,6 +29,10 @@ public class planInput extends JFrame{
     private JComboBox vegEvComboBox;
     private JComboBox vegHonapComboBox;
     private JComboBox vegNapComboBox;
+    private JComboBox operatorIDComboBox;
+    private JComboBox startDepoComboBox;
+    private JComboBox endDepoComboBox;
+    private JLabel operatorNameLable;
 
     public planInput(String title) {
         super(title);
@@ -36,6 +40,7 @@ public class planInput extends JFrame{
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setContentPane(mainPanel);
         this.pack();
+        new DataBaseHandler().readRecords(startDepoComboBox,endDepoComboBox,operatorIDComboBox,operatorNameLable);
         clearButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -49,6 +54,7 @@ public class planInput extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                 int month = kezdHonapComboBox.getSelectedIndex()+1;
+
                 String startDate = kezdEvComboBox.getSelectedItem().toString()+"-"
                         +month+"-"
                         +kezdNapComboBox.getSelectedItem().toString()+" "
@@ -59,17 +65,22 @@ public class planInput extends JFrame{
                         +vegNapComboBox.getSelectedItem().toString()+" "
                         +vegOraTextField.getText()+":"+vegPercTextField.getText();
                 System.out.println(endDate);
-                new DataBaseHandler().insertRecord(azonTextField.getText()+honnanField.getText()+hovaField.getText()
+                new DataBaseHandler().insertRecord(operatorIDComboBox.getSelectedItem().toString()
+                                +startDepoComboBox.getSelectedItem().toString()+endDepoComboBox.getSelectedItem().toString()
                                 +kezdHonapComboBox.getSelectedItem().toString()+kezdNapComboBox.getSelectedItem().toString()
                                 +vegHonapComboBox.getSelectedItem().toString()+vegNapComboBox.getSelectedItem().toString(),
-                        honnanField.getText(),hovaField.getText(),anyagComboBox.getSelectedItem().toString(),
-                        Integer.parseInt(mennyisegField.getText()),startDate,endDate,azonTextField.getText(),
-                        nevTextField.getText());
+                        startDepoComboBox.getSelectedItem().toString(),endDepoComboBox.getSelectedItem().toString(),anyagComboBox.getSelectedIndex(),
+                        Integer.parseInt(mennyisegField.getText()),startDate,endDate,operatorIDComboBox.getSelectedItem().toString());
 
             }
         });
+
+        operatorIDComboBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+               operatorNameLable.setText(
+                       new DataBaseHandler().updateGUI("operator","operatorname","operatorid",operatorIDComboBox.getSelectedItem().toString()));
+            }
+        });
     }
-
-
-
 }

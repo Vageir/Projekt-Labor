@@ -1,23 +1,73 @@
-create database projektlabor
-use projektlabor
+create database projektlabor;
+use projektlabor;
 
-create table TransportationPlan
+
+create table depo
 (
-	TransportationID varchar(30) not null,
-	FuelType varchar(30) not null,
-	EndDepoID varchar(30) not null,
-	StartDepoID varchar(30) not null,
-	FuelAmount int not null,
-	StartDate date not null,
-	EndDate date not null,
-	OperatorID varchar(30) not null,
-	OperatorName varchar(30) not null
+    DepoID varchar(30) not null,
+    DepoName varchar(45) not null,
+    DepoLocation varchar(45) not null,
+    constraint DepoID_UNIQUE
+        unique (DepoID)
 );
 
-create unique index TransportationPlan_TransportationID_uindex
-	on TransportationPlan (TransportationID);
+alter table depo
+    add primary key (DepoID);
 
-alter table TransportationPlan
-	add constraint TransportationPlan_pk
-		primary key (TransportationID);
+create table container
+(
+    containerID varchar(30) not null
+        primary key,
+    fuelType int null
+);
+
+create table depocontainer
+(
+    depoID varchar(30) not null,
+    containerID varchar(30) not null,
+    CurrentCapacity int not null,
+    MaxCapacity int not null,
+    primary key (depoID, containerID)
+);
+
+create table fuel
+(
+    fuelID int not null,
+    fuelName varchar(20) null,
+    constraint fuelID_UNIQUE
+        unique (fuelID)
+);
+
+alter table fuel
+    add primary key (fuelID);
+
+create table operator
+(
+    OperatorID varchar(30) not null,
+    OperatorName varchar(45) null,
+    OperatorBirth date null,
+    constraint OperatorID_UNIQUE
+        unique (OperatorID)
+);
+
+alter table operator
+    add primary key (OperatorID);
+
+create table transportationplan
+(
+    transportationID varchar(30) not null,
+    startdepoID varchar(30) not null,
+    endDepoID varchar(30) not null,
+    fuelID int not null,
+    fuelAmount int not null,
+    startDate datetime not null,
+    endDdate datetime not null,
+    constraint transportationID_UNIQUE
+        unique (transportationID)
+);
+
+alter table transportationplan
+    add primary key (transportationID);
+
+
 
