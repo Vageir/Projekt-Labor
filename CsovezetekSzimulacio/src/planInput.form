@@ -166,7 +166,7 @@
             <properties>
               <model>
                 <item value="Dízel"/>
-                <item value="Gázolaj"/>
+                <item value="Benzin"/>
               </model>
             </properties>
           </component>
