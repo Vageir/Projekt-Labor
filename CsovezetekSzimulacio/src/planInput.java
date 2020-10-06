@@ -1,6 +1,7 @@
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.*;
 
 public class planInput extends JFrame{
     private JPanel mainPanel;
@@ -36,11 +37,10 @@ public class planInput extends JFrame{
 
     public planInput(String title) {
         super(title);
-
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setContentPane(mainPanel);
         this.pack();
-        new DataBaseHandler().readRecords(startDepoComboBox,endDepoComboBox,operatorIDComboBox,operatorNameLable);
+        setGUIatStart();
         clearButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -55,7 +55,7 @@ public class planInput extends JFrame{
             public void actionPerformed(ActionEvent e) {
                 int monthStart = kezdHonapComboBox.getSelectedIndex()+1;
                 int monthEnd = vegHonapComboBox.getSelectedIndex()+1;
-
+                ArrayList<String> tmp = new ArrayList<>();
                 String startDate = kezdEvComboBox.getSelectedItem().toString()+"-"
                         +monthStart+"-"
                         +kezdNapComboBox.getSelectedItem().toString()+" "
@@ -66,22 +66,49 @@ public class planInput extends JFrame{
                         +vegNapComboBox.getSelectedItem().toString()+" "
                         +vegOraTextField.getText()+":"+vegPercTextField.getText();
                 System.out.println(endDate);
-                new DataBaseHandler().insertRecord(operatorIDComboBox.getSelectedItem().toString()
-                                +startDepoComboBox.getSelectedItem().toString()+endDepoComboBox.getSelectedItem().toString()
-                                +monthStart+kezdNapComboBox.getSelectedItem().toString()
-                                +monthEnd+vegNapComboBox.getSelectedItem().toString(),
-                        startDepoComboBox.getSelectedItem().toString(),endDepoComboBox.getSelectedItem().toString(),anyagComboBox.getSelectedIndex(),
-                        Integer.parseInt(mennyisegField.getText()),startDate,endDate,operatorIDComboBox.getSelectedItem().toString());
-
+                tmp.addAll(Arrays.asList(
+                        operatorIDComboBox.getSelectedItem().toString()+monthStart+kezdNapComboBox.getSelectedItem().toString()
+                                +monthEnd+vegNapComboBox.getSelectedItem().toString()+startDepoComboBox.getSelectedItem().toString()
+                                +endDepoComboBox.getSelectedItem().toString(),
+                        startDepoComboBox.getSelectedItem().toString(),
+                        endDepoComboBox.getSelectedItem().toString(),
+                        String.valueOf(anyagComboBox.getSelectedIndex()),
+                        mennyisegField.getText(),
+                        startDate,
+                        endDate,
+                        operatorIDComboBox.getSelectedItem().toString()));
+                new DataBaseHandler().insertRecord("transportationplan",tmp);
             }
         });
-
         operatorIDComboBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                operatorNameLable.setText(
-                       new DataBaseHandler().updateGUI("operator","operatorname","operatorid",operatorIDComboBox.getSelectedItem().toString()));
+                       new DataBaseHandler().readOneRecord("operator","operatorID = '"+operatorIDComboBox.getSelectedItem().toString()+"'").get(1));
             }
         });
+    }
+    private void setGUIatStart() {
+        LinkedHashMap<Integer,ArrayList<String>> result = new LinkedHashMap<>();
+        result = new DataBaseHandler().readRecords("operator");
+        for (Map.Entry<Integer,ArrayList<String>> entry : result.entrySet()){
+            operatorIDComboBox.addItem(new ComboItem(entry.getValue().get(0)));
+        }
+        operatorNameLable.setText(result.entrySet().iterator().next().getValue().get(1));
+        result = new DataBaseHandler().readRecords("depo");
+        for (Map.Entry<Integer,ArrayList<String>> entry : result.entrySet()){
+            startDepoComboBox.addItem(new ComboItem(entry.getValue().get(0)));
+            endDepoComboBox.addItem(new ComboItem(entry.getValue().get(0)));
+        }
+    }
+    private class ComboItem {
+        private String itemName;
+        ComboItem(String itemName){
+            this.itemName=itemName;
+        }
+        @Override
+        public String toString() {
+            return itemName;
+        }
     }
 }

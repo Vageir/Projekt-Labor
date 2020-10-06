@@ -1,107 +1,150 @@
 import javax.swing.*;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.Map;
 
 public class DataBaseHandler {
     static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
     static final String DB_URL = "jdbc:mysql://localhost:3306/projektlabor?useSSL=false&serverTimezone=UTC";
     static final String USER = "root";
     static final String PASS = "test";
+    Connection con = null;
+    Statement stmt = null;
 
-    public void insertRecord(String tID, String startDepoID, String endDepoID,
-                             int fuelID, int fuelAmount, String startDate, String endDate,
-                             String operatorID){
-        Connection con = null;
-        Statement stmt = null;
-
-        try{
+    private boolean setConnection(){
+        try {
             Class.forName(JDBC_DRIVER);
-            System.out.println("Connecting to a selected database...");
+//            System.out.println("Connecting to a selected database...");
             con = DriverManager.getConnection(DB_URL,USER,PASS);
-            System.out.println("Connected database successfully...");
+//            System.out.println("Connected database successfully...");
             stmt = con.createStatement();
-            String sql = "INSERT INTO TRANSPORTATIONPLAN VALUES ('"+tID+"','"+startDepoID+"','"+endDepoID+"',"+fuelID+","+fuelAmount+",'"+startDate+"','"+endDate+"','"+operatorID+"')";
+            return true;
+        }
+        catch (SQLException se){
+            se.printStackTrace();
+            return false;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    private void closeConnection(){
+        try {
+            stmt.close();
+            con.close();
+        }
+        catch (SQLException se){
+            se.printStackTrace();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public ArrayList<String> getTableMetaData(String tableName, int nameOrTypeOrColumns){
+        //0 = columnTypeName, 1 = columnName, 2 = columnCount
+        setConnection();
+        ArrayList<String> tableData = new ArrayList<>();
+        try {
+            ResultSet resultSet = stmt.executeQuery("Select * From "+tableName);
+            ResultSetMetaData md = resultSet.getMetaData();
+            if (nameOrTypeOrColumns == 0){
+                for (int i=1; i<=md.getColumnCount(); i++)
+                {
+                    tableData.add(md.getColumnTypeName(i));
+                }
+            }else if (nameOrTypeOrColumns == 1){
+                for (int i=1; i<=md.getColumnCount(); i++)
+                {
+                    tableData.add(md.getColumnName(i));
+                }
+            } else if (nameOrTypeOrColumns == 2){
+                tableData.add(String.valueOf(md.getColumnCount()));
+            }
+        }
+        catch (SQLException se){
+            se.printStackTrace();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        return  tableData;
+    }
+    public void insertRecord(String tableName, ArrayList<String> values){
+        if (!setConnection()) {
+            return;
+        }
+        try {
+            ArrayList<String> tableData = new ArrayList<>();
+            tableData = getTableMetaData(tableName,0);
+            String sql = "INSERT INTO "+ tableName+" Values (";
+            for (int i = 0; i < tableData.size();i++){
+                if (tableData.get(i).equals("INT")){
+                    sql+=values.get(i);
+                }
+                else {
+                    sql+="'"+ values.get(i)+"'";
+                }
+                sql+=",";
+            }
+            sql = sql.substring(0,sql.length()-1);
+            sql+=")";
             System.out.println(sql);
             stmt.executeUpdate(sql);
             stmt.close();
             con.close();
-        } catch(SQLException se) {
+        } catch (SQLException se) {
             se.printStackTrace();
-        } catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         } finally {
             try {
-                if(stmt!=null) stmt.close();
+                if (stmt != null) stmt.close();
+            } catch (SQLException se2) {
             }
-            catch(SQLException se2) { }
             try {
-                if(con!=null) con.close();
-            } catch(SQLException se) {
+                if (con != null) con.close();
+            } catch (SQLException se) {
                 se.printStackTrace();
             }
         }
     }
-    public void readRecords(JComboBox starDepo, JComboBox endDepo, JComboBox operatorID, JLabel operatorName){
-            Connection con = null;
-            Statement stmt = null;
-            try{
-                Class.forName(JDBC_DRIVER);
-                System.out.println("Connecting to a selected database...");
-                con = DriverManager.getConnection(DB_URL,USER,PASS);
-                System.out.println("Connected database successfully...");
-                stmt = con.createStatement();
-                String sql = "Select DepoID from depo";
-                ResultSet rs = stmt.executeQuery(sql);
-                while (rs.next()){
-                    String item = rs.getString("DepoID");
-                    starDepo.addItem(new ComboItem(item));
-                    endDepo.addItem(new ComboItem(item));
-                }
-                sql = "Select OperatorID,OperatorName from operator";
-                rs = stmt.executeQuery(sql);
-                int i = 0;
-                while (rs.next()){
-                   operatorID.addItem(new ComboItem(rs.getString("operatorID")));
-                   if(i==0)
-                    operatorName.setText(rs.getString("operatorName"));
-                   i++;
-                }
-
-
-                stmt.close();
-                con.close();
-            } catch(SQLException se) {
-                se.printStackTrace();
-            } catch(Exception e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    if(stmt!=null) stmt.close();
-                }
-                catch(SQLException se2) { }
-                try {
-                    if(con!=null) con.close();
-                } catch(SQLException se) {
-                    se.printStackTrace();
-                }
-            }
-
-    }
-    public String updateGUI(String tableName, String valueColumnName,String column, String value){
-        Connection con = null;
-        Statement stmt = null;
-        String result = null;
+    public LinkedHashMap<Integer,ArrayList<String>> readRecords(String tableName){
+        //0 = columnTypeName, 1 = columnName, 2 = columnCount
+        if(!setConnection()){
+            return null;
+        }
+        ArrayList<String> columName = new ArrayList<>();
+        ArrayList<String> columnType = new ArrayList<>();
+        ArrayList<String> columnCount = new ArrayList<>();
+        columName = getTableMetaData(tableName,1);
+        columnType = getTableMetaData(tableName,0);
+        columnCount = getTableMetaData(tableName,2);
+        LinkedHashMap<Integer,ArrayList<String>> result = new LinkedHashMap<>();
+        ResultSet resultSet = null;
         try{
-            Class.forName(JDBC_DRIVER);
-            System.out.println("Connecting to a selected database...");
-            con = DriverManager.getConnection(DB_URL,USER,PASS);
-            System.out.println("Connected database successfully...");
-            stmt = con.createStatement();
-//            select OperatorName from operator where OperatorID = "JSP23"
-            String sql = "Select "+valueColumnName+" from "+tableName+" where "+column+"='"+value+"'";
-            System.out.println(sql);
-            ResultSet rs = stmt.executeQuery(sql);
-            rs.next();
-            result = rs.getString(valueColumnName);
+            String sql = "select  * from " + tableName;
+            // System.out.println(sql);
+            resultSet = stmt.executeQuery(sql);
+            Integer i = 0;
+            while (resultSet.next()){
+                ArrayList<String> tmp = new ArrayList<>();
+                for (int j = 0; j < Integer.parseInt(columnCount.get(0)); j++) {
+                    //System.out.println("in the foooooooooooooor");
+                    if (columnType.get(j).equals("INT")) {
+                        // System.out.println("yeet we are int");
+                        tmp.add(String.valueOf(resultSet.getInt(columName.get(j))));
+                    } else if (columnType.get(j).equals("VARCHAR")) {
+                        tmp.add(resultSet.getString(columName.get(j)));
+                    } else if (columnType.get(j).equals("DATETIME")) {
+                        tmp.add(String.valueOf(resultSet.getDate(columName.get(j))));
+                    }
+                }
+                result.put(i,tmp);
+                i++;
+            }
             stmt.close();
             con.close();
         } catch(SQLException se) {
@@ -121,19 +164,52 @@ public class DataBaseHandler {
         }
         return result;
     }
-        //        starDepo.addItem(new ComboItem("ASD"));
-//        endDepo.addItem(new ComboItem("yo"));
-//        endDepo.addItem(new ComboItem("yes"));
-//        operatorID.addItem(new ComboItem("yeet"));
-//        operatorName.setText("fossssssss");
-    private class ComboItem {
-        private String itemName;
-        ComboItem(String itemName){
-            this.itemName=itemName;
+    public ArrayList<String> readOneRecord(String tableName, String condition){
+        if (!setConnection()){
+            return null;
         }
-        @Override
-        public String toString() {
-            return itemName;
+        ArrayList<String> record = new ArrayList<>();
+        try{
+            String sql = "select  * from " + tableName + " Where "+ condition;
+            ArrayList<String> columName = new ArrayList<>();
+            ArrayList<String> columnType = new ArrayList<>();
+            ArrayList<String> columnCount = new ArrayList<>();
+            columName = getTableMetaData(tableName,1);
+            columnType = getTableMetaData(tableName,0);
+            columnCount = getTableMetaData(tableName,2);
+//             System.out.println(sql);
+            ResultSet resultSet = stmt.executeQuery(sql);
+            while (resultSet.next()){
+                for (int j = 0; j < Integer.parseInt(columnCount.get(0)); j++) {
+                    //System.out.println("in the foooooooooooooor");
+                    if (columnType.get(j).equals("INT")) {
+                        // System.out.println("yeet we are int");
+                        record.add(String.valueOf(resultSet.getInt(columName.get(j))));
+                    } else if (columnType.get(j).equals("VARCHAR")) {
+                        record.add(resultSet.getString(columName.get(j)));
+                    } else if (columnType.get(j).equals("DATETIME")) {
+                        record.add(String.valueOf(resultSet.getDate(columName.get(j))));
+                    }
+                }
+            }
+            stmt.close();
+            con.close();
+        } catch(SQLException se) {
+            se.printStackTrace();
+        } catch(Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if(stmt!=null) stmt.close();
+            }
+            catch(SQLException se2) { }
+            try {
+                if(con!=null) con.close();
+            } catch(SQLException se) {
+                se.printStackTrace();
+            }
         }
+
+        return record;
     }
 }
