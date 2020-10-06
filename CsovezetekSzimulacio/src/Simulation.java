@@ -10,7 +10,7 @@ public class Simulation  {
         Comparator<? super TransportationPlan> comparator = new Comparator<TransportationPlan>() {
             @Override
             public int compare(TransportationPlan o1, TransportationPlan o2) {
-                return o1.getStartDate().compareTo(o2.getEndDate()) ;
+                return o1.getStartDate().compareTo(o2.getStartDate()) ;
             }
         };
         transportationPlans.sort(comparator);
