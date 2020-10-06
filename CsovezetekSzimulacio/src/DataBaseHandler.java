@@ -139,7 +139,8 @@ public class DataBaseHandler {
                     } else if (columnType.get(j).equals("VARCHAR")) {
                         tmp.add(resultSet.getString(columName.get(j)));
                     } else if (columnType.get(j).equals("DATETIME")) {
-                        tmp.add(String.valueOf(resultSet.getDate(columName.get(j))));
+//                        System.out.println(resultSet.getTimestamp(columName.get(j)));
+                        tmp.add(String.valueOf(resultSet.getTimestamp(columName.get(j))));
                     }
                 }
                 result.put(i,tmp);
@@ -188,7 +189,7 @@ public class DataBaseHandler {
                     } else if (columnType.get(j).equals("VARCHAR")) {
                         record.add(resultSet.getString(columName.get(j)));
                     } else if (columnType.get(j).equals("DATETIME")) {
-                        record.add(String.valueOf(resultSet.getDate(columName.get(j))));
+                        record.add(String.valueOf(resultSet.getTimestamp(columName.get(j))));
                     }
                 }
             }

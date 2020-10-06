@@ -1,6 +1,8 @@
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class planInput extends JFrame{
@@ -41,6 +43,13 @@ public class planInput extends JFrame{
         this.setContentPane(mainPanel);
         this.pack();
         setGUIatStart();
+        Simulation s = new Simulation();
+        for(Map.Entry<Integer,ArrayList<String>> entry: new DataBaseHandler().readRecords("transportationplan").entrySet()){
+            s.addTransportationPlan(new TransportationPlan(entry.getValue()));
+        }
+        s.runSimulation();
+
+
         clearButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -100,6 +109,10 @@ public class planInput extends JFrame{
             startDepoComboBox.addItem(new ComboItem(entry.getValue().get(0)));
             endDepoComboBox.addItem(new ComboItem(entry.getValue().get(0)));
         }
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy,MM,dd,HH,mm");
+        LocalDateTime now = LocalDateTime.now();
+        String[] splitted = dtf.format(now).split(",");
+
     }
     private class ComboItem {
         private String itemName;
