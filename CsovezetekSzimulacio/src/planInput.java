@@ -109,9 +109,9 @@ public class planInput extends JFrame{
             startDepoComboBox.addItem(new ComboItem(entry.getValue().get(0)));
             endDepoComboBox.addItem(new ComboItem(entry.getValue().get(0)));
         }
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy,MM,dd,HH,mm");
-        LocalDateTime now = LocalDateTime.now();
-        String[] splitted = dtf.format(now).split(",");
+//        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy,MM,dd,HH,mm");
+//        LocalDateTime now = LocalDateTime.now();
+//        String[] splitted = dtf.format(now).split(",");
 
     }
     private class ComboItem {

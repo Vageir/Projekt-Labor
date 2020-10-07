@@ -27,7 +27,6 @@ public class Simulation  {
     public void addTransportationPlan(TransportationPlan tp){
         transportationPlans.add(tp);
     }
-
     void runSimulation(){
         sortByDate();
         for (TransportationPlan t: transportationPlans){
