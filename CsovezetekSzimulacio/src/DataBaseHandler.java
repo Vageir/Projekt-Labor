@@ -7,7 +7,7 @@ import java.util.Map;
 
 public class DataBaseHandler {
     static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
-    static final String DB_URL = "jdbc:mysql://localhost:3306/projektlabor?useSSL=false&serverTimezone=UTC";
+    static final String DB_URL = "jdbc:mysql://localhost:3306/projektlabor?useLegacyDatetimeCode=false&amp&useSSL=false&serverTimezone=Europe/Budapest";
     static final String USER = "root";
     static final String PASS = "test";
     Connection con = null;
@@ -125,8 +125,8 @@ public class DataBaseHandler {
         LinkedHashMap<Integer,ArrayList<String>> result = new LinkedHashMap<>();
         ResultSet resultSet = null;
         try{
-            String sql = "select  * from " + tableName;
-            // System.out.println(sql);
+            String sql = "select  * from " + tableName + " order by  'startdate' asc";
+//             System.out.println(sql);
             resultSet = stmt.executeQuery(sql);
             Integer i = 0;
             while (resultSet.next()){

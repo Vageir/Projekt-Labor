@@ -1,9 +1,15 @@
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+
+import static java.time.ZoneOffset.UTC;
+import static javax.swing.JOptionPane.showMessageDialog;
 
 public class planInput extends JFrame{
     private JPanel mainPanel;
@@ -44,12 +50,17 @@ public class planInput extends JFrame{
         this.pack();
         setGUIatStart();
         Simulation s = new Simulation();
+//        for(Map.Entry<Integer,ArrayList<String>> entry: new DataBaseHandler().readRecords("transportationplan").entrySet()){
+//            System.out.println("Yeet: ");
+//            for (String ss :entry.getValue()){
+//                System.out.print(ss+"   ");
+//            }
+//            System.out.println();
+//        }
         for(Map.Entry<Integer,ArrayList<String>> entry: new DataBaseHandler().readRecords("transportationplan").entrySet()){
             s.addTransportationPlan(new TransportationPlan(entry.getValue()));
         }
         s.runSimulation();
-
-
         clearButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -69,24 +80,32 @@ public class planInput extends JFrame{
                         +monthStart+"-"
                         +kezdNapComboBox.getSelectedItem().toString()+" "
                         +kezdOraTextField.getText()+":"+kezdPercTextField.getText();
-
                 String endDate = vegEvComboBox.getSelectedItem().toString()+"-"
                         +monthEnd+"-"
                         +vegNapComboBox.getSelectedItem().toString()+" "
                         +vegOraTextField.getText()+":"+vegPercTextField.getText();
-                System.out.println(endDate);
-                tmp.addAll(Arrays.asList(
-                        operatorIDComboBox.getSelectedItem().toString()+monthStart+kezdNapComboBox.getSelectedItem().toString()
-                                +monthEnd+vegNapComboBox.getSelectedItem().toString()+startDepoComboBox.getSelectedItem().toString()
-                                +endDepoComboBox.getSelectedItem().toString(),
-                        startDepoComboBox.getSelectedItem().toString(),
-                        endDepoComboBox.getSelectedItem().toString(),
-                        String.valueOf(anyagComboBox.getSelectedIndex()),
-                        mennyisegField.getText(),
-                        startDate,
-                        endDate,
-                        operatorIDComboBox.getSelectedItem().toString()));
-                new DataBaseHandler().insertRecord("transportationplan",tmp);
+                Date start = new Date();
+                Date end = new Date();
+                try {
+                    start = new SimpleDateFormat("yyyy-MM-dd hh:mm").parse(startDate);
+                    end = new SimpleDateFormat("yyyy-MM-dd hh:mm").parse(endDate);
+                } catch (ParseException parseException) {
+                    parseException.printStackTrace();
+                }
+                if (end.after(start) && (end.getHours() > start.getHours() ||(end.getMinutes() > start.getMinutes()))) {
+                    tmp.addAll(Arrays.asList(
+                            operatorIDComboBox.getSelectedItem().toString() + monthStart + kezdNapComboBox.getSelectedItem().toString()
+                                    + monthEnd + vegNapComboBox.getSelectedItem().toString() + startDepoComboBox.getSelectedItem().toString()
+                                    + endDepoComboBox.getSelectedItem().toString(),
+                            startDepoComboBox.getSelectedItem().toString(),
+                            endDepoComboBox.getSelectedItem().toString(),
+                            String.valueOf(anyagComboBox.getSelectedIndex() + 1),
+                            mennyisegField.getText(),
+                            startDate,
+                            endDate,
+                            operatorIDComboBox.getSelectedItem().toString()));
+                    new DataBaseHandler().insertRecord("transportationplan", tmp);
+                }else showMessageDialog(null,"A vég dátum nem lehet előrébb mint a kezdődátum");
             }
         });
         operatorIDComboBox.addActionListener(new ActionListener() {
@@ -109,9 +128,7 @@ public class planInput extends JFrame{
             startDepoComboBox.addItem(new ComboItem(entry.getValue().get(0)));
             endDepoComboBox.addItem(new ComboItem(entry.getValue().get(0)));
         }
-//        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy,MM,dd,HH,mm");
-//        LocalDateTime now = LocalDateTime.now();
-//        String[] splitted = dtf.format(now).split(",");
+
 
     }
     private class ComboItem {
