@@ -1,12 +1,21 @@
 import java.util.ArrayList;
 import java.util.Collections;
-
+//v = Q / (π · (ø / 2)²)
+//        Q = Volume flow rate
+//        v = Flow velocity
+//        ø = Diameter
 public class Simulation  {
-    static final int flowRate = 1;
+    static final double volumeFlowRate = 10; //cubic meteres/s
+    static final double pipeDiameter = 0.3; //m
+    static final int pipeLength = 1000; //m
+    static final int timeSpeed = 100; //ms
+    double flowVelocity; //m/s
     ArrayList <TransportationPlan> transportationPlans;
 
     public Simulation() {
         transportationPlans = new ArrayList<>();
+        flowVelocity = volumeFlowRate/(Math.PI*Math.pow(((double)pipeDiameter/2),2));
+        System.out.println("The flow velocity: "+flowVelocity);
     }
     public ArrayList<TransportationPlan> getTransportationPlans() {
         return transportationPlans;
@@ -68,13 +77,13 @@ public class Simulation  {
         }
         return false;
     }
-
     void runSimulation(){
         sortByDate();
         for (TransportationPlan t : transportationPlans){
             System.out.println("Tid:" + t.getTransportationID());
             if(checkConnection(t.getTransportationID()) && checkContainer(t.getTransportationID())){
-                System.out.println("All check.....OK");
+                System.out.println("All check.....OK\n");
+                startSimulation(t);
             }else {
                 System.out.println("All check.....Failed");
             }
@@ -82,4 +91,57 @@ public class Simulation  {
         }
 
     }
+
+    private void startSimulation(TransportationPlan t) {
+        System.out.println("Simulation started......\n");
+        System.out.println("From: "+t.getStartDepoID()+"  To: "+ t.getEndDepoID()+"  Fuel: "+t.getFuelID()+"  Fuel Amount: "+t.getFuelAmount());
+        System.out.println("Start Hours:: "+ t.getStartHours()+"  Start Minutes: " + t.getStartMinutes());
+        System.out.println("End Hours:: "+ t.getEndHours()+"  End Minutes: " + t.getEndMinutes());
+        TimeSimulation timeSimulation = new TimeSimulation(t);
+        long startTime = System.nanoTime();
+        timeSimulation.start();
+        while (timeSimulation.isAlive()){
+
+
+        }
+        long elapsedTime = System.nanoTime() - startTime;
+        System.out.println("Elapsed time in seconds: "+(double)elapsedTime / 1_000_000_000.0);
+
+    }
+    private class TimeSimulation extends Thread {
+        private TransportationPlan t;
+        private int hours, minutes;
+        public TimeSimulation(TransportationPlan t) {
+            this.t = t;
+            this.hours = t.getStartHours();
+            this.minutes = t.getStartMinutes();
+        }
+        public void run() {
+            long startTime = System.nanoTime();
+            while (hours < t.getEndHours()){
+                while (minutes < 60){
+                    try{
+                        TimeSimulation.sleep(timeSpeed);
+                    }catch (InterruptedException ie){
+                        ie.printStackTrace();
+                    }
+                    minutes++;
+                }
+                minutes = 0;
+                System.out.println("Current hour:"+hours);
+                hours++;
+            }
+            if (t.getEndMinutes() > 0){
+                minutes = 0;
+                while (minutes < t.getEndMinutes()){
+                    try {
+                        TimeSimulation.sleep(timeSpeed);
+                    }catch (InterruptedException ie){
+                        ie.printStackTrace();
+                    }
+                    minutes++;
+                }
+            }
+        }
+    };
 }

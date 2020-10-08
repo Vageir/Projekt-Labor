@@ -33,7 +33,18 @@ public class TransportationPlan {
 //        return ls;
 //    }
 
-
+    public int getStartHours(){
+        return Integer.parseInt(startDate.substring(11,13));
+    }
+    public int getStartMinutes(){
+        return Integer.parseInt(startDate.substring(14,16));
+    }
+    public int getEndHours(){
+        return Integer.parseInt(endDate.substring(11,13));
+    }
+    public int getEndMinutes(){
+        return Integer.parseInt(endDate.substring(14,16));
+    }
     public String getStartDate() {
         return startDate;
     }
