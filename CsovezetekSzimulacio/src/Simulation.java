@@ -5,9 +5,9 @@ import java.util.Collections;
 //        v = Flow velocity
 //        ø = Diameter
 public class Simulation  {
-    static final double volumeFlowRate = 10; //cubic meteres/s
+    static final double volumeFlowRate = 1; //cubic meteres/s
     static final double pipeDiameter = 0.3; //m
-    static final int pipeLength = 1000; //m
+    static final int pipeLength = 400000; //m
     static final int timeSpeed = 100; //ms
     double flowVelocity; //m/s
     ArrayList <TransportationPlan> transportationPlans;
@@ -100,13 +100,28 @@ public class Simulation  {
         TimeSimulation timeSimulation = new TimeSimulation(t);
         long startTime = System.nanoTime();
         timeSimulation.start();
+        double d = 0.0;
         while (timeSimulation.isAlive()){
+            try {
+                Thread.sleep(1,6);
+            }catch (InterruptedException ie){
+                ie.printStackTrace();
+            }
+            d += flowVelocity;
+            if (d>=pipeLength/3){
 
-
+            }
+            if (d >= (double)pipeLength){
+                System.out.println("Tranpsortation complete.....\n");
+                timeSimulation.stop();
+                break;
+            }
         }
         long elapsedTime = System.nanoTime() - startTime;
         System.out.println("Elapsed time in seconds: "+(double)elapsedTime / 1_000_000_000.0);
-
+        if (d< pipeLength){
+            System.out.println("Transportation failed.....\n");
+        }
     }
     private class TimeSimulation extends Thread {
         private TransportationPlan t;
