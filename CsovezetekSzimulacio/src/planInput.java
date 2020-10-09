@@ -1,36 +1,23 @@
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-import static java.time.ZoneOffset.UTC;
 import static javax.swing.JOptionPane.showMessageDialog;
 
 public class planInput extends JFrame{
     private JPanel mainPanel;
-    private JPanel topLeftPanel;
-    private JPanel kezdoDatumPanel;
-    private JPanel bottomLeftPanel;
-    private JPanel bottomRightPanel;
-    private JTextField hovaField;
-    private JTextField honnanField;
-    private JTextField mennyisegField;
-    private JComboBox anyagComboBox;
+    private JTextField volumeField;
+    private JComboBox fluidComboBox;
     private JComboBox kezdEvComboBox;
     private JComboBox kezdHonapComboBox;
-    private JTextField csohosszTextField;
-    private JTextField atmeroTextField;
+    private JTextField pipeLengthField;
+    private JTextField pipeDiameterField;
     private JComboBox kezdNapComboBox;
     private JTextField kezdOraTextField;
     private JTextField kezdPercTextField;
-    private JPanel vegeDatumPanel;
-    private JTextField nevTextField;
-    private JTextField azonTextField;
     private JButton clearButton;
     private JButton submitButton;
     private JTextField vegOraTextField;
@@ -41,7 +28,7 @@ public class planInput extends JFrame{
     private JComboBox operatorIDComboBox;
     private JComboBox startDepoComboBox;
     private JComboBox endDepoComboBox;
-    private JLabel operatorNameLable;
+    private JLabel operatorNameLabel;
 
     public planInput(String title) {
         super(title);
@@ -64,10 +51,10 @@ public class planInput extends JFrame{
         clearButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                csohosszTextField.setText("500"); atmeroTextField.setText("50");
-                honnanField.setText(""); hovaField.setText(""); mennyisegField.setText(""); kezdOraTextField.setText(""); kezdPercTextField.setText("");
-                vegOraTextField.setText(""); vegPercTextField.setText(""); nevTextField.setText(""); azonTextField.setText("");
-                anyagComboBox.setSelectedIndex(0);
+                pipeLengthField.setText("1"); pipeDiameterField.setText("50");
+                startDepoComboBox.setSelectedIndex(0); endDepoComboBox.setSelectedIndex(1); volumeField.setText(""); kezdOraTextField.setText(""); kezdPercTextField.setText("");
+                vegOraTextField.setText(""); vegPercTextField.setText("");
+                fluidComboBox.setSelectedIndex(0);
             }
         });
         submitButton.addActionListener(new ActionListener() {
@@ -99,8 +86,8 @@ public class planInput extends JFrame{
                                     + endDepoComboBox.getSelectedItem().toString(),
                             startDepoComboBox.getSelectedItem().toString(),
                             endDepoComboBox.getSelectedItem().toString(),
-                            String.valueOf(anyagComboBox.getSelectedIndex() + 1),
-                            mennyisegField.getText(),
+                            String.valueOf(fluidComboBox.getSelectedIndex() + 1),
+                            volumeField.getText(),
                             startDate,
                             endDate,
                             operatorIDComboBox.getSelectedItem().toString()));
@@ -111,7 +98,7 @@ public class planInput extends JFrame{
         operatorIDComboBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-               operatorNameLable.setText(
+               operatorNameLabel.setText(
                        new DataBaseHandler().readOneRecord("operator","operatorID = '"+operatorIDComboBox.getSelectedItem().toString()+"'").get(1));
             }
         });
@@ -122,11 +109,11 @@ public class planInput extends JFrame{
         for (Map.Entry<Integer,ArrayList<String>> entry : result.entrySet()){
             operatorIDComboBox.addItem(new ComboItem(entry.getValue().get(0)));
         }
-        operatorNameLable.setText(result.entrySet().iterator().next().getValue().get(1));
+        operatorNameLabel.setText(result.entrySet().iterator().next().getValue().get(1));
         result = new DataBaseHandler().readRecords("depo");
         for (Map.Entry<Integer,ArrayList<String>> entry : result.entrySet()){
             startDepoComboBox.addItem(new ComboItem(entry.getValue().get(0)));
-            endDepoComboBox.addItem(new ComboItem(entry.getValue().get(0)));
+            endDepoComboBox.addItem(new ComboItem(entry.getValue().get(1)));
         }
 
 
