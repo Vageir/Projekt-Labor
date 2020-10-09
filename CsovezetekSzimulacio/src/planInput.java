@@ -113,10 +113,9 @@ public class planInput extends JFrame{
         result = new DataBaseHandler().readRecords("depo");
         for (Map.Entry<Integer,ArrayList<String>> entry : result.entrySet()){
             startDepoComboBox.addItem(new ComboItem(entry.getValue().get(0)));
-            endDepoComboBox.addItem(new ComboItem(entry.getValue().get(1)));
+            endDepoComboBox.addItem(new ComboItem(entry.getValue().get(0)));
         }
-
-
+        endDepoComboBox.setSelectedIndex(1);
     }
     private class ComboItem {
         private String itemName;
