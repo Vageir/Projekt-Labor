@@ -30,8 +30,3 @@ workspace.xml
 Projekt-Labor.iml
 #/CsovezetekSzimulacio/
 #/CsovezetekSzimulacio/
-
-
-out/production/Projekt-Labor/data.sql
-out/production/Projekt-Labor/databaseFormat.sql
-.idea/libraries/8_0.xml
