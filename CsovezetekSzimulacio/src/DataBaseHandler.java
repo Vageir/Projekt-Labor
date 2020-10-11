@@ -165,7 +165,7 @@ public class DataBaseHandler {
         }
         return result;
     }
-    public ArrayList<String> readOneRecord(String tableName, String condition){
+    public ArrayList<String> readRecordWithCondition(String tableName, String condition){
         if (!setConnection()){
             return null;
         }

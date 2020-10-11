@@ -74,12 +74,20 @@ public class planInput extends JFrame{
                 Date start = new Date();
                 Date end = new Date();
                 try {
-                    start = new SimpleDateFormat("yyyy-MM-dd hh:mm").parse(startDate);
-                    end = new SimpleDateFormat("yyyy-MM-dd hh:mm").parse(endDate);
+                    start = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(startDate);
+                    end = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(endDate);
                 } catch (ParseException parseException) {
                     parseException.printStackTrace();
                 }
-                if (end.after(start) && (end.getHours() > start.getHours() ||(end.getMinutes() > start.getMinutes()))) {
+//                System.out.println(start.getTime());
+//                System.out.println(end.getTime());
+//                if (end.after(start)){
+//                    System.out.println("yeet");
+//                }
+//                else{
+//                    System.out.println("wtf");
+//                }
+                if (end.after(start)) {
                     tmp.addAll(Arrays.asList(
                             operatorIDComboBox.getSelectedItem().toString() + monthStart + kezdNapComboBox.getSelectedItem().toString()
                                     + monthEnd + vegNapComboBox.getSelectedItem().toString() + startDepoComboBox.getSelectedItem().toString()
@@ -99,7 +107,7 @@ public class planInput extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                operatorNameLabel.setText(
-                       new DataBaseHandler().readOneRecord("operator","operatorID = '"+operatorIDComboBox.getSelectedItem().toString()+"'").get(1));
+                       new DataBaseHandler().readRecordWithCondition("operator","operatorID = '"+operatorIDComboBox.getSelectedItem().toString()+"'").get(1));
             }
         });
     }
