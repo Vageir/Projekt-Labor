@@ -3,6 +3,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
 
 import static javax.swing.JOptionPane.showMessageDialog;
@@ -16,12 +19,13 @@ public class planInput extends JFrame{
     private JTextField pipeLengthField;
     private JTextField pipeDiameterField;
     private JComboBox kezdNapComboBox;
-    private JTextField kezdOraTextField;
-    private JTextField kezdPercTextField;
+    private JSpinner kezdOraSpinner;
+    private JSpinner kezdPercSpinner;
+    private JPanel vegeDatumPanel;
     private JButton clearButton;
     private JButton submitButton;
-    private JTextField vegOraTextField;
-    private JTextField vegPercTextField;
+    private JSpinner vegOraSpinner;
+    private JSpinner vegPercSpinner;
     private JComboBox vegEvComboBox;
     private JComboBox vegHonapComboBox;
     private JComboBox vegNapComboBox;
@@ -52,8 +56,9 @@ public class planInput extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                 pipeLengthField.setText("1"); pipeDiameterField.setText("50");
-                startDepoComboBox.setSelectedIndex(0); endDepoComboBox.setSelectedIndex(1); volumeField.setText(""); kezdOraTextField.setText(""); kezdPercTextField.setText("");
-                vegOraTextField.setText(""); vegPercTextField.setText("");
+                startDepoComboBox.setSelectedIndex(0); endDepoComboBox.setSelectedIndex(1); volumeField.setText("");
+                kezdOraSpinner.setValue(LocalTime.now().getHour()); kezdPercSpinner.setValue(LocalTime.now().getMinute());
+                vegOraSpinner.setValue(LocalTime.now().getHour()); vegPercSpinner.setValue(LocalTime.now().getMinute());
                 fluidComboBox.setSelectedIndex(0);
             }
         });
@@ -66,11 +71,11 @@ public class planInput extends JFrame{
                 String startDate = kezdEvComboBox.getSelectedItem().toString()+"-"
                         +monthStart+"-"
                         +kezdNapComboBox.getSelectedItem().toString()+" "
-                        +kezdOraTextField.getText()+":"+kezdPercTextField.getText();
+                        + kezdOraSpinner.getValue().toString()+":"+ kezdPercSpinner.getValue().toString();
                 String endDate = vegEvComboBox.getSelectedItem().toString()+"-"
                         +monthEnd+"-"
                         +vegNapComboBox.getSelectedItem().toString()+" "
-                        +vegOraTextField.getText()+":"+vegPercTextField.getText();
+                        + vegOraSpinner.getValue().toString()+":"+ vegPercSpinner.getValue().toString();
                 Date start = new Date();
                 Date end = new Date();
                 try {
@@ -100,7 +105,7 @@ public class planInput extends JFrame{
                             endDate,
                             operatorIDComboBox.getSelectedItem().toString()));
                     new DataBaseHandler().insertRecord("transportationplan", tmp);
-                }else showMessageDialog(null,"A vég dátum nem lehet előrébb mint a kezdődátum");
+                }else showMessageDialog(null,"A befejezési dátumnak későbbinek kell lennie a kezdődátumnál!");
             }
         });
         operatorIDComboBox.addActionListener(new ActionListener() {
@@ -112,11 +117,33 @@ public class planInput extends JFrame{
         });
     }
     private void setGUIatStart() {
+        LocalDateTime localDateTime = LocalDateTime.now();
+        int currentYear = localDateTime.getYear();
+        int currentHour = localDateTime.getHour();
+        int currentMinute = localDateTime.getMinute();
+
+        kezdEvComboBox.addItem(currentYear);
+        kezdEvComboBox.addItem(currentYear+1);
+        kezdEvComboBox.setSelectedItem(currentYear);
+        kezdHonapComboBox.setSelectedIndex(localDateTime.getMonth().getValue()-1);
+        kezdNapComboBox.setSelectedIndex(localDateTime.getDayOfMonth()-1);
+        kezdOraSpinner.setModel(new SpinnerNumberModel(currentHour, 0, 23, 1));
+        kezdPercSpinner.setModel(new SpinnerNumberModel(currentMinute, 0, 59, 1));
+
+        vegEvComboBox.addItem(currentYear);
+        vegEvComboBox.addItem(currentYear+1);
+        vegHonapComboBox.setSelectedIndex(localDateTime.getMonth().getValue()-1);
+        vegNapComboBox.setSelectedIndex(localDateTime.getDayOfMonth()-1);
+        vegOraSpinner.setModel(new SpinnerNumberModel(currentHour, 0, 23, 1));
+        vegPercSpinner.setModel(new SpinnerNumberModel(currentMinute, 0, 59, 1));
+
         LinkedHashMap<Integer,ArrayList<String>> result = new LinkedHashMap<>();
         result = new DataBaseHandler().readRecords("operator");
         for (Map.Entry<Integer,ArrayList<String>> entry : result.entrySet()){
             operatorIDComboBox.addItem(new ComboItem(entry.getValue().get(0)));
         }
+        startDepoComboBox.addItem(new ComboItem(""));
+        endDepoComboBox.addItem(new ComboItem(""));
         operatorNameLabel.setText(result.entrySet().iterator().next().getValue().get(1));
         result = new DataBaseHandler().readRecords("depo");
         for (Map.Entry<Integer,ArrayList<String>> entry : result.entrySet()){
