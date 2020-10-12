@@ -1,16 +1,12 @@
 import javax.swing.*;
-import javax.swing.event.ListDataListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-import static java.time.ZoneOffset.UTC;
 import static javax.swing.JOptionPane.showMessageDialog;
 
 public class planInput extends JFrame{
@@ -28,15 +24,15 @@ public class planInput extends JFrame{
     private JTextField csohosszTextField;
     private JTextField atmeroTextField;
     private JComboBox kezdNapComboBox;
-    private JSpinner kezdOraTextField;
-    private JSpinner kezdPercTextField;
+    private JSpinner kezdOraSpinner;
+    private JSpinner kezdPercSpinner;
     private JPanel vegeDatumPanel;
     private JTextField nevTextField;
     private JTextField azonTextField;
     private JButton clearButton;
     private JButton submitButton;
-    private JSpinner vegOraTextField;
-    private JSpinner vegPercTextField;
+    private JSpinner vegOraSpinner;
+    private JSpinner vegPercSpinner;
     private JComboBox vegEvComboBox;
     private JComboBox vegHonapComboBox;
     private JComboBox vegNapComboBox;
@@ -68,8 +64,8 @@ public class planInput extends JFrame{
             public void actionPerformed(ActionEvent e) {
                 csohosszTextField.setText("500"); atmeroTextField.setText("50");
                 /*honnanField.setText(""); hovaField.setText(""); */mennyisegField.setText("");
-                kezdOraTextField.setValue(LocalTime.now().getHour()); kezdPercTextField.setValue(LocalTime.now().getMinute());
-                vegOraTextField.setValue(LocalTime.now().getHour()); vegPercTextField.setValue(LocalTime.now().getMinute());
+                kezdOraSpinner.setValue(LocalTime.now().getHour()); kezdPercSpinner.setValue(LocalTime.now().getMinute());
+                vegOraSpinner.setValue(LocalTime.now().getHour()); vegPercSpinner.setValue(LocalTime.now().getMinute());
                 // nevTextField.setText(""); azonTextField.setText("");
                 anyagComboBox.setSelectedIndex(0);
             }
@@ -83,11 +79,11 @@ public class planInput extends JFrame{
                 String startDate = kezdEvComboBox.getSelectedItem().toString()+"-"
                         +monthStart+"-"
                         +kezdNapComboBox.getSelectedItem().toString()+" "
-                        +kezdOraTextField.getValue().toString()+":"+kezdPercTextField.getValue().toString();
+                        + kezdOraSpinner.getValue().toString()+":"+ kezdPercSpinner.getValue().toString();
                 String endDate = vegEvComboBox.getSelectedItem().toString()+"-"
                         +monthEnd+"-"
                         +vegNapComboBox.getSelectedItem().toString()+" "
-                        +vegOraTextField.getValue().toString()+":"+vegPercTextField.getValue().toString();
+                        + vegOraSpinner.getValue().toString()+":"+ vegPercSpinner.getValue().toString();
                 Date start = new Date();
                 Date end = new Date();
                 try {
@@ -131,15 +127,15 @@ public class planInput extends JFrame{
         kezdEvComboBox.setSelectedItem(currentYear);
         kezdHonapComboBox.setSelectedIndex(localDateTime.getMonth().getValue()-1);
         kezdNapComboBox.setSelectedIndex(localDateTime.getDayOfMonth()-1);
-        kezdOraTextField.setModel(new SpinnerNumberModel(currentHour, 0, 23, 1));
-        kezdPercTextField.setModel(new SpinnerNumberModel(currentMinute, 0, 59, 1));
+        kezdOraSpinner.setModel(new SpinnerNumberModel(currentHour, 0, 23, 1));
+        kezdPercSpinner.setModel(new SpinnerNumberModel(currentMinute, 0, 59, 1));
 
         vegEvComboBox.addItem(currentYear);
         vegEvComboBox.addItem(currentYear+1);
         vegHonapComboBox.setSelectedIndex(localDateTime.getMonth().getValue()-1);
         vegNapComboBox.setSelectedIndex(localDateTime.getDayOfMonth()-1);
-        vegOraTextField.setModel(new SpinnerNumberModel(currentHour, 0, 23, 1));
-        vegPercTextField.setModel(new SpinnerNumberModel(currentMinute, 0, 59, 1));
+        vegOraSpinner.setModel(new SpinnerNumberModel(currentHour, 0, 23, 1));
+        vegPercSpinner.setModel(new SpinnerNumberModel(currentMinute, 0, 59, 1));
 
         LinkedHashMap<Integer,ArrayList<String>> result = new LinkedHashMap<>();
         result = new DataBaseHandler().readRecords("operator");
