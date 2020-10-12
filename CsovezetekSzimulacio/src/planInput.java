@@ -3,6 +3,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
@@ -11,24 +12,16 @@ import static javax.swing.JOptionPane.showMessageDialog;
 
 public class planInput extends JFrame{
     private JPanel mainPanel;
-    private JPanel topLeftPanel;
-    private JPanel kezdoDatumPanel;
-    private JPanel bottomLeftPanel;
-    private JPanel bottomRightPanel;
-    private JTextField hovaField;
-    private JTextField honnanField;
-    private JTextField mennyisegField;
-    private JComboBox anyagComboBox;
+    private JTextField volumeField;
+    private JComboBox fluidComboBox;
     private JComboBox kezdEvComboBox;
     private JComboBox kezdHonapComboBox;
-    private JTextField csohosszTextField;
-    private JTextField atmeroTextField;
+    private JTextField pipeLengthField;
+    private JTextField pipeDiameterField;
     private JComboBox kezdNapComboBox;
     private JSpinner kezdOraSpinner;
     private JSpinner kezdPercSpinner;
     private JPanel vegeDatumPanel;
-    private JTextField nevTextField;
-    private JTextField azonTextField;
     private JButton clearButton;
     private JButton submitButton;
     private JSpinner vegOraSpinner;
@@ -39,7 +32,7 @@ public class planInput extends JFrame{
     private JComboBox operatorIDComboBox;
     private JComboBox startDepoComboBox;
     private JComboBox endDepoComboBox;
-    private JLabel operatorNameLable;
+    private JLabel operatorNameLabel;
 
     public planInput(String title) {
         super(title);
@@ -62,12 +55,11 @@ public class planInput extends JFrame{
         clearButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                csohosszTextField.setText("500"); atmeroTextField.setText("50");
-                /*honnanField.setText(""); hovaField.setText(""); */mennyisegField.setText("");
+                pipeLengthField.setText("1"); pipeDiameterField.setText("50");
+                startDepoComboBox.setSelectedIndex(0); endDepoComboBox.setSelectedIndex(1); volumeField.setText("");
                 kezdOraSpinner.setValue(LocalTime.now().getHour()); kezdPercSpinner.setValue(LocalTime.now().getMinute());
                 vegOraSpinner.setValue(LocalTime.now().getHour()); vegPercSpinner.setValue(LocalTime.now().getMinute());
-                // nevTextField.setText(""); azonTextField.setText("");
-                anyagComboBox.setSelectedIndex(0);
+                fluidComboBox.setSelectedIndex(0);
             }
         });
         submitButton.addActionListener(new ActionListener() {
@@ -87,20 +79,28 @@ public class planInput extends JFrame{
                 Date start = new Date();
                 Date end = new Date();
                 try {
-                    start = new SimpleDateFormat("yyyy-MM-dd hh:mm").parse(startDate);
-                    end = new SimpleDateFormat("yyyy-MM-dd hh:mm").parse(endDate);
+                    start = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(startDate);
+                    end = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(endDate);
                 } catch (ParseException parseException) {
                     parseException.printStackTrace();
                 }
-                if (end.after(start) && (end.getHours() > start.getHours() ||(end.getMinutes() > start.getMinutes()))) {
+//                System.out.println(start.getTime());
+//                System.out.println(end.getTime());
+//                if (end.after(start)){
+//                    System.out.println("yeet");
+//                }
+//                else{
+//                    System.out.println("wtf");
+//                }
+                if (end.after(start)) {
                     tmp.addAll(Arrays.asList(
                             operatorIDComboBox.getSelectedItem().toString() + monthStart + kezdNapComboBox.getSelectedItem().toString()
                                     + monthEnd + vegNapComboBox.getSelectedItem().toString() + startDepoComboBox.getSelectedItem().toString()
                                     + endDepoComboBox.getSelectedItem().toString(),
                             startDepoComboBox.getSelectedItem().toString(),
                             endDepoComboBox.getSelectedItem().toString(),
-                            String.valueOf(anyagComboBox.getSelectedIndex() + 1),
-                            mennyisegField.getText(),
+                            String.valueOf(fluidComboBox.getSelectedIndex() + 1),
+                            volumeField.getText(),
                             startDate,
                             endDate,
                             operatorIDComboBox.getSelectedItem().toString()));
@@ -111,8 +111,8 @@ public class planInput extends JFrame{
         operatorIDComboBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-               operatorNameLable.setText(
-                       new DataBaseHandler().readOneRecord("operator","operatorID = '"+operatorIDComboBox.getSelectedItem().toString()+"'").get(1));
+               operatorNameLabel.setText(
+                       new DataBaseHandler().readRecordWithCondition("operator","operatorID = '"+operatorIDComboBox.getSelectedItem().toString()+"'").get(1));
             }
         });
     }
@@ -142,17 +142,15 @@ public class planInput extends JFrame{
         for (Map.Entry<Integer,ArrayList<String>> entry : result.entrySet()){
             operatorIDComboBox.addItem(new ComboItem(entry.getValue().get(0)));
         }
-
         startDepoComboBox.addItem(new ComboItem(""));
         endDepoComboBox.addItem(new ComboItem(""));
-        operatorNameLable.setText(result.entrySet().iterator().next().getValue().get(1));
+        operatorNameLabel.setText(result.entrySet().iterator().next().getValue().get(1));
         result = new DataBaseHandler().readRecords("depo");
         for (Map.Entry<Integer,ArrayList<String>> entry : result.entrySet()){
             startDepoComboBox.addItem(new ComboItem(entry.getValue().get(0)));
             endDepoComboBox.addItem(new ComboItem(entry.getValue().get(0)));
         }
-
-
+        endDepoComboBox.setSelectedIndex(1);
     }
     private class ComboItem {
         private String itemName;
