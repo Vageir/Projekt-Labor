@@ -1,4 +1,3 @@
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -10,12 +9,13 @@ import static java.lang.Thread.sleep;
 //        ø = Diameter
 // t=s/v
 public class Simulation  {
-    static final double volumeFlowRate = 1; //cubic meteres/s
+    static final double volumeFlowRate = 100; //cubic meteres/min
     static final double pipeDiameter = 1; //m
-    static final int pipeLength = 25000; //m
+    static final int pipeLength = 10000; //m
     static final int timeSpeed = 100; // 1 ms = 1perc
-    double flowVelocity; //m/s
-    private int startDepoContainerCapacity;
+    double flowVelocity; //m/min
+    private int startDepoCurrentCapacity,endDepoCurrentCapacity;
+    private String startDepoContainerID,endDepoContainerID;
     ArrayList <TransportationPlan> transportationPlans;
 
     public Simulation() {
@@ -38,36 +38,61 @@ public class Simulation  {
     private boolean checkContainer(String tID){
         for(TransportationPlan t : transportationPlans){
             if (t.getTransportationID().equals(tID)){
-               ArrayList<String> ls = new DataBaseHandler().readRecordWithCondition("depocontainer","DepoID = '" + t.getStartDepoID()+"'");
-                if (checkFuelMatch(t, ls) && checkCapacity(t, ls)) {
+                ArrayList<String> startDepoContainer = new DataBaseHandler().readRecordWithCondition("depocontainer","DepoID = '" + t.getStartDepoID()+"'");
+                ArrayList<String> endDepoContainer = new DataBaseHandler().readRecordWithCondition("depocontainer","DepoID = '" + t.getEndDepoID()+"'");
+               System.out.println("Start Depo Fuel and Container Check");
+               if (!checkEnoughFuel(t,startDepoContainer)) {
+                   System.out.println("Container check.....Failed");
+                   System.out.println("Start Depo Fuel and Container Check.....Failed");
+                   return false;
+               }
+               System.out.println("Container check.....OK");
+                System.out.println("Start Depo Fuel and Container Check.....OK\n");
+               System.out.println("End Depo Fuel and Container Check");
+               if (checkFuelAndCapacity(t, endDepoContainer)) {
                     System.out.println("Container check.....OK");
+                   System.out.println("End Depo Fuel and Container Check.....OK");
                     return true;
-                }else {
+               }else {
                     System.out.println("Conatiner check.....Failed");
+                   System.out.println("End Depo Fuel and Container Check.....Failed");
                     return false;
-                }
+               }
             }
         }
         return false;
     }
-    private boolean checkFuelMatch(TransportationPlan t, ArrayList<String> ls) {
-//        for (String s : ls ){
-//            System.out.print(s+"  ");
-//        }
-//        System.out.println("\n"+ls.get(9)+"\n");
+    private boolean checkFuelAndCapacity(TransportationPlan t, ArrayList<String> ls) {
         for (int i =4; i < ls.size(); i+=5){
-            if (Integer.parseInt(ls.get(i)) == t.getFuelID()){
-                System.out.println("Container Fuel Match.....OK");
-                startDepoContainerCapacity = Integer.parseInt(ls.get(i-2));
+            if (Integer.parseInt(ls.get(i)) == t.getFuelID() && (Integer.parseInt(ls.get(i-2))+ (t.getFuelAmount()) <= Integer.parseInt(ls.get(i-1)))){
+                System.out.println("Container Fuel and Capacity.....OK");
+                endDepoCurrentCapacity = Integer.parseInt(ls.get(i - 2));
+                endDepoContainerID = ls.get(i - 3);
                 return true;
             }
         }
-        System.out.println("Container Fuel Match.....Failed");
+        System.out.println("Container Fuel and Capacity.....Failed");
+        return false;
+    }
+    private boolean checkEnoughFuel(TransportationPlan t, ArrayList<String> ls) {
+        for (int i =4; i < ls.size(); i+=5){
+            if (Integer.parseInt(ls.get(i)) == t.getFuelID() && Integer.parseInt(ls.get(i-2))>=t.getFuelAmount()){
+                System.out.println("Container Fuel and Capacity.....OK");
+                startDepoCurrentCapacity = Integer.parseInt(ls.get(i - 2));
+                startDepoContainerID = ls.get(i - 3);
+                return true;
+            }
+        }
+        System.out.println("Container Fuel and Capacity.....Failed");
         return false;
     }
     private boolean checkCapacity(TransportationPlan t, ArrayList<String> ls) {
         for (int i = 2; i < ls.size(); i+=5) {
-            if (Integer.parseInt(ls.get(i))+ (t.getFuelAmount()) < Integer.parseInt(ls.get(i+1))){
+            if (Integer.parseInt(ls.get(i))+ (t.getFuelAmount()) <= Integer.parseInt(ls.get(i+1))){
+                endDepoCurrentCapacity=Integer.parseInt(ls.get(i));
+                endDepoContainerID = ls.get(i-1);
+                endDepoCurrentCapacity=Integer.parseInt(ls.get(i));
+                endDepoContainerID = ls.get(i-1);
                 System.out.println("Container Capacity.....OK");
                 return true;
             }
@@ -92,13 +117,10 @@ public class Simulation  {
         }
         return false;
     }
-    void runSimulation(){
+    public void runSimulation(){
         sortByDate();
-//        Thread timeSimulation = new Thread(new TimeSimulation(transportationPlans.get(0).getStartHours(), transportationPlans.get(0).getEndMinutes()));
-//        TimeSimulation timeSimulation = new TimeSimulation(transportationPlans.get(0).getStartHours(), transportationPlans.get(0).getEndMinutes());
-//        timeSimulation.start();
         for (TransportationPlan t : transportationPlans){
-            System.out.println("Tid:" + t.getTransportationID());
+            System.out.println("\nTid:" + t.getTransportationID());
             if(checkConnection(t.getTransportationID()) && checkContainer(t.getTransportationID())){
                 System.out.println("All check.....OK\n");
                 startSimulation(t);
@@ -110,116 +132,74 @@ public class Simulation  {
 
 
     }
-
     private void startSimulation(TransportationPlan t) {
         System.out.println("Simulation started......\n");
         System.out.println("From: "+t.getStartDepoID()+"  To: "+ t.getEndDepoID()+"  Fuel: "+t.getFuelID()+"  Fuel Amount: "+t.getFuelAmount());
         System.out.println("Start Hours:: "+ t.getStartHours()+"  Start Minutes: " + t.getStartMinutes());
         System.out.println("End Hours:: "+ t.getEndHours()+"  End Minutes: " + t.getEndMinutes());
-        TimeSimulation timeSimulation = new TimeSimulation(t);
-        timeSimulation.start();
         int movedFuelAmount = 0;
         double time = pipeLength/flowVelocity;
-        while (timeSimulation.isAlive()){
-            if (movedFuelAmount < t.getFuelAmount()){
-                time--;
+        int hours = t.getStartHours(), minutes = t.getStartMinutes();
+        while (hours < t.getEndHours()){
+            while (minutes < 60){
+                try{
+                    Thread.currentThread().sleep(timeSpeed);
+                    if (movedFuelAmount != t.getFuelAmount())
+                        movedFuelAmount+=volumeFlowRate;
+                    else
+                        time--;
+                }catch (InterruptedException ie){
+                    ie.printStackTrace();
+                }
+                minutes++;
             }
-            else{
-                movedFuelAmount+=volumeFlowRate;
-            }
-            try {
-                Thread.currentThread().sleep(timeSpeed);
-            } catch (InterruptedException interruptedException) {
-                interruptedException.printStackTrace();
-            }
-            if (time <= 0){
-                timeSimulation.interrupt();
-                break;
+            minutes = 0;
+            System.out.println("Current hour:"+hours);
+            hours++;
+        }
+        if (t.getEndMinutes() > 0){
+            minutes = 0;
+            while (minutes < t.getEndMinutes()){
+                try {
+                    Thread.currentThread().sleep(timeSpeed);
+                    if (movedFuelAmount != t.getFuelAmount())
+                        movedFuelAmount+=volumeFlowRate;
+                    else
+                        time--;
+                }catch (InterruptedException ie){
+                    ie.printStackTrace();
+                }
+                minutes++;
             }
         }
-
+        if (movedFuelAmount == t.getFuelAmount() && time <= 0){
+            System.out.println("Transportation Complete.....");
+            new DataBaseHandler().updateRecord("depocontainer",
+                    "currentcapacity",String.valueOf(startDepoCurrentCapacity-t.getFuelAmount()),"containerID = '"+startDepoContainerID+"'");
+            System.out.println(String.valueOf(t.getFuelAmount()+endDepoCurrentCapacity));
+            new DataBaseHandler().updateRecord("depocontainer",
+                    "currentcapacity",String.valueOf(t.getFuelAmount()+endDepoCurrentCapacity),"containerID = '"+endDepoContainerID+"'");
+            System.out.println(String.valueOf(t.getFuelAmount()+endDepoCurrentCapacity));
+        }
+        else{
+            System.out.println("Transportation Failed.....");
+        }
     }
-    private class TimeSimulation extends Thread {
-        private TransportationPlan t;
-        private int hours, minutes;
-        public TimeSimulation(TransportationPlan t) {
-            this.t = t;
-            this.hours = t.getStartHours();
-            this.minutes = t.getStartMinutes();
-        }
-        public void run() {
-            while (hours < t.getEndHours()){
-                while (minutes < 60){
-                    try{
-                        TimeSimulation.sleep(timeSpeed);
-                    }catch (InterruptedException ie){
-                        ie.printStackTrace();
-                    }
-                    minutes++;
-                }
-                minutes = 0;
-                System.out.println("Current hour:"+hours);
-                hours++;
-            }
-            if (t.getEndMinutes() > 0){
-                minutes = 0;
-                while (minutes < t.getEndMinutes()){
-                    try {
-                        TimeSimulation.sleep(timeSpeed);
-                    }catch (InterruptedException ie){
-                        ie.printStackTrace();
-                    }
-                    minutes++;
-                }
-            }
-        }
-    };
-    //    private class TimeSimulation extends Thread{
-//        private int hours, minutes;
-//        private boolean yeet=false;
-//        public TimeSimulation(int hours, int minutes) {
-//            this.hours = hours;
-//            this.minutes = minutes;
-//        }
-//        @Override
-//        public void run() {
-//            super.run();
-//            while (hours < 11){
-//                while (minutes < 60){
-//                    while (yeet){}
-//                    try {
-//
-//                        wait(timeSpeed);
-//                    } catch (InterruptedException interruptedException) {
-//                        interruptedException.printStackTrace();
-//                    }
-//                    minutes++;
-//                }
-//                minutes = 0;
-//                System.out.println("Current hour:"+hours);
-//                hours++;
-//            }
-//        }
-//        public void setYeet(boolean y){
-//            yeet = y;
-//        }
-//
-//    };
-//    private class TimeSimulation implements Runnable {
+//    private class TimeSimulation extends Thread {
 //        private TransportationPlan t;
 //        private int hours, minutes;
-//
-//        public TimeSimulation(int hours, int minutes) {
-//            this.hours = hours;
-//            this.minutes = minutes;
+//        public TimeSimulation(TransportationPlan t) {
+//            this.t = t;
+//            this.hours = t.getStartHours();
+//            this.minutes = t.getStartMinutes();
 //        }
 //        public void run() {
-//            while (hours < 11){
+//            while (hours < t.getEndHours()){
 //                while (minutes < 60){
-//                    try {
-//                        wait(timeSpeed);
-//                    } catch (InterruptedException interruptedException) {
-//                        interruptedException.printStackTrace();
+//                    try{
+//                        TimeSimulation.sleep(timeSpeed);
+//                    }catch (InterruptedException ie){
+//                        ie.printStackTrace();
 //                    }
 //                    minutes++;
 //                }
@@ -227,6 +207,18 @@ public class Simulation  {
 //                System.out.println("Current hour:"+hours);
 //                hours++;
 //            }
+//            if (t.getEndMinutes() > 0){
+//                minutes = 0;
+//                while (minutes < t.getEndMinutes()){
+//                    try {
+//                        TimeSimulation.sleep(timeSpeed);
+//                    }catch (InterruptedException ie){
+//                        ie.printStackTrace();
+//                    }
+//                    minutes++;
+//                }
+//            }
 //        }
 //    };
+
 }

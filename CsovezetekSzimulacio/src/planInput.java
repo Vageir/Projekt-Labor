@@ -41,13 +41,6 @@ public class planInput extends JFrame{
         this.pack();
         setGUIatStart();
         Simulation s = new Simulation();
-//        for(Map.Entry<Integer,ArrayList<String>> entry: new DataBaseHandler().readRecords("transportationplan").entrySet()){
-//            System.out.println("Yeet: ");
-//            for (String ss :entry.getValue()){
-//                System.out.print();
-//            }
-//            System.out.println();
-//        }
         for(Map.Entry<Integer,ArrayList<String>> entry: new DataBaseHandler().readRecords("transportationplan").entrySet()){
             s.addTransportationPlan(new TransportationPlan(entry.getValue()));
         }
