@@ -9,7 +9,7 @@ import static java.lang.Thread.sleep;
 //        ø = Diameter
 // t=s/v
 public class Simulation  {
-    static final double volumeFlowRate = 100; //cubic meteres/min
+    static final double volumeFlowRate = 1; //cubic meteres/min
     static final double pipeDiameter = 1; //m
     static final int pipeLength = 10000; //m
     static final int timeSpeed = 100; // 1 ms = 1perc
