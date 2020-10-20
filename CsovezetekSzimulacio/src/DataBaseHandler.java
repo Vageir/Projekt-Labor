@@ -125,8 +125,13 @@ public class DataBaseHandler {
         LinkedHashMap<Integer,ArrayList<String>> result = new LinkedHashMap<>();
         ResultSet resultSet = null;
         try{
-            String sql = "select  * from " + tableName + " order by  'startdate' asc";
-//             System.out.println(sql);
+            String sql = null;
+            if (tableName.equals("transportationplan")) {
+                sql = "select  * from " + tableName + " ORDER BY startdate ASC";
+            }else{
+                sql = "select  * from " + tableName;
+            }
+//            System.out.println(sql);
             resultSet = stmt.executeQuery(sql);
             Integer i = 0;
             while (resultSet.next()){
@@ -143,6 +148,7 @@ public class DataBaseHandler {
                         tmp.add(String.valueOf(resultSet.getTimestamp(columName.get(j))));
                     }
                 }
+//                System.out.println(tmp);
                 result.put(i,tmp);
                 i++;
             }
