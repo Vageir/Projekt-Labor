@@ -89,7 +89,6 @@ public class Graph extends JFrame {
             at.concatenate(AffineTransform.getRotateInstance(angle));
             g.transform(at);
 
-            // Draw horizontal arrow starting in (0, 0)
             g.drawLine(0, 0, len, 0);
             g.fillPolygon(new int[] {len, len-4, len-4, len},
                     new int[] {0, -4, 4, 0}, 4);
@@ -101,8 +100,6 @@ public class Graph extends JFrame {
 
             g.setColor(Color.black);
             for (edge e : edges) {
-                //g.drawLine(nodes.get(e.i).x, nodes.get(e.i).y,
-                        //nodes.get(e.j).x, nodes.get(e.j).y);
                 drawArrow(g, nodes.get(e.i).x, nodes.get(e.i).y,
                         nodes.get(e.j).x, nodes.get(e.j).y);
             }

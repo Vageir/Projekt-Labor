@@ -13,11 +13,14 @@ public class SimulationGui {
         result = new DataBaseHandler().readRecords("depo");
         Dimension pos = frame.getSize();
         int div = result.size();
-        int cyc = 0;
+        int cyc = 1;
         for (Map.Entry<Integer, ArrayList<String>> entry : result.entrySet()){
-            int x, y;
-            x = pos.width * cyc / div;
-            y = (int) (pos.height * 1 - Math.cos(cyc / div));
+            int a = pos.width / 2;
+            int b = pos.height / 2;
+            int r = Math.min(a, b) * 4 / 5;
+            double t = 2 * Math.PI * cyc / div;
+            int x = (int) Math.round(a + r * Math.cos(t));
+            int y = (int) Math.round(b + r * Math.sin(t));
             frame.addNode(entry.getValue().get(0), x, y);
             cyc++;
         }
@@ -25,7 +28,7 @@ public class SimulationGui {
         result = new DataBaseHandler().readRecords("connecteddepos");
         for (Map.Entry<Integer, ArrayList<String>> entry : result.entrySet()){
             frame.addEdge(frame.findNode(entry.getValue().get(0)),frame.findNode(entry.getValue().get(1)));
-            //frame.addEdge(frame.findNode(entry.getValue().get(1)),frame.findNode(entry.getValue().get(0)));
+            frame.addEdge(frame.findNode(entry.getValue().get(1)),frame.findNode(entry.getValue().get(0)));
         }
 
         //nem muxik, nemtom hogy kell a Graphics-al dolgozni
