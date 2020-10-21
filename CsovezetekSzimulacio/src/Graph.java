@@ -88,17 +88,22 @@ public class Graph extends JFrame {
             AffineTransform at = AffineTransform.getTranslateInstance(x1, y1);
             at.concatenate(AffineTransform.getRotateInstance(angle));
             g.transform(at);
+            g.setStroke(new BasicStroke(10));
 
-            g.drawLine(0, 0, len, 0);
-            g.fillPolygon(new int[] {len, len-4, len-4, len},
-                    new int[] {0, -4, 4, 0}, 4);
+            int offset;
+            if(dx == 0 && dy > 0 || dy == 0 && dx > 0)
+                offset = -10;
+            else
+                offset = 10;
+            g.drawLine(0, offset, len, offset);
+            g.fillPolygon(new int[] {len, len-10, len-10, len}, new int[] {offset, -10 + offset, 10 + offset, offset}, 4);
         }
 
         public void paint(Graphics g) {
             FontMetrics f = g.getFontMetrics();
             int nodeHeight = Math.max(height, f.getHeight());
 
-            g.setColor(Color.black);
+            g.setColor(Color.gray);
             for (edge e : edges) {
                 drawArrow(g, nodes.get(e.i).x, nodes.get(e.i).y,
                         nodes.get(e.j).x, nodes.get(e.j).y);

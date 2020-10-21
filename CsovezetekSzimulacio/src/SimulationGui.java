@@ -6,7 +6,7 @@ import java.util.Map;
 public class SimulationGui {
     public static void main(String[] args) {
         Graph frame = new Graph("Telephelyek és csövek");
-        frame.setSize(500,500);
+        frame.setSize(700,700);
         frame.setVisible(true);
 
         LinkedHashMap<Integer,ArrayList<String>> result;
@@ -31,7 +31,8 @@ public class SimulationGui {
             frame.addEdge(frame.findNode(entry.getValue().get(1)),frame.findNode(entry.getValue().get(0)));
         }
 
-        //nem muxik, nemtom hogy kell a Graphics-al dolgozni
-        frame.recolorEdge("BSA","DSA", Color.YELLOW);
+        //neha muxik, neha nem
+        //nemtom hogy kell a Graphics-al dolgozni
+        frame.recolorEdge("BSA","DSA", Color.yellow);
     }
 }
