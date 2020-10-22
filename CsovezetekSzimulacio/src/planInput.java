@@ -45,10 +45,7 @@ public class planInput extends JFrame {
         this.pack();
         setGUIatStart();
         Simulation s = new Simulation();
-        for (Map.Entry<Integer, ArrayList<String>> entry : new DataBaseHandler().readRecords("transportationplan").entrySet()) {
-            s.addTransportationPlan(new TransportationPlan(entry.getValue()));
-        }
-        s.runSimulation();
+//        s.runSimulation();
 
         clearButton.addActionListener(new ActionListener() {
             @Override
