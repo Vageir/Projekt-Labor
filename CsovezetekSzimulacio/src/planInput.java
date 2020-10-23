@@ -43,6 +43,7 @@ public class planInput extends JFrame {
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setContentPane(mainPanel);
         this.pack();
+        this.setLocationRelativeTo(null);
         setGUIatStart();
         Simulation s = new Simulation();
         s.runSimulation();

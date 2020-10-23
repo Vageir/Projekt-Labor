@@ -33,6 +33,7 @@ public class AdminGui extends JFrame {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setContentPane(mainPanel);
         this.pack();
+        this.setLocationRelativeTo(null);
         setComboBoxes();
 
         addOperatorButton.addActionListener(new ActionListener() {
