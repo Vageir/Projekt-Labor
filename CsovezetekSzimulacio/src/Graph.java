@@ -1,85 +1,67 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
-import java.util.ArrayList;
+import java.util.*;
 import java.awt.Color;
+import java.util.List;
 
 public class Graph extends JFrame {
         int width;
         int height;
 
-        ArrayList<Node> nodes;
-        ArrayList<edge> edges;
+        ArrayList<DepoVertex> depoVertices;
 
         public Graph(String name) {
             this.setTitle(name);
             this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            nodes = new ArrayList<Node>();
-            edges = new ArrayList<edge>();
+            depoVertices = new ArrayList<DepoVertex>();
             width = 30;
             height = 30;
         }
 
-        class Node {
-            int x, y;
-            String name;
+        class DepoVertex {
+            private final Depo depo;
+            private final int x,y;
 
-            public Node(String myName, int myX, int myY) {
-                x = myX;
-                y = myY;
-                name = myName;
+            public DepoVertex(Depo depo, int x, int y) {
+                this.depo = depo;
+                this.x = x;
+                this.y = y;
+            }
+
+            public String getDepoId() {
+                return depo.getDepoID();
+            }
+            public Map<String, Depo.DepoContainer> getDepoContainers() {
+                return depo.getContainers();
+            }
+            public Map<String, List<Integer>> getDepoConnections() {
+                return depo.getDepoConnections();
+            }
+
+            public int getX() {
+                return x;
+            }
+            public int getY() {
+                return y;
             }
         }
 
-        class edge {
-            int i,j;
-
-            public edge(int ii, int jj) {
-                i = ii;
-                j = jj;
-            }
-        }
-
-        public void addNode(String name, int x, int y) {
-            nodes.add(new Node(name,x,y));
-            this.repaint();
-        }
-        public void addEdge(int i, int j) {
-            edges.add(new edge(i,j));
+        public void addDepoVertex(Depo depo, int x, int y) {
+            depoVertices.add(new DepoVertex(depo,x,y));
             this.repaint();
         }
 
-        public int findNode(String name) {
-            for (int i = 0; i < nodes.size(); i++) {
-                if (nodes.get(i) !=null && nodes.get(i).name.equals(name)) {
+        public int findDepoVertex(String id) throws Exception {
+            for (int i = 0; i < depoVertices.size(); i++) {
+                if (depoVertices.get(i) !=null && depoVertices.get(i).getDepoId().equals(id)) {
                     return i;
                 }
             }
-            return -1;
-        }
-        public int findEdge(String start, String end) {
-            int startIndex = findNode(start);
-            int endIndex = findNode(end);
-            for (int i = 0; i < edges.size(); i++) {
-                if (edges.get(i) !=null && edges.get(i).i == startIndex && edges.get(i).j == endIndex) {
-                    return i;
-                }
-            }
-            return -1;
+            throw new Exception("The following depo could not be found: \"" + id + "\"");
         }
 
-        public void recolorEdge(String start, String end, Color state) {
-            try {
-                edge e = edges.get(findEdge(start, end));
-                Graphics g = getGraphics();
-                g.setColor(state);
-                drawArrow(g, nodes.get(e.i).x, nodes.get(e.i).y, nodes.get(e.j).x, nodes.get(e.j).y);
-            }
-            catch (IndexOutOfBoundsException error) {
-                System.err.println("The edge could not be found");
-            }
-        }
-        void drawArrow(Graphics g1, int x1, int y1, int x2, int y2) {
+        void drawPipe(Graphics g1, int strokeWidth, int x1, int y1, int x2, int y2) {
             Graphics2D g = (Graphics2D) g1.create();
 
             double dx = x2 - x1, dy = y2 - y1;
@@ -88,38 +70,92 @@ public class Graph extends JFrame {
             AffineTransform at = AffineTransform.getTranslateInstance(x1, y1);
             at.concatenate(AffineTransform.getRotateInstance(angle));
             g.transform(at);
-            g.setStroke(new BasicStroke(10));
+            g.setStroke(new BasicStroke((float) (strokeWidth * 0.5)));
 
-            int offset;
-            if(dx == 0 && dy > 0 || dy == 0 && dx > 0)
+            int offset = 0;
+            /*if(dx == 0 && dy > 0 || dy == 0 && dx > 0)
                 offset = -10;
             else
-                offset = 10;
+                offset = 10;*/
             g.drawLine(0, offset, len, offset);
             g.fillPolygon(new int[] {len, len-10, len-10, len}, new int[] {offset, -10 + offset, 10 + offset, offset}, 4);
         }
-
-        public void paint(Graphics g) {
+        void drawDepo(Graphics g, DepoVertex depoVertex) {
             FontMetrics f = g.getFontMetrics();
             int nodeHeight = Math.max(height, f.getHeight());
+            int nodeWidth = Math.max(width, f.stringWidth(depoVertex.getDepoId())+width/2);
 
-            g.setColor(Color.gray);
-            for (edge e : edges) {
-                drawArrow(g, nodes.get(e.i).x, nodes.get(e.i).y,
-                        nodes.get(e.j).x, nodes.get(e.j).y);
+            g.setColor(Color.white);
+            g.fillOval(depoVertex.getX()-nodeWidth/2, depoVertex.getY()-nodeHeight/2,
+                    nodeWidth, nodeHeight);
+            g.setColor(Color.black);
+            g.drawOval(depoVertex.getX()-nodeWidth/2, depoVertex.getY()-nodeHeight/2,
+                    nodeWidth, nodeHeight);
+
+            g.drawString(depoVertex.getDepoId(), depoVertex.getX()-f.stringWidth(depoVertex.getDepoId())/2,
+                    depoVertex.getY()+f.getHeight()/2);
+
+            int div = depoVertex.getDepoContainers().size();
+            int cyc = 1;
+            for (Map.Entry<String, Depo.DepoContainer> dc : depoVertex.getDepoContainers().entrySet()) {
+                int a = 50;
+                int b = 50;
+                int r = Math.min(a, b) * 4 / 5;
+                double t = 2 * Math.PI * cyc / div;
+                cyc++;
+                int x = (int) Math.round(a + r * Math.cos(t));
+                int y = (int) Math.round(b + r * Math.sin(t));
+                drawContainer(g, depoVertex.getX() + x, depoVertex.getY() + y, dc.getValue());
             }
+        }
 
-            for (Node n : nodes) {
-                int nodeWidth = Math.max(width, f.stringWidth(n.name)+width/2);
-                g.setColor(Color.white);
-                g.fillOval(n.x-nodeWidth/2, n.y-nodeHeight/2,
-                        nodeWidth, nodeHeight);
-                g.setColor(Color.black);
-                g.drawOval(n.x-nodeWidth/2, n.y-nodeHeight/2,
-                        nodeWidth, nodeHeight);
+        void drawContainer(Graphics g, int x, int y, Depo.DepoContainer depoContainer) {
+            Map<String, Color> fuels = new HashMap<String, Color>() {{
+                put("Dízel", Color.yellow);
+                put("Benzin", Color.orange);
 
-                g.drawString(n.name, n.x-f.stringWidth(n.name)/2,
-                        n.y+f.getHeight()/2);
+                put("Unused", Color.red);
+            }};
+
+            FontMetrics f = g.getFontMetrics();
+            int nodeHeight = 3 * f.getHeight();
+            int nodeWidth = f.stringWidth("" + depoContainer.getMaxCapacity());
+
+            Color tmp = Color.white;
+            int i = 0;
+            for (Color color : fuels.values()) {
+                if (i == depoContainer.getFuelID()-1)
+                    tmp = color;
+                i++;
+            }
+            System.out.println(tmp);
+
+            g.setColor(tmp);
+            g.fillRect(x-nodeWidth/2, y-nodeHeight/2, nodeWidth, nodeHeight);
+
+            g.setColor(Color.black);
+            g.drawRect(x-nodeWidth/2, y-nodeHeight/2, nodeWidth, nodeHeight);
+            g.drawString("" + depoContainer.getCurrentCapacity(),
+                    x-f.stringWidth("" + depoContainer.getCurrentCapacity())/2,y-f.getHeight()/2);
+            g.drawString("/",x-f.stringWidth("/")/2,y+f.getHeight()/2);
+            g.drawString("" + depoContainer.getMaxCapacity(),
+                    x-f.stringWidth("" + depoContainer.getMaxCapacity())/2,y+f.getHeight()*3/2);
+        }
+
+        public void paint(Graphics g) {
+
+            for (DepoVertex dv : depoVertices) {
+                dv.getDepoConnections().forEach((k, v) -> {
+                    try {
+                        drawPipe(g, v.get(1), dv.getX(), dv.getY(),
+                                depoVertices.get(findDepoVertex(k)).getX(), depoVertices.get(findDepoVertex(k)).getY());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });
+            }
+            for (DepoVertex dv : depoVertices) {
+                drawDepo(g, dv);
             }
         }
     }
