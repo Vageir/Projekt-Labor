@@ -45,7 +45,7 @@ public class planInput extends JFrame {
         this.pack();
         setGUIatStart();
         Simulation s = new Simulation();
-//        s.runSimulation();
+        s.runSimulation();
 
         clearButton.addActionListener(new ActionListener() {
             @Override
