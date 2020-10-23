@@ -9,7 +9,7 @@ import java.util.Map;
 import static javax.swing.JOptionPane.showMessageDialog;
 
 public class LoginGui extends JFrame {
-    private JFrame mainPanel;
+    private JPanel mainPanel;
     private JTextField usernameField;
     private JPasswordField passwordField;
     private JButton loginButton;
