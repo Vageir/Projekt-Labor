@@ -4,35 +4,32 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class SimulationGui {
-    public static void main(String[] args) {
-        Graph frame = new Graph("Telephelyek és csövek");
+    private static Simulation simulation;
+    private static Graph frame;
+
+    private static void setGUIatStart() {
+        simulation = new Simulation();
+
+        frame = new Graph("Depos and pipes");
         frame.setSize(700,700);
         frame.setVisible(true);
 
-        LinkedHashMap<Integer,ArrayList<String>> result;
-        result = new DataBaseHandler().readRecords("depo");
         Dimension pos = frame.getSize();
-        int div = result.size();
+        int div = simulation.depos.size();
         int cyc = 1;
-        for (Map.Entry<Integer, ArrayList<String>> entry : result.entrySet()){
+        for (Depo entry : simulation.depos){
             int a = pos.width / 2;
             int b = pos.height / 2;
             int r = Math.min(a, b) * 4 / 5;
             double t = 2 * Math.PI * cyc / div;
+            cyc++;
+
             int x = (int) Math.round(a + r * Math.cos(t));
             int y = (int) Math.round(b + r * Math.sin(t));
-            frame.addNode(entry.getValue().get(0), x, y);
-            cyc++;
+            frame.addDepoVertex(entry, x, y);
         }
-
-        result = new DataBaseHandler().readRecords("connecteddepos");
-        for (Map.Entry<Integer, ArrayList<String>> entry : result.entrySet()){
-            frame.addEdge(frame.findNode(entry.getValue().get(0)),frame.findNode(entry.getValue().get(1)));
-            frame.addEdge(frame.findNode(entry.getValue().get(1)),frame.findNode(entry.getValue().get(0)));
-        }
-
-        //neha muxik, neha nem
-        //nemtom hogy kell a Graphics-al dolgozni
-        frame.recolorEdge("BSA","DSA", Color.yellow);
+    }
+    public static void main(String[] args) {
+        setGUIatStart();
     }
 }
