@@ -74,12 +74,16 @@ public class RunSimulation implements Callable<Boolean> {
                     Thread.currentThread().sleep(Simulation.timeSpeed);
                     if (headOfTheFluid < pipeLength) {
                         headOfTheFluid += flowVelocity;
+                    }else if(headOfTheFluid >= pipeLength && endDepoMoveFuelAmount != t.getFuelAmount()){
+                        endDepoMoveFuelAmount+=Simulation.volumeFlowRate;
+                        endDepo.getContainers().get(endDepoContainerID).addCurrentCapacity(Simulation.volumeFlowRate);
                     }
-                    if (startDepoMovedFuelAmount != t.getFuelAmount())
+                    if (startDepoMovedFuelAmount != t.getFuelAmount()) {
                         startDepoMovedFuelAmount += Simulation.volumeFlowRate;
-                    else {
+                        startDepo.getContainers().get(startDepoContainerID).substractCurrentCapacity(Simulation.volumeFlowRate);
+                    }
+                    else if (tailOfTheFluid < pipeLength) {
                         time--;
-
                         tailOfTheFluid += flowVelocity;
                     }
                 } catch (InterruptedException ie) {
