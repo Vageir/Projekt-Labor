@@ -8,6 +8,7 @@ public class MenuGui extends JFrame {
     private JButton planInputButton;
     private JButton simulationButton;
     private JButton logoutButton;
+    private JButton alterDatabaseButton;
 
     public MenuGui(String title) {
         super(title);
@@ -47,6 +48,15 @@ public class MenuGui extends JFrame {
             public void actionPerformed(ActionEvent actionEvent) {
                 JFrame login = new LoginGui("Login");
                 login.setVisible(true);
+                MenuGui.super.dispose();
+            }
+        });
+
+        alterDatabaseButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                JFrame alter = new AlterDatabaseGui("Módosítás");
+                alter.setVisible(true);
                 MenuGui.super.dispose();
             }
         });
