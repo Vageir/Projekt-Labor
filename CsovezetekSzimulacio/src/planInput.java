@@ -1,4 +1,5 @@
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
@@ -45,8 +46,8 @@ public class planInput extends JFrame {
         this.pack();
         this.setLocationRelativeTo(null);
         setGUIatStart();
-        Simulation s = new Simulation();
-        s.runSimulation();
+//        Simulation s = new Simulation();
+//        s.runSimulation();
 
         clearButton.addActionListener(new ActionListener() {
             @Override
@@ -119,6 +120,7 @@ public class planInput extends JFrame {
             }
         });
 
+        backToAdminButton.addActionListener(e -> this.dispose());
     }
 
     private void setGUIatStart() {

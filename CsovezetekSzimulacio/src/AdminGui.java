@@ -25,8 +25,7 @@ public class AdminGui extends JFrame {
     private JComboBox connectDepoOneBox;
     private JComboBox connectDepoTwoBox;
     private JButton connectDeposButton;
-    private JButton exitButton;
-    private JButton newPlanButton;
+    private JButton menuButton;
 
     public AdminGui(String title) {
         super(title);
@@ -95,11 +94,10 @@ public class AdminGui extends JFrame {
             }
         });
 
-        newPlanButton.addActionListener(new ActionListener() {
+        menuButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                JFrame plan = new planInput("Plan input");
-                plan.setVisible(true);
+                AdminGui.super.dispose();
             }
         });
     }
