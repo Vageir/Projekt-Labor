@@ -97,6 +97,8 @@ public class AdminGui extends JFrame {
         menuButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
+                JFrame menu = new MenuGui("Menü");
+                menu.setVisible(true);
                 AdminGui.super.dispose();
             }
         });

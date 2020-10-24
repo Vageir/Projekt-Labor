@@ -1,8 +1,6 @@
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
@@ -35,8 +33,7 @@ public class planInput extends JFrame {
     private JComboBox startDepoComboBox;
     private JComboBox endDepoComboBox;
     private JLabel operatorNameLabel;
-    private JButton backToAdminButton;
-    private JButton exitButton;
+    private JButton menuButton;
 
     public planInput(String title) {
         super(title);
@@ -120,7 +117,14 @@ public class planInput extends JFrame {
             }
         });
 
-        backToAdminButton.addActionListener(e -> this.dispose());
+        menuButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                JFrame menu = new MenuGui("Menü");
+                menu.setVisible(true);
+                planInput.super.dispose();
+            }
+        });
     }
 
     private void setGUIatStart() {
