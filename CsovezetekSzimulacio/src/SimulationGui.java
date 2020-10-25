@@ -1,6 +1,4 @@
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class SimulationGui {
@@ -13,11 +11,12 @@ public class SimulationGui {
         frame = new Graph("Depos and pipes");
         frame.setSize(700,700);
         frame.setVisible(true);
+        //frame.setBackground(Color.blue);
 
         Dimension pos = frame.getSize();
         int div = simulation.depos.size();
         int cyc = 1;
-        for (Depo entry : simulation.depos){
+        for (Depo entry : simulation.depos) {
             int a = pos.width / 2;
             int b = pos.height / 2;
             int r = Math.min(a, b) * 4 / 5;
@@ -29,7 +28,14 @@ public class SimulationGui {
             frame.addDepoVertex(entry, x, y);
         }
     }
+
+    private static void drawSimulation() {
+        simulation.runSimulation();
+        frame.repaint();
+    }
+
     public static void main(String[] args) {
         setGUIatStart();
+        //drawSimulation();
     }
 }
