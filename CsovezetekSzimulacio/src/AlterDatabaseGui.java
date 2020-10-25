@@ -2,9 +2,12 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
+import javax.xml.crypto.Data;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Map;
 
 public class AlterDatabaseGui extends JFrame {
     private JPanel mainPanel;
@@ -41,6 +44,12 @@ public class AlterDatabaseGui extends JFrame {
 //        operatorModel.setColumnCount(3);
         operatorTable.setModel(operatorModel);
         Object[] row = {"AD123", "Adam", "1956-10-25"};
+        Map<Integer, ArrayList<String>> result = new DataBaseHandler().readRecords("operator");
+        for (Map.Entry<Integer,ArrayList<String>> entry : result.entrySet()){
+            System.out.println("ID:"+entry.getValue().get(0));
+            System.out.println("Name:"+entry.getValue().get(1));
+            System.out.println("Birth:"+entry.getValue().get(2));
+        }
         operatorModel.addRow(row);
 
 

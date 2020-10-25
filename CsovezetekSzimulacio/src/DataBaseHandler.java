@@ -146,7 +146,10 @@ public class DataBaseHandler {
                     } else if (columnType.get(j).equals("DATETIME")) {
 //                        System.out.println(resultSet.getTimestamp(columName.get(j)));
                         tmp.add(String.valueOf(resultSet.getTimestamp(columName.get(j))));
-                    }
+                    }   else if (columnType.get(j).equals("DATE")) {
+//                        System.out.println(resultSet.getTimestamp(columName.get(j)));
+                    tmp.add(String.valueOf(resultSet.getString(columName.get(j))));
+                }
                 }
 //                System.out.println(tmp);
                 result.put(i,tmp);
