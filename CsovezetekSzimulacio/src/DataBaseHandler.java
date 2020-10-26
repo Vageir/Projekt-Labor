@@ -228,6 +228,32 @@ public class DataBaseHandler {
         }
         try {
             String sql = "UPDATE "+tableName+" SET "+columName+" = "+value+" WHERE "+condition;
+//            System.out.println(sql);
+            stmt.executeUpdate(sql);
+            stmt.close();
+            con.close();
+        } catch (SQLException se) {
+            se.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (stmt != null) stmt.close();
+            } catch (SQLException se2) {
+            }
+            try {
+                if (con != null) con.close();
+            } catch (SQLException se) {
+                se.printStackTrace();
+            }
+        }
+    }
+    public void deleteRecord(String tableName, String condition){
+        if (!setConnection()) {
+            return;
+        }
+        try {
+            String sql = "Delete "+tableName+" Where "+condition;
             System.out.println(sql);
             stmt.executeUpdate(sql);
             stmt.close();

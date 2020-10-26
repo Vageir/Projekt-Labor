@@ -1,81 +1,73 @@
-create database projektlabor;
-use projektlabor;
+CREATE TABLE `connecteddepos` (
+                                  `LeftDepoID` varchar(30) NOT NULL,
+                                  `RightDepoID` varchar(30) NOT NULL,
+                                  `PipeLength` int NOT NULL,
+                                  `PipeDiameter` int NOT NULL,
+                                  PRIMARY KEY (`LeftDepoID`,`RightDepoID`),
+                                  KEY `rightdepoidfk_idx` (`RightDepoID`),
+                                  CONSTRAINT `leftdepoidfk` FOREIGN KEY (`LeftDepoID`) REFERENCES `depo` (`DepoID`) ON DELETE CASCADE ON UPDATE CASCADE,
+                                  CONSTRAINT `rightdepoidfk` FOREIGN KEY (`RightDepoID`) REFERENCES `depo` (`DepoID`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-create table connecteddepos
-(
-    LeftDepoID   varchar(30) not null
-        primary key,
-    RightDepoID  varchar(30) not null,
-    PipeLength   int         not null,
-    PipeDiameter int         not null
-);
+CREATE TABLE `depo` (
+                        `DepoID` varchar(30) NOT NULL,
+                        `DepoName` varchar(45) NOT NULL,
+                        `DepoLocation` varchar(45) NOT NULL,
+                        PRIMARY KEY (`DepoID`),
+                        UNIQUE KEY `DepoID_UNIQUE` (`DepoID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-create table depo
-(
-    DepoID       varchar(30) not null,
-    DepoName     varchar(45) not null,
-    DepoLocation varchar(45) not null,
-    constraint DepoID_UNIQUE
-        unique (DepoID)
-);
+CREATE TABLE `depocontainer` (
+                                 `depoID` varchar(30) NOT NULL,
+                                 `containerID` varchar(30) NOT NULL,
+                                 `CurrentCapacity` int NOT NULL,
+                                 `MaxCapacity` int NOT NULL,
+                                 `fuelID` int NOT NULL,
+                                 PRIMARY KEY (`depoID`,`containerID`),
+                                 KEY `fuelid_idx` (`fuelID`),
+                                 CONSTRAINT `depoidfk` FOREIGN KEY (`depoID`) REFERENCES `depo` (`DepoID`) ON DELETE CASCADE ON UPDATE CASCADE,
+                                 CONSTRAINT `fuelidfk` FOREIGN KEY (`fuelID`) REFERENCES `fuel` (`fuelID`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-alter table depo
-    add primary key (DepoID);
+CREATE TABLE `fuel` (
+                        `fuelID` int NOT NULL,
+                        `fuelName` varchar(20) DEFAULT NULL,
+                        PRIMARY KEY (`fuelID`),
+                        UNIQUE KEY `fuelID_UNIQUE` (`fuelID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-create table depocontainer
-(
-    depoID          varchar(30) not null,
-    containerID     varchar(30) not null,
-    CurrentCapacity int         not null,
-    MaxCapacity     int         not null,
-    fuelID          int         not null,
-    primary key (depoID, containerID)
-);
+CREATE TABLE `operator` (
+                            `OperatorID` varchar(30) NOT NULL,
+                            `OperatorName` varchar(45) DEFAULT NULL,
+                            `OperatorBirth` date DEFAULT NULL,
+                            PRIMARY KEY (`OperatorID`),
+                            UNIQUE KEY `OperatorID_UNIQUE` (`OperatorID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-create table fuel
-(
-    fuelID   int         not null,
-    fuelName varchar(20) null,
-    constraint fuelID_UNIQUE
-        unique (fuelID)
-);
+CREATE TABLE `transportationplan` (
+                                      `transportationID` varchar(30) NOT NULL,
+                                      `startdepoID` varchar(30) NOT NULL,
+                                      `endDepoID` varchar(30) NOT NULL,
+                                      `fuelID` int DEFAULT NULL,
+                                      `fuelAmount` int NOT NULL,
+                                      `startDate` datetime NOT NULL,
+                                      `endDdate` datetime NOT NULL,
+                                      `operatorID` varchar(30) NOT NULL,
+                                      PRIMARY KEY (`transportationID`),
+                                      UNIQUE KEY `transportationID_UNIQUE` (`transportationID`),
+                                      KEY `stardepoidfk_idx` (`startdepoID`,`endDepoID`),
+                                      KEY `endepoidfk_idx` (`endDepoID`),
+                                      KEY `fuelidfk_idx` (`fuelID`),
+                                      KEY `operatoridfk_idx` (`operatorID`),
+                                      CONSTRAINT `endepoidfk` FOREIGN KEY (`endDepoID`) REFERENCES `depo` (`DepoID`) ON DELETE CASCADE ON UPDATE CASCADE,
+                                      CONSTRAINT `operatoridfk` FOREIGN KEY (`operatorID`) REFERENCES `operator` (`OperatorID`) ON DELETE CASCADE ON UPDATE CASCADE,
+                                      CONSTRAINT `startdepoidfk` FOREIGN KEY (`startdepoID`) REFERENCES `depo` (`DepoID`) ON DELETE CASCADE ON UPDATE CASCADE,
+                                      CONSTRAINT `tfuelidfk` FOREIGN KEY (`fuelID`) REFERENCES `fuel` (`fuelID`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-alter table fuel
-    add primary key (fuelID);
-
-create table operator
-(
-    OperatorID    varchar(30) not null,
-    OperatorName  varchar(45) null,
-    OperatorBirth date        null,
-    constraint OperatorID_UNIQUE
-        unique (OperatorID)
-);
-
-alter table operator
-    add primary key (OperatorID);
-
-create table transportationplan
-(
-    transportationID varchar(30) not null,
-    startdepoID      varchar(30) not null,
-    endDepoID        varchar(30) not null,
-    fuelID           int         not null,
-    fuelAmount       int         not null,
-    startDate        datetime    not null,
-    endDdate         datetime    not null,
-    operatorID       varchar(30) not null,
-    constraint transportationID_UNIQUE
-        unique (transportationID)
-);
-
-alter table transportationplan
-    add primary key (transportationID);
-
-create table user
-(
-    uname        varchar(30) not null primary key,
-    password    varchar(30) not null,
-    constraint username_UNIQUE
-        unique (uname)
-);
+CREATE TABLE `user` (
+                        `uname` varchar(30) NOT NULL,
+                        `password` varchar(30) NOT NULL,
+                        PRIMARY KEY (`uname`),
+                        UNIQUE KEY `username_UNIQUE` (`uname`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
