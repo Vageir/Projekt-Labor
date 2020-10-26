@@ -1,6 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
 //import java.awt.geom.AffineTransform;
+import java.awt.geom.AffineTransform;
 import java.util.*;
 import java.awt.Color;
 import java.util.List;
@@ -52,13 +53,39 @@ public class Graph extends JFrame {
             this.repaint();
         }
 
-        public int findDepoVertex(String id) throws Exception {
+        public int findDepoVertex(String id) {
             for (int i = 0; i < depoVertices.size(); i++) {
                 if (depoVertices.get(i) !=null && depoVertices.get(i).getDepoId().equals(id)) {
                     return i;
                 }
             }
-            throw new Exception("The following depo could not be found: \"" + id + "\"");
+            return -1;
+        }
+        public DepoVertex getDepoVertexById(String id) {
+            try {
+                return depoVertices.get(findDepoVertex(id));
+            }
+            catch (IndexOutOfBoundsException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        public Map.Entry<String, Color> getFuelColorAndName(int id) {
+            HashMap<String, Color> fuels = new HashMap<String, Color>() {{
+                put("Dízel", Color.yellow);
+                put("Benzin", Color.orange);
+
+                put("Unused", Color.red);
+            }};
+            int i = 0;
+            for (Map.Entry<String, Color> entry : fuels.entrySet()) {
+                if (i == id-1) {
+                    return entry;
+                }
+                i++;
+            }
+            return null;
         }
 
         void drawPipe(Graphics g1, int strokeWidth, int x1, int y1, int x2, int y2) {
@@ -96,25 +123,10 @@ public class Graph extends JFrame {
             }
         }
         void drawContainer(Graphics g, int x, int y, Depo.DepoContainer depoContainer) {
-            Map<String, Color> fuels = new HashMap<String, Color>() {{
-                put("Dízel", Color.yellow);
-                put("Benzin", Color.orange);
-
-                put("Unused", Color.red);
-            }};
-
             FontMetrics f = g.getFontMetrics();
-
-            Color fuel = Color.white;
-            String fuelName = "";
-            int i = 0;
-            for (Map.Entry<String, Color> entry : fuels.entrySet()) {
-                if (i == depoContainer.getFuelID()-1) {
-                    fuel = entry.getValue();
-                    fuelName = entry.getKey();
-                }
-                i++;
-            }
+            Map.Entry<String, Color> tmp = getFuelColorAndName(depoContainer.getFuelID());
+            Color fuel = tmp.getValue();
+            String fuelName = tmp.getKey();
             //System.out.println(tmp);
 
             int nodeHeight = 5 * f.getHeight();
@@ -137,32 +149,33 @@ public class Graph extends JFrame {
                     x-f.stringWidth("" + depoContainer.getMaxCapacity())/2,y+f.getHeight()/2);
             g.drawString(fuelName,x-f.stringWidth(fuelName)/2,y+f.getHeight()*2);
         }
-        void drawFuel(Graphics g1, int strokeWidth, int x1, int y1, int x2, int y2, Color fuel) {
+        void drawFuel(Graphics g1, int strokeWidth, int x1, int y1, int x2, int y2, int pipeLen, double head, double tail, int fuelID) {
             Graphics2D g = (Graphics2D) g1.create();
 
-            /*double dx = x2 - x1, dy = y2 - y1;
+            double dx = x2 - x1, dy = y2 - y1;
             double angle = Math.atan2(dy, dx);
-            int len = (int) Math.sqrt(dx*dx + dy*dy);
             AffineTransform at = AffineTransform.getTranslateInstance(x1, y1);
             at.concatenate(AffineTransform.getRotateInstance(angle));
-            g.transform(at);*/
+            g.transform(at);
+
+            int len = (int) Math.sqrt(dx*dx + dy*dy);
+            double headRatio = pipeLen / head;
+            double tailRatio = pipeLen / tail;
+
             g.setStroke(new BasicStroke((float) (strokeWidth * 0.4)));
-            g.setColor(fuel);
+            g.setColor(getFuelColorAndName(fuelID).getValue());
 
             //int offset;
-            g.drawLine(x1, y1, x2, y2);
-            //g.fillPolygon(new int[] {len, len-10, len-10, len}, new int[] {offset, -10 + offset, 10 + offset, offset}, 4);
+            //g.drawLine((int) (len * tailRatio), 0, (int) (len * headRatio), 0);
+            g.drawLine((int) (len * headRatio), 0, (int) (len * tailRatio), 0);
+            this.repaint();
         }
 
         public void paint(Graphics g) {
             for (DepoVertex dv : depoVertices) {
                 dv.getDepoConnections().forEach((k, v) -> {
-                    try {
-                        drawPipe(g, v.get(1), dv.getX(), dv.getY(),
-                                depoVertices.get(findDepoVertex(k)).getX(), depoVertices.get(findDepoVertex(k)).getY());
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    drawPipe(g, v.get(1), dv.getX(), dv.getY(),
+                            depoVertices.get(findDepoVertex(k)).getX(), depoVertices.get(findDepoVertex(k)).getY());
                 });
             }
             for (DepoVertex dv : depoVertices) {
