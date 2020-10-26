@@ -1,6 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-//import java.awt.geom.AffineTransform;
 import java.awt.geom.AffineTransform;
 import java.util.*;
 import java.awt.Color;
@@ -168,7 +167,6 @@ public class Graph extends JFrame {
             //int offset;
             //g.drawLine((int) (len * tailRatio), 0, (int) (len * headRatio), 0);
             g.drawLine((int) (len * headRatio), 0, (int) (len * tailRatio), 0);
-            this.repaint();
         }
 
         public void paint(Graphics g) {

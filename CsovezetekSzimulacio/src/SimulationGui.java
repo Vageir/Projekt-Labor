@@ -33,17 +33,24 @@ public class SimulationGui {
     private static void drawSimulation() {
         simulation.runSimulation();
         while(true) {
+            //System.out.println(simulation.getPositionOfTheFluid().size());
             for (Map.Entry<String, List<Double>> entry : simulation.getPositionOfTheFluid().entrySet()) {
                 int width = 0, pipeLen = 0, startX = 0, startY = 0, endX = 0, endY = 0, fuelID = 0;
                 Double head = entry.getValue().get(0);
+                //System.out.println(head);
                 Double tail = entry.getValue().get(1);
+                //System.out.println(tail);
                 List<TransportationPlan> tPlans = simulation.getTransportationPlans();
                 for (int i = 0; i < tPlans.size(); i++) {
                     if (tPlans.get(i) !=null && tPlans.get(i).getTransportationID().equals(entry.getKey())) {
                         TransportationPlan plan = tPlans.get(i);
                         Graph.DepoVertex start = frame.getDepoVertexById(plan.getStartDepoID());
+                        //System.out.println(start.getDepoId());
                         Graph.DepoVertex end = frame.getDepoVertexById(plan.getEndDepoID());
+                        //System.out.println(end.getDepoId());
+                        //System.out.println(head);
                         fuelID = plan.getFuelID();
+                        //System.out.println(fuelID);
                         startX = start.getX();
                         startY = start.getY();
                         endX = end.getX();
@@ -51,13 +58,16 @@ public class SimulationGui {
                         for(Map.Entry<String, List<Integer>> connections : start.getDepoConnections().entrySet()) {
                             if(connections.getKey().equals(end.getDepoId())) {
                                 pipeLen = connections.getValue().get(0);
+                                //System.out.println(pipeLen);
                                 width = connections.getValue().get(1);
+                                //System.out.println(width);
                             }
                         }
                     }
                 }
                 frame.drawFuel(frame.getGraphics(), width, startX, startY, endX, endY, pipeLen, head, tail, fuelID);
             }
+            frame.repaint();
         }
     }
 
