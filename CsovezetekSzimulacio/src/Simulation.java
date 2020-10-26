@@ -15,9 +15,15 @@ public class Simulation  {
     List <TransportationPlan> transportationPlans;
     List <Depo> depos;
 
+    public Map<String, List<Double>> getPositionOfTheFluid() {
+        return positionOfTheFluid;
+    }
+
+    Map<String, List<Double>> positionOfTheFluid;
     public Simulation() {
         transportationPlans = new ArrayList<>();
         depos = new ArrayList<>();
+        positionOfTheFluid = new HashMap<String, List<Double>>();
         readData();
     }
     public void readData(){
@@ -126,9 +132,9 @@ public class Simulation  {
     }
     public void runSimulation(){
         if (runSimulations()){
-            System.out.println("WTF");
+            System.out.println("Sikeres lefutás");
         }else {
-            System.out.println("Hibás lefuttás az adatbázis nem módosult");
+            System.out.println("Hibás lefutás az adatbázis nem módosult");
         }
     }
     private boolean runSimulations(){
@@ -196,10 +202,30 @@ public class Simulation  {
                 System.out.println("yeeeeeeeeeeeeeeeeeeeeeeeet");
             }
         }
+
+//        Thread testingThread = new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                try {
+//                        int i =0;
+//                        while (i < 7) {
+//                            Thread.currentThread().sleep(1000);
+//                            for (Map.Entry<String, List<Double>> entry : positionOfTheFluid.entrySet()) {
+//                                System.out.println("TID: " + entry.getKey() + " HeadOfTheFluid: " + entry.getValue().get(0) + " TailOfTheFluid: " + entry.getValue().get(1));
+//                            }
+//                            i++;
+//                        }
+//
+//                } catch (InterruptedException interruptedException) {
+//                    interruptedException.printStackTrace();
+//                }
+//            }
+//        });
         for (FutureTask futureTask : simulationTask){
             Thread t = new Thread(futureTask);
             t.start();
         }
+//        testingThread.start();
         for (FutureTask futureTask : simulationTask){
             try {
                 if(!(Boolean)futureTask.get()){
@@ -211,6 +237,11 @@ public class Simulation  {
                 e.printStackTrace();
             }
         }
+//        try {
+//            testingThread.join();
+//        } catch (InterruptedException interruptedException) {
+//            interruptedException.printStackTrace();
+//        }
         return true;
     }
 
@@ -251,6 +282,10 @@ public class Simulation  {
             int startDepoMovedFuelAmount = 0, endDepoMoveFuelAmount = 0;
             double time = pipeLength / flowVelocity;
             int hours = t.getStartHours(), minutes = t.getStartMinutes();
+            List ls = new ArrayList();
+            ls.add(headOfTheFluid);
+            ls.add(tailOfTheFluid);
+            positionOfTheFluid.put(t.getTransportationID(),ls);
             while (hours < t.getEndHours()) {
                 while (minutes < 60) {
                     try {
@@ -272,6 +307,8 @@ public class Simulation  {
                     } catch (InterruptedException ie) {
                         ie.printStackTrace();
                     }
+                    positionOfTheFluid.get(t.getTransportationID()).set(0,headOfTheFluid);
+                    positionOfTheFluid.get(t.getTransportationID()).set(1,tailOfTheFluid);
                     minutes++;
                 }
                 minutes = 0;
