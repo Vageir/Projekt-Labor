@@ -337,9 +337,12 @@ public class Simulation  {
                     } catch (InterruptedException ie) {
                         ie.printStackTrace();
                     }
+                    positionOfTheFluid.get(t.getTransportationID()).set(0,headOfTheFluid);
+                    positionOfTheFluid.get(t.getTransportationID()).set(1,tailOfTheFluid);
                     minutes++;
                 }
             }
+            positionOfTheFluid.remove(t.getTransportationID());
             if (startDepoMovedFuelAmount == t.getFuelAmount() && time <= 0) {
                 System.out.println("Transportation Complete.....");
                 return true;
