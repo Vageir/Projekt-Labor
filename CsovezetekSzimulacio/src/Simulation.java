@@ -42,10 +42,6 @@ public class Simulation  {
         transportationPlans.add(tp);
     }
     public void setTransportationPlans(ArrayList<TransportationPlan> transportationPlans) {
-//        List<TransportationPlan> tmp = new LinkedList<TransportationPlan>();
-//        for (TransportationPlan t : transportationPlans){
-//            tmp.add(t);
-//        }
         this.transportationPlans = transportationPlans;
     }
     private boolean checkContainer(String tID){
@@ -181,11 +177,8 @@ public class Simulation  {
         return true;
     }
 
-
     private boolean startSimulation(List<TransportationPlan> runTransportationPlans){
         List<FutureTask> simulationTask = new ArrayList<>();
-//        ExecutorService  executorService =  Executors.newFixedThreadPool(runTransportationPlans.size());
-//        List<Callable<Boolean>> callableList = new ArrayList<>();
         for (TransportationPlan t : runTransportationPlans){
             Depo startDepo=null,endDepo=null;
             for (Depo d : depos){
@@ -218,131 +211,106 @@ public class Simulation  {
                 e.printStackTrace();
             }
         }
-
-        //------------------------
-//        List<Thread> threads = new ArrayList<>();
-//        for (TransportationPlan t : runTransportationPlans){
-//            Depo startDepo=null,endDepo=null;
-//            for (Depo d : depos){
-//                if (d.getDepoID().equals(t.getStartDepoID()))
-//                    startDepo=d;
-//            }
-//            for (Depo d : depos){
-//                if (d.getDepoID().equals(t.getEndDepoID()))
-//                    endDepo=d;
-//            }
-//            if (startDepo != null && endDepo != null){
-//                Thread thread = new Thread(new RunSimulation(t, startDepo, endDepo));
-//                threads.add(thread);
-//            }else{
-//                System.out.println("yeeeeeeeeeeeeeeeeeeeeeeeet");
-//            }
-//        }
-//        for (Thread thread:threads){
-//            thread.start();
-//        }
-//        for (TransportationPlan t: runTransportationPlans){
-//            for (Depo d: depos){
-//                if (d.getDepoID().equals(t.getStartDepoID())){
-//                    System.out.println(d.getContainers().get(0).getCurrentCapacity());
-//                }
-//            }
-//        }
-//        for (Thread thread:threads){
-//            try {
-//                thread.join();
-//            } catch (InterruptedException interruptedException) {
-//                interruptedException.printStackTrace();
-//            }
-//        }
         return true;
     }
 
-//    private class RunSimulation implements Runnable {
-//        TransportationPlan t;
-//        int pipeLength=0, pipeDiameter=0;
-//        double flowVelocity;
-//        double headOfTheFluid=0;
-//        double tailOfTheFluid=0;
-//        Depo startDepo,endDepo;
-//
-//        public RunSimulation(TransportationPlan t, Depo startDepo, Depo endDepo) {
-//            this.t = t;
-//            this.startDepo = startDepo;
-//            this.endDepo = endDepo;
-//            this.pipeLength = startDepo.getDepoConnections().get(endDepo.getDepoID()).get(0);
-//            this.pipeDiameter = startDepo.getDepoConnections().get(endDepo.getDepoID()).get(1);
-//            flowVelocity = volumeFlowRate/(Math.PI*Math.pow(((double)pipeDiameter/2),2));
-//            System.out.println("Flow velocity: "+flowVelocity);
-//        }
-//        @Override
-//        public void run() {
-//            System.out.println("Simulation started......\n");
-//            System.out.println("From: " + t.getStartDepoID() + "  To: " + t.getEndDepoID() + "  Fuel: " + t.getFuelID() + "  Fuel Amount: " + t.getFuelAmount());
-//            System.out.println("Start Hours:: " + t.getStartHours() + "  Start Minutes: " + t.getStartMinutes());
-//            System.out.println("End Hours:: " + t.getEndHours() + "  End Minutes: " + t.getEndMinutes());
-//            int movedFuelAmount = 0;
-//            double time = pipeLength / flowVelocity;
-//            int hours = t.getStartHours(), minutes = t.getStartMinutes();
-//            while (hours < t.getEndHours()) {
-//                while (minutes < 60) {
-//                    try {
-//                        Thread.currentThread().sleep(timeSpeed);
-//                        if (headOfTheFluid < pipeLength){
-//                            headOfTheFluid += flowVelocity;
-//                        }
-//                        if (movedFuelAmount != t.getFuelAmount())
-//                            movedFuelAmount += volumeFlowRate;
-//                        else if (tailOfTheFluid < pipeLength){
-//                            time--;
-//                            tailOfTheFluid+=flowVelocity;
-//                        }
-//                    } catch (InterruptedException ie) {
-//                        ie.printStackTrace();
-//                    }
-//                    minutes++;
-//                }
-//                minutes = 0;
-//                System.out.println("Current hour:("+t.getTransportationID()+")"+ hours);
-//                hours++;
-//            }
-//            if (t.getEndMinutes() > 0) {
-//                minutes = 0;
-//                while (minutes < t.getEndMinutes()) {
-//                    try {
-//                        Thread.currentThread().sleep(timeSpeed);
-//                        if (headOfTheFluid < pipeLength){
-//                            headOfTheFluid += flowVelocity;
-//                        }
-//                        if (movedFuelAmount != t.getFuelAmount())
-//                            movedFuelAmount += volumeFlowRate;
-//                        else {
-//                            time--;
-//                            tailOfTheFluid += flowVelocity;
-//                        }
-//                    } catch (InterruptedException ie) {
-//                        ie.printStackTrace();
-//                    }
-//                    minutes++;
-//                }
-//            }
-//            if (movedFuelAmount == t.getFuelAmount() && time <= 0) {
-//                System.out.println("Transportation Complete.....");
-////                new DataBaseHandler().updateRecord("depocontainer",
-////                        "currentcapacity", String.valueOf(startDepoCurrentCapacity - t.getFuelAmount()), "containerID = '" + startDepoContainerID + "'");
-////                new DataBaseHandler().updateRecord("depocontainer",
-////                        "currentcapacity", String.valueOf(t.getFuelAmount() + endDepoCurrentCapacity), "containerID = '" + endDepoContainerID + "'");
-//            } else {
-//                System.out.println("Transportation Failed.....");
-//            }
-//        }
-//        public synchronized double getHeadOfTheFluid() {
-//            return headOfTheFluid;
-//        }
-//        public double getTailOfTheFluid() {
-//            return tailOfTheFluid;
-//        }
-//
-//    }
+    private class RunSimulation implements Callable<Boolean> {
+        TransportationPlan t;
+        int pipeLength = 0, pipeDiameter = 0;
+        double flowVelocity;
+        double headOfTheFluid = 0;
+        double tailOfTheFluid = 0;
+        Depo startDepo, endDepo;
+        String startDepoContainerID,endDepoContainerID;
+        public RunSimulation(TransportationPlan t, Depo startDepo, Depo endDepo) {
+            this.t = t;
+            this.startDepo = startDepo;
+            this.endDepo = endDepo;
+            this.pipeLength = startDepo.getDepoConnections().get(endDepo.getDepoID()).get(0);
+            this.pipeDiameter = startDepo.getDepoConnections().get(endDepo.getDepoID()).get(1);
+            flowVelocity = Simulation.volumeFlowRate / (Math.PI * Math.pow(((double) pipeDiameter / 2), 2));
+            System.out.println("Flow velocity: " + flowVelocity);
+            startDepoContainerID = startDepo.getContainerID(t);
+            endDepoContainerID = endDepo.getContainerID(t);
+        }
+
+        public double getTailOfTheFluid() {
+            return tailOfTheFluid;
+        }
+
+        public double getHeadOfTheFluid() {
+            return headOfTheFluid;
+        }
+
+        @Override
+        public Boolean call() throws Exception {
+            System.out.println("Simulation started......\n");
+            System.out.println("From: " + t.getStartDepoID() + "  To: " + t.getEndDepoID() + "  Fuel: " + t.getFuelID() + "  Fuel Amount: " + t.getFuelAmount());
+            System.out.println("Start Hours:: " + t.getStartHours() + "  Start Minutes: " + t.getStartMinutes());
+            System.out.println("End Hours:: " + t.getEndHours() + "  End Minutes: " + t.getEndMinutes());
+            int startDepoMovedFuelAmount = 0, endDepoMoveFuelAmount = 0;
+            double time = pipeLength / flowVelocity;
+            int hours = t.getStartHours(), minutes = t.getStartMinutes();
+            while (hours < t.getEndHours()) {
+                while (minutes < 60) {
+                    try {
+                        Thread.currentThread().sleep(Simulation.timeSpeed);
+                        if (headOfTheFluid < pipeLength) {
+                            headOfTheFluid += flowVelocity;
+                        }else if(headOfTheFluid >= pipeLength && endDepoMoveFuelAmount != t.getFuelAmount()){
+                            endDepoMoveFuelAmount+=Simulation.volumeFlowRate;
+                            endDepo.getContainers().get(endDepoContainerID).addCurrentCapacity(Simulation.volumeFlowRate);
+                        }
+                        if (startDepoMovedFuelAmount != t.getFuelAmount()) {
+                            startDepoMovedFuelAmount += Simulation.volumeFlowRate;
+                            startDepo.getContainers().get(startDepoContainerID).substractCurrentCapacity(Simulation.volumeFlowRate);
+                        }
+                        else if (tailOfTheFluid < pipeLength) {
+                            time--;
+                            tailOfTheFluid += flowVelocity;
+                        }
+                    } catch (InterruptedException ie) {
+                        ie.printStackTrace();
+                    }
+                    minutes++;
+                }
+                minutes = 0;
+                System.out.println("Current hour:(" + t.getTransportationID() + ")" + hours);
+                hours++;
+            }
+            if (t.getEndMinutes() > 0) {
+                minutes = 0;
+                while (minutes < t.getEndMinutes()) {
+                    try {
+                        Thread.currentThread().sleep(Simulation.timeSpeed);
+                        if (headOfTheFluid < pipeLength) {
+                            headOfTheFluid += flowVelocity;
+                        }else if(headOfTheFluid >= pipeLength && endDepoMoveFuelAmount != t.getFuelAmount()){
+                            endDepoMoveFuelAmount+=Simulation.volumeFlowRate;
+                            endDepo.getContainers().get(endDepoContainerID).addCurrentCapacity(Simulation.volumeFlowRate);
+                        }
+                        if (startDepoMovedFuelAmount != t.getFuelAmount()) {
+                            startDepoMovedFuelAmount += Simulation.volumeFlowRate;
+                            startDepo.getContainers().get(startDepoContainerID).substractCurrentCapacity(Simulation.volumeFlowRate);
+                        }
+                        else if (tailOfTheFluid < pipeLength) {
+                            time--;
+                            tailOfTheFluid += flowVelocity;
+                        }
+                    } catch (InterruptedException ie) {
+                        ie.printStackTrace();
+                    }
+                    minutes++;
+                }
+            }
+            if (startDepoMovedFuelAmount == t.getFuelAmount() && time <= 0) {
+                System.out.println("Transportation Complete.....");
+                return true;
+            } else {
+                System.out.println("Transportation Failed.....");
+                return false;
+            }
+        }
+    }
 
 }

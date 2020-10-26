@@ -84,6 +84,6 @@ public class AlterDatabaseGui extends JFrame {
             String id = entry.getValue().get(0), name = entry.getValue().get(1);
             fuelModel.addRow(new Object[] {id, name});
         }
-
+//        new DataBaseHandler().deleteRecord("depo","depoid='DDD'");
     }
 }

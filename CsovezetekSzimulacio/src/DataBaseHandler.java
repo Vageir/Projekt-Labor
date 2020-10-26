@@ -253,7 +253,7 @@ public class DataBaseHandler {
             return;
         }
         try {
-            String sql = "Delete "+tableName+" Where "+condition;
+            String sql = "Delete FROM "+tableName+" Where "+condition;
             System.out.println(sql);
             stmt.executeUpdate(sql);
             stmt.close();
