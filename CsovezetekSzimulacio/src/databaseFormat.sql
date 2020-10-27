@@ -1,14 +1,3 @@
-CREATE TABLE `connecteddepos` (
-                                  `LeftDepoID` varchar(30) NOT NULL,
-                                  `RightDepoID` varchar(30) NOT NULL,
-                                  `PipeLength` int NOT NULL,
-                                  `PipeDiameter` int NOT NULL,
-                                  PRIMARY KEY (`LeftDepoID`,`RightDepoID`),
-                                  KEY `rightdepoidfk_idx` (`RightDepoID`),
-                                  CONSTRAINT `leftdepoidfk` FOREIGN KEY (`LeftDepoID`) REFERENCES `depo` (`DepoID`) ON DELETE CASCADE ON UPDATE CASCADE,
-                                  CONSTRAINT `rightdepoidfk` FOREIGN KEY (`RightDepoID`) REFERENCES `depo` (`DepoID`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
 CREATE TABLE `depo` (
                         `DepoID` varchar(30) NOT NULL,
                         `DepoName` varchar(45) NOT NULL,
@@ -34,6 +23,28 @@ CREATE TABLE `fuel` (
                         `fuelName` varchar(20) DEFAULT NULL,
                         PRIMARY KEY (`fuelID`),
                         UNIQUE KEY `fuelID_UNIQUE` (`fuelID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `connecteddepos` (
+                                  `PipeID` varchar(30) NOT NULL,
+                                  `LeftDepoID` varchar(30) DEFAULT NULL,
+                                  `RightDepoID` varchar(30) DEFAULT NULL,
+                                  `PipeLength` int DEFAULT NULL,
+                                  `PipeDiameter` int DEFAULT NULL,
+                                  PRIMARY KEY (`PipeID`),
+                                  UNIQUE KEY `PipeID_UNIQUE` (`PipeID`),
+                                  KEY `leftdepoidfk_idx` (`LeftDepoID`),
+                                  KEY `rightdepoidfk_idx` (`RightDepoID`),
+                                  CONSTRAINT `leftdepoidfk` FOREIGN KEY (`LeftDepoID`) REFERENCES `depo` (`DepoID`) ON DELETE CASCADE ON UPDATE CASCADE,
+                                  CONSTRAINT `rightdepoidfk` FOREIGN KEY (`RightDepoID`) REFERENCES `depo` (`DepoID`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `depo` (
+                        `DepoID` varchar(30) NOT NULL,
+                        `DepoName` varchar(45) NOT NULL,
+                        `DepoLocation` varchar(45) NOT NULL,
+                        PRIMARY KEY (`DepoID`),
+                        UNIQUE KEY `DepoID_UNIQUE` (`DepoID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `operator` (

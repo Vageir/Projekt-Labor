@@ -118,10 +118,9 @@ public class Simulation  {
             if (t.getTransportationID().equals(tID)) {
                 for (Depo d : depos){
                     if(d.getDepoID().equals(t.getStartDepoID())){
-                        for (Map.Entry<String,List<Integer>> entry : d.getDepoConnections().entrySet()){
-                            if (entry.getKey().equals(t.getEndDepoID())){
+                        for (Depo.DepoConnection dc : d.getDepoConnections()){
+                            if (dc.connectedDepoID.equals(t.getEndDepoID()))
                                 return true;
-                            }
                         }
                     }
                 }
@@ -257,8 +256,12 @@ public class Simulation  {
             this.t = t;
             this.startDepo = startDepo;
             this.endDepo = endDepo;
-            this.pipeLength = startDepo.getDepoConnections().get(endDepo.getDepoID()).get(0);
-            this.pipeDiameter = startDepo.getDepoConnections().get(endDepo.getDepoID()).get(1);
+            for (Depo.DepoConnection dc : startDepo.getDepoConnections()){
+                if (dc.connectedDepoID.equals(endDepo.getDepoID())){
+                    this.pipeLength = dc.getPipeLength();
+                    this.pipeDiameter = dc.getPipeDiameter();
+                }
+            }
             flowVelocity = Simulation.volumeFlowRate / (Math.PI * Math.pow(((double) pipeDiameter / 2), 2));
             System.out.println("Flow velocity: " + flowVelocity);
             startDepoContainerID = startDepo.getContainerID(t);

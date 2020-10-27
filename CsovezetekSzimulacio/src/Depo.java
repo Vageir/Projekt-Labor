@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class Depo {
     private String depoID;
-    private Map<String, List<Integer>> depoConnections;
+    private List<DepoConnection> depoConnections;
     private Map<String, DepoContainer> containers;
 
 //    public void readDepoDatas(){
@@ -24,29 +24,26 @@ public class Depo {
 //        }
 //        System.out.println("\n\n");
 //    }
-    public Depo(String depoID, Map<String, List<Integer>> depoConnections, Map<String, DepoContainer> containers) {
+    public Depo(String depoID, List<DepoConnection> depoConnections, Map<String, DepoContainer> containers) {
         this.depoID = depoID;
         this.depoConnections = depoConnections;
         this.containers = containers;
     }
     public Depo(String depoID, List<String> depoContainers, List<String> connectedDepos) {
         this.depoID = depoID;
-        depoConnections = new HashMap<String, List<Integer>>();
+        depoConnections = new ArrayList<>();
         containers = new HashMap<String, DepoContainer>();
         for (int i = 1; i < depoContainers.size(); i += 5){
             containers.put(depoContainers.get(i), new DepoContainer(Integer.parseInt(depoContainers.get(i+1)), Integer.parseInt(depoContainers.get(i+2)), Integer.parseInt(depoContainers.get(i+3))));
         }
 
-        List<Integer> lengthDiameter = new ArrayList<>();
-        for (int i = 0; i < connectedDepos.size(); i+=4) {
-            lengthDiameter.add(Integer.parseInt(connectedDepos.get(i+2)));
-            lengthDiameter.add(Integer.parseInt(connectedDepos.get(i+3)));
-            if (depoID.equals(connectedDepos.get(i))){
-                depoConnections.put(connectedDepos.get(i+1),lengthDiameter);
-            }
-            else {
-                depoConnections.put(connectedDepos.get(i),lengthDiameter);
-            }
+        for (int i = 0; i < connectedDepos.size(); i+=5) {
+            if (depoID.equals(connectedDepos.get(i+1)))
+                depoConnections.add(new DepoConnection(connectedDepos.get(i),connectedDepos.get(i+2),Integer.parseInt(connectedDepos.get(i+3)),Integer.parseInt(connectedDepos.get(i+4))));
+            else
+                depoConnections.add(new DepoConnection(connectedDepos.get(i),connectedDepos.get(i+1),Integer.parseInt(connectedDepos.get(i+3)),Integer.parseInt(connectedDepos.get(i+4))));
+
+
         }
 
     }
@@ -55,7 +52,7 @@ public class Depo {
         return depoID;
     }
 
-    public Map<String, List<Integer>> getDepoConnections() {
+    public List<DepoConnection> getDepoConnections() {
         return depoConnections;
     }
 
@@ -104,6 +101,56 @@ public class Depo {
 
         public int getFuelID() {
             return fuelID;
+        }
+    }
+    class DepoConnection{
+        String connectedDepoID,pipeID;
+        int pipeDiameter,pipeLength;
+
+        public String getPipeID() {
+            return pipeID;
+        }
+
+        public void setPipeID(String pipeID) {
+            this.pipeID = pipeID;
+        }
+
+        public DepoConnection(String pipeID,String connectedDepoID,  int pipeLength ,int pipeDiameter ) {
+            System.out.println(pipeID+";"+connectedDepoID+";"+pipeLength+";"+pipeDiameter);
+            this.connectedDepoID = connectedDepoID;
+            this.pipeID = pipeID;
+            this.pipeDiameter = pipeDiameter;
+            this.pipeLength = pipeLength;
+        }
+
+        public String getConnectedDepoID() {
+            return connectedDepoID;
+        }
+
+        public void setConnectedDepoID(String connectedDepoID) {
+            this.connectedDepoID = connectedDepoID;
+        }
+
+        public int getPipeDiameter() {
+            return pipeDiameter;
+        }
+
+        public void setPipeDiameter(int pipeDiameter) {
+            this.pipeDiameter = pipeDiameter;
+        }
+
+        public int getPipeLength() {
+            return pipeLength;
+        }
+
+        public void setPipeLength(int pipeLength) {
+            this.pipeLength = pipeLength;
+        }
+
+        public DepoConnection(String connectedDepoID, int pipeDiametediameter, int pipeLength) {
+            this.connectedDepoID = connectedDepoID;
+            this.pipeDiameter = pipeDiametediameter;
+            this.pipeLength = pipeLength;
         }
     }
 }

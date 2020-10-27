@@ -1,4 +1,3 @@
-INSERT INTO projektlabor.connecteddepos (LeftDepoID, RightDepoID, PipeLength, PipeDiameter) VALUES ('BSA', 'DSA', 500, 50);
 INSERT INTO projektlabor.depo (DepoID, DepoName, DepoLocation) VALUES ('BSA', 'Budapest', 'Budapest');
 INSERT INTO projektlabor.depo (DepoID, DepoName, DepoLocation) VALUES ('DSA', 'Debrecen', 'Debrecen');
 INSERT INTO projektlabor.depocontainer (depoID, containerID, CurrentCapacity, MaxCapacity, fuelID) VALUES ('BSA', 'BSA1M4000', 2000, 4000, 1);
@@ -16,3 +15,5 @@ INSERT INTO projektlabor.transportationplan (transportationID, startdepoID, endD
 INSERT INTO projektlabor.transportationplan (transportationID, startdepoID, endDepoID, fuelID, fuelAmount, startDate, endDdate, operatorID) VALUES ('JSP231111DSADSA', 'DSA', 'DSA', 1, 6000, '2020-01-01 15:00:00', '2020-01-01 17:00:00', 'JSP23');
 INSERT INTO projektlabor.user (uname, password) VALUES ('Adam', 'adampa55');
 INSERT INTO projektlabor.user (uname, password) VALUES ('Joseph', 'josephpa55');
+INSERT INTO projektlabor.connecteddepos (PipeID, LeftDepoID, RightDepoID, PipeLength, PipeDiameter) VALUES ('1BSA5000DSA1', 'BSA', 'DSA', 5000, 1);
+INSERT INTO projektlabor.connecteddepos (PipeID, LeftDepoID, RightDepoID, PipeLength, PipeDiameter) VALUES ('1DSA5000CSA1', 'DSA', 'CSA', 5000, 1);
