@@ -43,24 +43,24 @@ public class DataBaseHandler {
             e.printStackTrace();
         }
     }
-    public ArrayList<String> getTableMetaData(String tableName, int nameOrTypeOrColumns){
+    public ArrayList<String> getTableMetaData(String tableName, int typeOrNameOrColumns){
         //0 = columnTypeName, 1 = columnName, 2 = columnCount
         setConnection();
         ArrayList<String> tableData = new ArrayList<>();
         try {
             ResultSet resultSet = stmt.executeQuery("Select * From "+tableName);
             ResultSetMetaData md = resultSet.getMetaData();
-            if (nameOrTypeOrColumns == 0){
+            if (typeOrNameOrColumns == 0){
                 for (int i=1; i<=md.getColumnCount(); i++)
                 {
                     tableData.add(md.getColumnTypeName(i));
                 }
-            }else if (nameOrTypeOrColumns == 1){
+            }else if (typeOrNameOrColumns == 1){
                 for (int i=1; i<=md.getColumnCount(); i++)
                 {
                     tableData.add(md.getColumnName(i));
                 }
-            } else if (nameOrTypeOrColumns == 2){
+            } else if (typeOrNameOrColumns == 2){
                 tableData.add(String.valueOf(md.getColumnCount()));
             }
         }
