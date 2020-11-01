@@ -6,6 +6,13 @@ CREATE TABLE `depo` (
                         UNIQUE KEY `DepoID_UNIQUE` (`DepoID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+CREATE TABLE `fuel` (
+                        `fuelID` int NOT NULL,
+                        `fuelName` varchar(20) DEFAULT NULL,
+                        PRIMARY KEY (`fuelID`),
+                        UNIQUE KEY `fuelID_UNIQUE` (`fuelID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 CREATE TABLE `depocontainer` (
                                  `depoID` varchar(30) NOT NULL,
                                  `containerID` varchar(30) NOT NULL,
@@ -16,13 +23,6 @@ CREATE TABLE `depocontainer` (
                                  KEY `fuelid_idx` (`fuelID`),
                                  CONSTRAINT `depoidfk` FOREIGN KEY (`depoID`) REFERENCES `depo` (`DepoID`) ON DELETE CASCADE ON UPDATE CASCADE,
                                  CONSTRAINT `fuelidfk` FOREIGN KEY (`fuelID`) REFERENCES `fuel` (`fuelID`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-CREATE TABLE `fuel` (
-                        `fuelID` int NOT NULL,
-                        `fuelName` varchar(20) DEFAULT NULL,
-                        PRIMARY KEY (`fuelID`),
-                        UNIQUE KEY `fuelID_UNIQUE` (`fuelID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `connecteddepos` (
@@ -37,14 +37,6 @@ CREATE TABLE `connecteddepos` (
                                   KEY `rightdepoidfk_idx` (`RightDepoID`),
                                   CONSTRAINT `leftdepoidfk` FOREIGN KEY (`LeftDepoID`) REFERENCES `depo` (`DepoID`) ON DELETE CASCADE ON UPDATE CASCADE,
                                   CONSTRAINT `rightdepoidfk` FOREIGN KEY (`RightDepoID`) REFERENCES `depo` (`DepoID`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-CREATE TABLE `depo` (
-                        `DepoID` varchar(30) NOT NULL,
-                        `DepoName` varchar(45) NOT NULL,
-                        `DepoLocation` varchar(45) NOT NULL,
-                        PRIMARY KEY (`DepoID`),
-                        UNIQUE KEY `DepoID_UNIQUE` (`DepoID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `operator` (
@@ -66,7 +58,7 @@ CREATE TABLE `transportationplan` (
                                       `operatorID` varchar(30) NOT NULL,
                                       PRIMARY KEY (`transportationID`),
                                       UNIQUE KEY `transportationID_UNIQUE` (`transportationID`),
-                                      KEY `stardepoidfk_idx` (`startdepoID`,`endDepoID`),
+                                      KEY `startdepoidfk_idx` (`startdepoID`,`endDepoID`),
                                       KEY `endepoidfk_idx` (`endDepoID`),
                                       KEY `fuelidfk_idx` (`fuelID`),
                                       KEY `operatoridfk_idx` (`operatorID`),
