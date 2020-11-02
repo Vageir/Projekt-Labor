@@ -213,7 +213,7 @@ public class Simulation  {
         int pipeLength = 0, pipeDiameter = 0;
         double startDepoMovedFuelAmount = 0.0, endDepoMoveFuelAmount = 0.0;
         double flowVelocity = 0.0;
-        double headOfTheFluid = 0.0;
+//        List<Double> headOfTheFluid = 0.0;
         double tailOfTheFluid = 0.0;
         Depo startDepo, endDepo;
         String startDepoContainerID,endDepoContainerID, pipeID;
@@ -244,8 +244,8 @@ public class Simulation  {
                     process();
                     minutes++;
                     currentMinutes = minutes;
-                    depoConnections.get(pipeID).getHeadOfTheFluidRelativeToLeftDepo().put(t.getFuelID()+100,headOfTheFluid);
-                    depoConnections.get(pipeID).getTailOfTheFluidRelativeToLeftDepo().put(t.getFuelID()+100,tailOfTheFluid);
+//                    depoConnections.get(pipeID).getHeadAndTailOfTheFluidRelativeToLeftDepo().put(t.getFuelID()+100,headOfTheFluid);
+//                    depoConnections.get(pipeID).getTailOfTheFluidRelativeToLeftDepo().put(t.getFuelID()+100,tailOfTheFluid);
 //                    if (startDepo.getContainers().get(highestContainerCapacityID).getCurrentCapacity() < 0) {
 //                        System.out.println("Transportation Failed");
 //                        System.out.println("Nincs elég üzemanyag továbbításra");
@@ -259,19 +259,19 @@ public class Simulation  {
             int minutes = t.getStartMinutes();
             while(minutes < t.getEndMinutes()){
                 process();
-                depoConnections.get(pipeID).getHeadOfTheFluidRelativeToLeftDepo().put(t.getFuelID()+100,headOfTheFluid);
-                depoConnections.get(pipeID).getTailOfTheFluidRelativeToLeftDepo().put(t.getFuelID()+100,tailOfTheFluid);
-                currentMinutes = minutes;
+//                depoConnections.get(pipeID).getHeadAndTailOfTheFluidRelativeToLeftDepo().put(t.getFuelID()+100,headOfTheFluid);
+//                depoConnections.get(pipeID).getTailOfTheFluidRelativeToLeftDepo().put(t.getFuelID()+100,tailOfTheFluid);
+//                currentMinutes = minutes;
                 minutes++;
             }
             if (tailOfTheFluid >= pipeLength){
                 System.out.println("Transportation Complete");
-                depoConnections.get(pipeID).
-                        getHeadOfTheFluidRelativeToLeftDepo().put(t.getFuelID(),depoConnections.get(pipeID).getHeadOfTheFluidRelativeToLeftDepo().get(t.getFuelID()+100));
-                depoConnections.get(pipeID).getHeadOfTheFluidRelativeToLeftDepo().remove(t.getFuelID()+100);
-                depoConnections.get(pipeID).
-                        getTailOfTheFluidRelativeToLeftDepo().put(t.getFuelID(),depoConnections.get(pipeID).getTailOfTheFluidRelativeToLeftDepo().get(t.getFuelID()+100));
-                depoConnections.get(pipeID).getTailOfTheFluidRelativeToLeftDepo().remove(t.getFuelID()+100);
+//                depoConnections.get(pipeID).
+//                        getHeadAndTailOfTheFluidRelativeToLeftDepo().put(t.getFuelID(),depoConnections.get(pipeID).getHeadAndTailOfTheFluidRelativeToLeftDepo().get(t.getFuelID()+100));
+//                depoConnections.get(pipeID).getHeadAndTailOfTheFluidRelativeToLeftDepo().remove(t.getFuelID()+100);
+//                depoConnections.get(pipeID).
+//                        getTailOfTheFluidRelativeToLeftDepo().put(t.getFuelID(),depoConnections.get(pipeID).getTailOfTheFluidRelativeToLeftDepo().get(t.getFuelID()+100));
+//                depoConnections.get(pipeID).getTailOfTheFluidRelativeToLeftDepo().remove(t.getFuelID()+100);
                 return true;
             }
             else{
@@ -292,111 +292,35 @@ public class Simulation  {
 
                 tailOfTheFluid += flowVelocity;
             }
-            if (headOfTheFluid < pipeLength) {
-                headOfTheFluid += flowVelocity;
-                if (!depoConnections.get(pipeID).getHeadOfTheFluidRelativeToLeftDepo().isEmpty()){
-                    for (Map.Entry<Integer,Double> entry: depoConnections.get(pipeID).getHeadOfTheFluidRelativeToLeftDepo().entrySet()){
-                        if (entry.getValue() < pipeLength)
-                            entry.setValue(entry.getValue()+flowVelocity);
-                    }
-                    List<Integer> ls = new ArrayList<>();
-                    for (Map.Entry<Integer,Double> entry: depoConnections.get(pipeID).getTailOfTheFluidRelativeToLeftDepo().entrySet()){
-                        if (entry.getValue() > pipeLength) {
-//                                depoConnections.get(pipeID).getTailOfTheFluidRelativeToLeftDepo().remove(entry.getKey());
-//                                depoConnections.get(pipeID).getHeadOfTheFluidRelativeToLeftDepo().remove(entry.getKey());
-                            ls.add(entry.getKey());
-                        }
-                        else  entry.setValue(entry.getValue()+flowVelocity);
-                    }
-                    for (int i : ls){
-                        depoConnections.get(pipeID).getHeadOfTheFluidRelativeToLeftDepo().remove(i);
-                        depoConnections.get(pipeID).getTailOfTheFluidRelativeToLeftDepo().remove(i);
-                    }
-                }
-            }
-            else {
-                if (endDepoMoveFuelAmount != t.getFuelAmount()){
-                    endDepo.getContainers().get(endDepoContainerID).addCurrentCapacity(volumeFlowRate);
-                    endDepoMoveFuelAmount+=volumeFlowRate;
-                }
-            }
+//            if (headOfTheFluid < pipeLength) {
+//                headOfTheFluid += flowVelocity;
+//                if (!depoConnections.get(pipeID).getHeadAndTailOfTheFluidRelativeToLeftDepo().isEmpty()){
+//                    for (Map.Entry<Integer, List<Double>> entry: depoConnections.get(pipeID).getHeadAndTailOfTheFluidRelativeToLeftDepo().entrySet()){
+//                        if (entry.getValue() < pipeLength)
+//                            entry.setValue(entry.getValue()+flowVelocity);
+//                    }
+//                    List<Integer> ls = new ArrayList<>();
+//                    for (Map.Entry<Integer,Double> entry: depoConnections.get(pipeID).getTailOfTheFluidRelativeToLeftDepo().entrySet()){
+//                        if (entry.getValue() > pipeLength) {
+////                                depoConnections.get(pipeID).getTailOfTheFluidRelativeToLeftDepo().remove(entry.getKey());
+////                                depoConnections.get(pipeID).getHeadOfTheFluidRelativeToLeftDepo().remove(entry.getKey());
+//                            ls.add(entry.getKey());
+//                        }
+//                        else  entry.setValue(entry.getValue()+flowVelocity);
+//                    }
+//                    for (int i : ls){
+//                        depoConnections.get(pipeID).getHeadAndTailOfTheFluidRelativeToLeftDepo().remove(i);
+//                        depoConnections.get(pipeID).getTailOfTheFluidRelativeToLeftDepo().remove(i);
+//                    }
+//                }
+//            }
+//            else {
+//                if (endDepoMoveFuelAmount != t.getFuelAmount()){
+//                    endDepo.getContainers().get(endDepoContainerID).addCurrentCapacity(volumeFlowRate);
+//                    endDepoMoveFuelAmount+=volumeFlowRate;
+//                }
+//            }
         }
-        //        public Boolean call() throws Exception {
-//            System.out.println("Simulation started......\n");
-//            System.out.println("From: " + t.getStartDepoID() + "  To: " + t.getEndDepoID() + "  Fuel: " + t.getFuelID() + "  Fuel Amount: " + t.getFuelAmount());
-//            System.out.println("Start Hours:: " + t.getStartHours() + "  Start Minutes: " + t.getStartMinutes());
-//            System.out.println("End Hours:: " + t.getEndHours() + "  End Minutes: " + t.getEndMinutes());
-//            int startDepoMovedFuelAmount = 0, endDepoMoveFuelAmount = 0;
-//            double time = pipeLength / flowVelocity;
-//            int hours = t.getStartHours(), minutes = t.getStartMinutes();
-//            List ls = new ArrayList();
-//            ls.add(headOfTheFluid);
-//            ls.add(tailOfTheFluid);
-//            while (hours < t.getEndHours()) {
-//                while (minutes < 60) {
-//                    try {
-//                        Thread.currentThread().sleep(Simulation.timeSpeed);
-//                        if (headOfTheFluid < pipeLength) {
-//                            headOfTheFluid += flowVelocity;
-//                        }else if(headOfTheFluid >= pipeLength && endDepoMoveFuelAmount != t.getFuelAmount()){
-//                            endDepoMoveFuelAmount+=Simulation.volumeFlowRate;
-//                            endDepo.getContainers().get(endDepoContainerID).addCurrentCapacity(Simulation.volumeFlowRate);
-//                        }
-//                        if (startDepoMovedFuelAmount != t.getFuelAmount()) {
-//                            startDepoMovedFuelAmount += Simulation.volumeFlowRate;
-//                            startDepo.getContainers().get(startDepoContainerID).substractCurrentCapacity(Simulation.volumeFlowRate);
-//                        }
-//                        else if (tailOfTheFluid < pipeLength) {
-//                            time--;
-//                            tailOfTheFluid += flowVelocity;
-//                        }
-//
-//                    } catch (InterruptedException ie) {
-//                        ie.printStackTrace();
-//                    }
-//                    depoConnections.get(pipeID).setHeadOfTheFluid(t.getFuelID(),headOfTheFluid);
-//                    depoConnections.get(pipeID).setTailOfTheFluid(t.getFuelID(),tailOfTheFluid);
-//                    currentMinutes=minutes;
-//                    minutes++;
-//                }
-//                minutes = 0;
-//                System.out.println("Current hour:(" + t.getTransportationID() + ")" + hours);
-//                currentHours = hours;
-//                hours++;
-//            }
-//            if (t.getEndMinutes() > 0) {
-//                minutes = 0;
-//                while (minutes < t.getEndMinutes()) {
-//                    try {
-//                        Thread.currentThread().sleep(Simulation.timeSpeed);
-//                        if (headOfTheFluid < pipeLength) {
-//                            headOfTheFluid += flowVelocity;
-//                        }else if(headOfTheFluid >= pipeLength && endDepoMoveFuelAmount != t.getFuelAmount()){
-//                            endDepoMoveFuelAmount+=Simulation.volumeFlowRate;
-//                            endDepo.getContainers().get(endDepoContainerID).addCurrentCapacity(Simulation.volumeFlowRate);
-//                        }
-//                        if (startDepoMovedFuelAmount != t.getFuelAmount()) {
-//                            startDepoMovedFuelAmount += Simulation.volumeFlowRate;
-//                            startDepo.getContainers().get(startDepoContainerID).substractCurrentCapacity(Simulation.volumeFlowRate);
-//                        }
-//                        else if (tailOfTheFluid < pipeLength) {
-//                            time--;
-//                            tailOfTheFluid += flowVelocity;
-//                        }
-//                    } catch (InterruptedException ie) {
-//                        ie.printStackTrace();
-//                    }
-//                    minutes++;
-//                }
-//            }
-//            if (startDepoMovedFuelAmount == t.getFuelAmount() && time <= 0) {
-//                System.out.println("Transportation Complete.....");
-//                return true;
-//            } else {
-//                System.out.println("Transportation Failed.....");
-//                return false;
-//            }
-//        }
     }
 
 }
