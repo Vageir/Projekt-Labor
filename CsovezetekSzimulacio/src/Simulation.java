@@ -208,6 +208,10 @@ public class Simulation  {
         return true;
     }
 
+    public List<Depo> getDepos() {
+        return depos;
+    }
+
     private class RunSimulation implements Callable<Boolean> {
         TransportationPlan t;
         int pipeLength = 0, pipeDiameter = 0;
