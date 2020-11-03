@@ -6,7 +6,7 @@ import java.util.Map;
 public class DepoConnection {
     private String leftDepoID, rightDepoID;
     private int pipeLength,pipeDiameter;
-    private Map<Integer, List<Double>> headAndTailOfTheFluidRelativeToLeftDepo;
+    private Map<Integer, List<Double>> headAndTailOfTheFluidRelativeToLeftDepo;//List:head,tail
 
     public DepoConnection(String leftDepoID, String rightDepoID, int pipeLength, int pipeDiameter) {
         this.leftDepoID = leftDepoID;
@@ -37,6 +37,37 @@ public class DepoConnection {
     public Map<Integer, List<Double>> getHeadAndTailOfTheFluidRelativeToLeftDepo() {
         return headAndTailOfTheFluidRelativeToLeftDepo;
     }
+    public List<Integer> getFuelIDBefore(){
+        List<Integer> ls = new ArrayList<>();
+        for (Map.Entry<Integer,List<Double>> entry : headAndTailOfTheFluidRelativeToLeftDepo.entrySet()){
+            if (entry.getKey() < 100)
+                ls.add(entry.getKey());
+        }
+        return ls;
+    }
+    public void setCurrentFuelID() {
+        List<Integer> ls = new ArrayList<>();
+        List<Integer> ll = new ArrayList<>();
+        for (Map.Entry<Integer, List<Double>> entry : headAndTailOfTheFluidRelativeToLeftDepo.entrySet()) {
+            if (entry.getKey() > 100)
+                ls.add(entry.getKey());
+        }
+        for (int i : ls ) {
+            headAndTailOfTheFluidRelativeToLeftDepo.put(i-100,headAndTailOfTheFluidRelativeToLeftDepo.get(i));
+            headAndTailOfTheFluidRelativeToLeftDepo.remove(i);
+        }
+        for (Map.Entry<Integer, List<Double>> entry : headAndTailOfTheFluidRelativeToLeftDepo.entrySet()) {
+            Double head = entry.getValue().get(0);
+            Double tail = entry.getValue().get(1);
+            if (head.equals(tail) || tail.compareTo(head) > 0) {
+                ll.add(entry.getKey());
+                System.out.println("YEET");
+            }
 
+        }
+        for (int i : ll){
+            headAndTailOfTheFluidRelativeToLeftDepo.remove(i);
+        }
+    }
 
 }

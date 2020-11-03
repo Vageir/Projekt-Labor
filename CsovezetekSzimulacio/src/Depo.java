@@ -45,6 +45,14 @@ public class Depo {
         }
         return null;
     }
+    public String getContainerID(int fuelID){
+        for (Map.Entry<String, Depo.DepoContainer> entry : this.containers.entrySet()){
+            if (entry.getValue().getFuelID() == fuelID){
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
     public String getHighestCurrentCapacityContainer(){
         int max = 0;
         String s = null;
