@@ -50,7 +50,7 @@ public class Graph extends JFrame {
             int rightX = getDepoVertex(rightDepoID).getX();
             int rightY = getDepoVertex(rightDepoID).getY();
 
-            double ratio = 0.15;
+            double ratio = 0.25;
             int distLeftX, distLeftY, distRightX, distRightY;
             distLeftX = leftX - getWidth() / 2;
             distLeftY = leftY - getHeight() / 2;
@@ -61,8 +61,7 @@ public class Graph extends JFrame {
             rightX -= (int) (distRightX * ratio);
             rightY -= (int) (distRightY * ratio);
 
-            addPipe(dc.getKey(),
-                    leftX, leftY, rightX, rightY, pipe.getPipeDiameter(), leftDepoID, rightDepoID);
+            addPipe(dc.getKey(), leftX, leftY, rightX, rightY, pipe.getPipeDiameter(), leftDepoID, rightDepoID);
         }
     }
 
@@ -87,7 +86,6 @@ public class Graph extends JFrame {
 
     class DepoVertex {
         private final int x, y;
-        private final int containersX, containersY;
         private final ArrayList<String> containerVertices;
 
         public DepoVertex(int x, int y, Set<String> containerNames) {
@@ -97,15 +95,6 @@ public class Graph extends JFrame {
             for (String name : containerNames) {
                 this.containerVertices.add(name);
             }
-            double ratio = 0.33;
-            int distX, distY;
-            distX = this.x - getWidth() / 2;
-            distY = this.y - getHeight() / 2;
-            this.containersX = this.x + (int) (distX * ratio);
-            this.containersY = this.y + (int) (distY * ratio);
-//            System.out.println("centX: " + getWidth() / 2 + ", centY: " + getHeight() / 2);
-//            System.out.println("origX: " + getX() + ", newX: " + getContainersX());
-//            System.out.println("origY: " + getY() + ", newY: " + getContainersY());
         }
 
         public int getX() {
@@ -113,12 +102,6 @@ public class Graph extends JFrame {
         }
         public int getY() {
             return y;
-        }
-        public int getContainersX() {
-            return containersX;
-        }
-        public int getContainersY() {
-            return containersY;
         }
         public ArrayList<String> getContainerVertices() {
             return containerVertices;
@@ -188,7 +171,6 @@ public class Graph extends JFrame {
 
     public void addPipe(String pipeID, int leftX, int leftY, int rightX, int rightY, int diameter, String leftDepo, String rightDepo) {
         pipes.put(pipeID, new Pipe(leftX, leftY, rightX, rightY, diameter, leftDepo, rightDepo));
-        this.repaint();
     }
 
     public DepoVertex getDepoVertex(String id) {
@@ -207,34 +189,68 @@ public class Graph extends JFrame {
         return null;
     }
 
-    void drawDepo(Graphics g, Map.Entry<String, DepoVertex> depoVertex) {
+    void drawLegend(Graphics g1, int x, int y) {
+        Graphics2D g = (Graphics2D) g1.create();
+        String title = "Jelmagyarázat";
+
+        g.setFont(new Font("sans", Font.PLAIN, 26));
+        FontMetrics f = g.getFontMetrics();
+        int longest = 0;
+        for(Fuel fuel : fuels) {
+            if(f.stringWidth(fuel.getName()) > longest);
+                longest = f.stringWidth(fuel.getName());
+        }
+        if(f.stringWidth(title) > longest);
+            longest = f.stringWidth(title);
+
+        int cHeight, cWidth, offset, dVX, dVY, mOffset;
+        cHeight = (int) (f.getHeight() * 1.1);
+        cWidth = (int) (longest * 1.1);
+        offset = 1;
+
+        AffineTransform at = AffineTransform.getTranslateInstance(x, y);
+        g.transform(at);
+
+        g.setColor(Color.black);
+        g.drawRect(0, 0, cWidth, cHeight);
+        g.drawString(title, f.stringWidth("/"), (int) (f.getHeight() * 0.85));
+
+        for(Fuel fuel : fuels) {
+            g.setColor(fuel.getColor());
+            g.fillRect(0, cHeight * offset, cWidth, cHeight);
+            g.setColor(Color.black);
+            g.drawRect(0, cHeight * offset, cWidth, cHeight);
+            g.drawString(fuel.getName(), f.stringWidth("/"), cHeight * offset + (int) (f.getHeight() * 0.85));
+
+            offset++;
+        }
+    }
+
+    void drawDepo(Graphics g1, Map.Entry<String, DepoVertex> depoVertex) {
+        Graphics2D g = (Graphics2D) g1.create();
+
         g.setFont(new Font("sans", Font.PLAIN, 22));
         FontMetrics f = g.getFontMetrics();
-        int nHeight = Math.max(height, f.getHeight());
-        int nWidth = Math.max(width, f.stringWidth(depoVertex.getKey()) + width / 2);
-
-        int dVX, dVY;
-        dVX = depoVertex.getValue().getX();
-        dVY = depoVertex.getValue().getY();
-
-        g.setColor(Color.white);
-        g.fillOval(dVX - nWidth / 2, dVY - nHeight / 2, nWidth, nHeight);
-        g.setColor(Color.black);
-        g.drawOval(dVX - nWidth / 2, dVY - nHeight / 2, nWidth, nHeight);
-        g.drawString(depoVertex.getKey(), dVX - f.stringWidth(depoVertex.getKey()) / 2,dVY + f.getHeight() / 2);
-
         int longest = 0;
         for(Depo.DepoContainer dc : getContainersOfDepo(depoVertex.getKey()).values()) {
             if(f.stringWidth(Integer.toString(dc.getMaxCapacity())) > longest);
                 longest = f.stringWidth(Integer.toString(dc.getMaxCapacity()));
         }
-        int cHeight, cWidth, offset, dCX, dCY, mOffset;
+
+        int cHeight, cWidth, offset, dVX, dVY, mOffset;
         cHeight = (int) (f.getHeight() * 1.1);
         cWidth = (int) (longest * 2.8);
-        offset = 0;
+        offset = 1;
         mOffset = depoVertex.getValue().getContainerVertices().size();
-        dCX = depoVertex.getValue().getContainersX() - cWidth / 2;
-        dCY = depoVertex.getValue().getContainersY() - (int) (mOffset / 2.0 * cHeight);
+        dVX = depoVertex.getValue().getX()- cWidth / 2;
+        dVY = depoVertex.getValue().getY()- (int) ((mOffset + offset) / 2.0 * cHeight);
+
+        AffineTransform at = AffineTransform.getTranslateInstance(dVX, dVY);
+        g.transform(at);
+
+        g.setColor(Color.black);
+        g.drawRect(0, 0, cWidth, cHeight);
+        g.drawString(depoVertex.getKey(), f.stringWidth("/"), (int) (f.getHeight() * 0.85));
 
         for(Depo.DepoContainer dc : getContainersOfDepo(depoVertex.getKey()).values()) {
             String current = Integer.toString(dc.getCurrentCapacity());
@@ -242,12 +258,12 @@ public class Graph extends JFrame {
             int level = Math.round(cWidth * dc.getCurrentCapacity() / dc.getMaxCapacity());
 
             g.setColor(Color.white);
-            g.fillRect(dCX + level, dCY + cHeight * offset, cWidth - level, cHeight);
+            g.fillRect(level, cHeight * offset, cWidth - level, cHeight);
             g.setColor(getFuelType(dc.getFuelID()-1).getColor());
-            g.fillRect(dCX, dCY + cHeight * offset, level, cHeight);
+            g.fillRect(0, cHeight * offset, level, cHeight);
             g.setColor(Color.black);
-            g.drawRect(dCX, dCY + cHeight * offset, cWidth, cHeight);
-            g.drawString(current + " / " + max,dCX + f.stringWidth("/"), dCY  + cHeight * offset + (int) (f.getHeight() * 0.85));
+            g.drawRect(0, cHeight * offset, cWidth, cHeight);
+            g.drawString(current + " / " + max, f.stringWidth("/"), cHeight * offset + (int) (f.getHeight() * 0.85));
 
             offset++;
         }
@@ -278,14 +294,30 @@ public class Graph extends JFrame {
         int len = (int) Math.sqrt(dx * dx + dy * dy);
         double headRatio = head / pipeLen;
         double tailRatio = tail / pipeLen;
+        if(headRatio > 1.0)
+            headRatio = 1.0;
+        if(tailRatio > 1.0)
+            tailRatio = 1.0;
 
-        g.setStroke(new BasicStroke((float) (pipe.getDiameter() * 6)));
+        g.setStroke(new BasicStroke((float) (pipe.getDiameter() * 11)));
         g.setColor(getFuelType(fuelID-1).getColor());
-
         g.drawLine((int) (len * tailRatio), 0, (int) (len * headRatio), 0);
+
+        g.setStroke(new BasicStroke((float) 2.5));
+        g.setColor(Color.black);
+        g.drawLine((int) (len * headRatio), -4, (int) (len * headRatio) + 3, 0);
+        g.drawLine((int) (len * headRatio) + 3, 0, (int) (len * headRatio), 4);
+
+        g.setColor(Color.white);
+        g.fillOval(-6, -6, 12, 12);
+        g.fillOval(len-6, -6, 12, 12);
+        g.setColor(Color.black);
+        g.drawOval(-6, -6, 12, 12);
+        g.drawOval(len-6, -6, 12, 12);
     }
 
     public void paint(Graphics g) {
+        drawLegend(g, (int) (getWidth() * 0.825), (int) (getHeight() * 0.05));
         for (Map.Entry<String, DepoVertex> dv : depoVertices.entrySet()) {
             drawDepo(g, dv);
         }
