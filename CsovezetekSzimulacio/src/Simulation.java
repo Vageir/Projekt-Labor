@@ -41,10 +41,9 @@ public class Simulation  {
     }
     public String getPipeID(String startDepoID, String endDepoID){
         for (Map.Entry<String,DepoConnection> entry : depoConnections.entrySet()){
-            if ((entry.getValue().getLeftDepoID().equals(startDepoID) || entry.getValue().getRightDepoID().equals(endDepoID) &&
-                    (entry.getValue().getLeftDepoID().equals(startDepoID) || entry.getValue().getRightDepoID().equals(endDepoID)))){
-                return entry.getKey();
-            }
+            if (entry.getValue().getLeftDepoID().equals(startDepoID) && entry.getValue().getRightDepoID().equals(endDepoID)) return entry.getKey();
+            else if(entry.getValue().getLeftDepoID().equals(endDepoID) && entry.getValue().getRightDepoID().equals(startDepoID)) return entry.getKey();
+
         }
         return null;
     }
@@ -199,8 +198,6 @@ public class Simulation  {
                  System.out.println("Hiba a szimulációban");
                  return false;
              }
-
-
             }
             else {
                 System.out.println("All check.....Failed");
