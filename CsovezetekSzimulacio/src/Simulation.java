@@ -9,8 +9,8 @@ import static java.lang.Thread.sleep;
 //        ø = Diameter
 // t=s/v
 public class Simulation  {
-    static final int volumeFlowRate = 100; //cubic meteres/min
-    static final int timeSpeed = 100; // 1 ms = 1perc
+    static final int volumeFlowRate = 100; //cubic metres/min
+    static final int timeSpeed = 100; // 1 ms = 1min
 //    double flowVelocity; //m/min
     private List <TransportationPlan> transportationPlans;
     private List <Depo> depos;
@@ -176,21 +176,18 @@ public class Simulation  {
                 }
                 int finalI = i;
                 int finalJ = j;
-                Thread t = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (transportationPlans.size() > finalJ){
-                            if (transportationPlans.get(finalJ).getStartHours() < transportationPlans.get(finalI).getEndHours()
-                                    ||(transportationPlans.get(finalJ).getStartHours() == transportationPlans.get(finalI).getEndHours()
-                                    && transportationPlans.get(finalJ).getStartMinutes() < transportationPlans.get(finalI).getEndMinutes()))
-                            {
-                                System.out.println(transportationPlans.get(finalJ).getStartHours() + ":" + transportationPlans.get(finalJ).getStartMinutes());
-                                while (currentHours != transportationPlans.get(finalJ).getStartHours()
-                                        || currentMinutes != transportationPlans.get(finalJ).getStartMinutes()) {
-                                }
-                                executor.shutdownNow();
-                                errorMessages.add("A terv nem indulhat el amig a másik be nem fejeződött");
+                Thread t = new Thread(() -> {
+                    if (transportationPlans.size() > finalJ){
+                        if (transportationPlans.get(finalJ).getStartHours() < transportationPlans.get(finalI).getEndHours()
+                                ||(transportationPlans.get(finalJ).getStartHours() == transportationPlans.get(finalI).getEndHours()
+                                && transportationPlans.get(finalJ).getStartMinutes() < transportationPlans.get(finalI).getEndMinutes()))
+                        {
+                            System.out.println(transportationPlans.get(finalJ).getStartHours() + ":" + transportationPlans.get(finalJ).getStartMinutes());
+                            while (currentHours != transportationPlans.get(finalJ).getStartHours()
+                                    || currentMinutes != transportationPlans.get(finalJ).getStartMinutes()) {
                             }
+                            executor.shutdownNow();
+                            errorMessages.add("A terv nem indulhat el amig a másik be nem fejeződött");
                         }
                     }
                 });
@@ -211,7 +208,7 @@ public class Simulation  {
     }
     private boolean startSimulation(List<TransportationPlan> runTransportationPlans){
         executor = Executors.newFixedThreadPool(runTransportationPlans.size());
-        futureList = new ArrayList<Future<Boolean>>();
+        futureList = new ArrayList<>();
         for (TransportationPlan t : runTransportationPlans){
             Depo startDepo=null,endDepo=null;
             for (Depo d : depos){
@@ -236,11 +233,9 @@ public class Simulation  {
                 if(!(Boolean)future.get()){
                     return false;
                 }
-            } catch (InterruptedException interruptedException) {
+            } catch (InterruptedException | ExecutionException interruptedException) {
                 interruptedException.printStackTrace();
 
-            } catch (ExecutionException e) {
-                e.printStackTrace();
             }
         }
         executor.shutdown();
@@ -249,9 +244,9 @@ public class Simulation  {
 
     private class RunSimulation implements Callable<Boolean> {
         TransportationPlan t;
-        int pipeLength = 0, pipeDiameter = 0;
+        int pipeLength, pipeDiameter;
         double startDepoMovedFuelAmount = 0.0, endDepoMoveFuelAmount = 0.0;
-        double flowVelocity = 0.0;
+        double flowVelocity;
         double tailOfTheFluid = 0.0;
         Depo startDepo, endDepo;
         String startDepoContainerID,endDepoContainerID, pipeID;
@@ -328,7 +323,7 @@ public class Simulation  {
 
         }
         private boolean process() throws InterruptedException {
-            Thread.currentThread().sleep(Simulation.timeSpeed);
+            sleep(Simulation.timeSpeed);
             if (startDepoMovedFuelAmount != t.getFuelAmount()) {
                 startDepoMovedFuelAmount += volumeFlowRate;
                 startDepo.getContainers().get(startDepoContainerID).substractCurrentCapacity(volumeFlowRate);
