@@ -17,7 +17,8 @@ public class Simulation  {
     private Map<String, DepoConnection> depoConnections;
     private int currentHours, currentMinutes;
     private List<String> errorMessages;
-
+    private ExecutorService executor;
+    private List<Future<Boolean>> futureList;
 
     public Simulation() {
         transportationPlans = new ArrayList<>();
@@ -61,6 +62,7 @@ public class Simulation  {
 //        }
         if (runSimulations()){
             System.out.println("Sikeres lefutás");
+            //database update
         }else {
             System.out.println("Hibás lefutás az adatbázis nem módosult");
         }
@@ -173,20 +175,45 @@ public class Simulation  {
                         }else break;
 
                 }
-             if (!startSimulation(runTransportationPlans)){
+                int finalI = i;
+                int finalJ = j;
+                Thread t = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (transportationPlans.size() > finalJ){
+                            if (transportationPlans.get(finalJ).getStartHours() < transportationPlans.get(finalI).getEndHours()
+                                    ||(transportationPlans.get(finalJ).getStartHours() == transportationPlans.get(finalI).getEndHours()
+                                    && transportationPlans.get(finalJ).getStartMinutes() < transportationPlans.get(finalI).getEndMinutes()))
+                            {
+                                System.out.println(transportationPlans.get(finalJ).getStartHours()+":"+transportationPlans.get(finalJ).getStartMinutes() );
+                                while(currentHours != transportationPlans.get(finalJ).getStartHours()
+                                        || currentMinutes != transportationPlans.get(finalJ).getStartMinutes()){}
+                                executor.shutdownNow();
+                                errorMessages.add("A terv nem indulhat el amig a másik be nem fejeződött");
+                            }
+                        }
+                    }
+                });
+                t.start();
+                if (!startSimulation(runTransportationPlans)){
                  System.out.println("Hiba a szimulációban");
                  return false;
              }
-            } else {
+
+
+            }
+            else {
                 System.out.println("All check.....Failed");
                 System.out.println("Hiba! Ellenőrzie a : " + transportationPlans.get(i).getTransportationID() + " tervet");
                 return false;
             }
+
         }
         return true;
     }
     private boolean startSimulation(List<TransportationPlan> runTransportationPlans){
-        List<FutureTask> simulationTask = new ArrayList<>();
+        executor = Executors.newFixedThreadPool(runTransportationPlans.size());
+        futureList = new ArrayList<Future<Boolean>>();
         for (TransportationPlan t : runTransportationPlans){
             Depo startDepo=null,endDepo=null;
             for (Depo d : depos){
@@ -199,26 +226,25 @@ public class Simulation  {
             }
             if (startDepo != null && endDepo != null){
                 RunSimulation runSimulation = new RunSimulation(t, startDepo, endDepo);
-                simulationTask.add(new FutureTask(runSimulation));
+                Future<Boolean> future = executor.submit(runSimulation);
+                futureList.add(future);
             }else{
                 System.out.println("yeeeeeeeeeeeeeeeeeeeeeeeet");
             }
         }
-        for (FutureTask futureTask : simulationTask){
-            Thread t = new Thread(futureTask);
-            t.start();
-        }
-        for (FutureTask futureTask : simulationTask){
+        for (Future future : futureList){
             try {
-                if(!(Boolean)futureTask.get()){
+                if(!(Boolean)future.get()){
                     return false;
                 }
             } catch (InterruptedException interruptedException) {
                 interruptedException.printStackTrace();
+
             } catch (ExecutionException e) {
                 e.printStackTrace();
             }
         }
+        executor.shutdown();
         return true;
     }
 
@@ -234,6 +260,7 @@ public class Simulation  {
         String highestContainerCapacityID;
         private double headOfTheFluid;
 
+
         public RunSimulation(TransportationPlan t, Depo startDepo, Depo endDepo) {
             this.t = t;
             this.startDepo = startDepo;
@@ -247,9 +274,10 @@ public class Simulation  {
             endDepoContainerID = endDepo.getContainerID(t);
             highestContainerCapacityID = startDepo.getHighestCurrentCapacityContainer();
             currentHours = t.getStartHours();
+            currentMinutes = t.getStartMinutes();
         }
         @Override
-        public Boolean call() throws Exception {
+        public Boolean call()  {
             System.out.println("Simulation started......\n");
             System.out.println("PipeID:"+pipeID+"  From: " + t.getStartDepoID() + "  To: " + t.getEndDepoID() + "  Fuel: " + t.getFuelID() + "  Fuel Amount: " + t.getFuelAmount());
             System.out.println("Start Hours:: " + t.getStartHours() + "  Start Minutes: " + t.getStartMinutes());
@@ -258,7 +286,13 @@ public class Simulation  {
             while(hours < t.getEndHours()){
                 int minutes = 0;
                 while (minutes < 60){
-                    if (!process()) return false;
+                    try {
+                        if (Thread.currentThread().isInterrupted()) return false;
+                        if (!process()) return false;
+                    } catch (InterruptedException interruptedException) {
+                        Thread.currentThread().interrupt();
+                        return false;
+                    }
                     currentMinutes = minutes;
                     minutes++;
                 }
@@ -268,7 +302,11 @@ public class Simulation  {
             }
             int minutes = t.getStartMinutes();
             while(minutes < t.getEndMinutes()){
-                if (!process()) return false;
+                try {
+                    if (!process()) return false;
+                } catch (InterruptedException interruptedException) {
+                    interruptedException.printStackTrace();
+                }
                 minutes++;
                 currentMinutes = minutes;
             }
