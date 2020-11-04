@@ -16,12 +16,18 @@ public class Simulation  {
     private List <Depo> depos;
     private Map<String, DepoConnection> depoConnections;
     private int currentHours, currentMinutes;
+    private List<String> errorMessages;
+
 
     public Simulation() {
         transportationPlans = new ArrayList<>();
         depos = new ArrayList<>();
         depoConnections = new LinkedHashMap<>();
+        errorMessages = new ArrayList<>();
         readData();
+    }
+    public List<String> getErrorMessages() {
+        return errorMessages;
     }
     public Map<String, DepoConnection> getDepoConnections() {
         return depoConnections;
@@ -107,6 +113,7 @@ public class Simulation  {
             }
         }
         System.out.println("End Container Fuel and Capacity.....Failed");
+        errorMessages.add("Nincs elég kapacitás/nem létezik olyan tipusú tartály a vételi oldalon. Ellenőrizze a "+t.getTransportationID()+" tervet!");
         return false;
     }
     private boolean checkStartFuelAndCapacity(TransportationPlan t, Depo d) {
@@ -117,6 +124,7 @@ public class Simulation  {
             }
         }
         System.out.println("Start Container Fuel and Capacity.....Failed");
+        errorMessages.add("Nincs elég kapacitás/nem létezik olyan tipusú tartály a küldő oldalon. Ellenőrizze a "+t.getTransportationID()+" tervet!");
         return false;
     }
     private boolean checkConnection(String tID){
@@ -127,6 +135,7 @@ public class Simulation  {
             }
         }
         System.out.println("Depo Connection.....Failed");
+        errorMessages.add("A küldő és vételi oldal között nincs összeköttetés. Ellenőrizze a "+ tID+" tervet!");
         return false;
     }
     private boolean runSimulations(){
@@ -144,7 +153,9 @@ public class Simulation  {
                             System.out.println("Ugyanazon az időben, ugyanabban az irányban nem mehet két terv egyszere");
                             System.out.println("Hibás tervek:"+transportationPlans.get(i).getTransportationID()
                                     + " , "+transportationPlans.get(j).getTransportationID());
-                            System.out.println("whack");
+                            errorMessages.add("Ugyanazon időpillantban egyszerre nem mehet két terv. Ellenőrizze a "
+                                    +transportationPlans.get(i).getTransportationID()
+                                    + " és a "+transportationPlans.get(j).getTransportationID()+" terveket!");
                             return false;
                         }
                         else if (transportationPlans.get(i).getStartDepoID().equals(transportationPlans.get(j).getStartDepoID())
@@ -155,7 +166,7 @@ public class Simulation  {
                                 j++; i++;
                             }
                             else{
-                                System.out.println("Hiba! Ellenőrzise a "+transportationPlans.get(j).getTransportationID()+ " tervet");
+                                System.out.println("Hiba! Ellenőrizze a "+transportationPlans.get(j).getTransportationID()+ " tervet");
                                 return false;
                             }
 
@@ -235,6 +246,7 @@ public class Simulation  {
             startDepoContainerID = startDepo.getContainerID(t);
             endDepoContainerID = endDepo.getContainerID(t);
             highestContainerCapacityID = startDepo.getHighestCurrentCapacityContainer();
+            currentHours = t.getStartHours();
         }
         @Override
         public Boolean call() throws Exception {
@@ -247,8 +259,8 @@ public class Simulation  {
                 int minutes = 0;
                 while (minutes < 60){
                     if (!process()) return false;
-                    minutes++;
                     currentMinutes = minutes;
+                    minutes++;
                 }
                 hours++;
                 currentHours = hours;
@@ -272,6 +284,8 @@ public class Simulation  {
                 return true;
             }
             else{
+                errorMessages.add("A megadott idő intervallumban nem teljesíthető a "+t.getTransportationID()+" terv. " +
+                        "Növelje az időintervallumot vagy csökkentse az átvinni kivánt anyagmennyiséget");
                 System.out.println("Transportation Failed");
                 return false;
             }
@@ -290,6 +304,8 @@ public class Simulation  {
                         if (highestContainerCapacityID == null)
                             return false;
                         if ((startDepo.getContainers().get(highestContainerCapacityID).getCurrentCapacity() - volumeFlowRate) < 0) {
+                            errorMessages.add("Nincs elég üzemanyag a vételi oldalon, hogy át lehessen vinni a tervben szereplő üzemanyagot. " +
+                                    "Ellenőrizze a "+t.getTransportationID()+" tervet!");
                             System.out.println("Alulcsordulás");
                             return false;
                         }
@@ -312,6 +328,7 @@ public class Simulation  {
                     for (int i : ls){
                         if ((endDepo.getContainers().get(endDepo.getContainerID(i)).getCurrentCapacity()+volumeFlowRate) >
                                 endDepo.getContainers().get(endDepo.getContainerID(i)).getMaxCapacity()) {
+                            errorMessages.add("A vételi oldalon megtelt a tartály! ");
                             System.out.println("Túlcsordulás");
                             return false;
                         }
