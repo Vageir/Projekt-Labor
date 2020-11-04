@@ -12,6 +12,9 @@ public class TransportationPlan {
     private String startDate;
     private String endDate;
     private String operatorID;
+    private String pipeID;
+
+
 
     public TransportationPlan(ArrayList<String> ls){
         this.transportationID = ls.get(0);
@@ -22,6 +25,7 @@ public class TransportationPlan {
         this.startDate = ls.get(5);
         this.endDate = ls.get(6);
         this.operatorID = ls.get(7);
+        this.pipeID = ls.get(8);
     }
 
 //    public  ArrayList<Integer> dateComponent(String date){
@@ -32,7 +36,9 @@ public class TransportationPlan {
 //        }
 //        return ls;
 //    }
-
+    public String getPipeID() {
+        return pipeID;
+    }
     public int getStartHours(){
         return Integer.parseInt(startDate.substring(11,13));
     }
@@ -54,37 +60,20 @@ public class TransportationPlan {
     public String getTransportationID() {
         return transportationID;
     }
-    public void setTransportationID(String transportationID) {
-        this.transportationID = transportationID;
-    }
     public String getStartDepoID() {
         return startDepoID;
-    }
-    public void setStartDepoID(String startDepoID) {
-        this.startDepoID = startDepoID;
     }
     public String getEndDepoID() {
         return endDepoID;
     }
-    public void setEndDepoID(String endDepoID) {
-        this.endDepoID = endDepoID;
-    }
     public int getFuelID() {
         return fuelID;
-    }
-    public void setFuelID(int fuelID) {
-        this.fuelID = fuelID;
     }
     public int getFuelAmount() {
         return fuelAmount;
     }
-    public void setFuelAmount(int fuelAmount) {
-        this.fuelAmount = fuelAmount;
-    }
     public String getOperatorID() {
         return operatorID;
     }
-    public void setOperatorID(String operatorID) {
-        this.operatorID = operatorID;
-    }
+
 }

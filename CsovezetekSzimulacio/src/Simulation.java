@@ -184,9 +184,10 @@ public class Simulation  {
                                     ||(transportationPlans.get(finalJ).getStartHours() == transportationPlans.get(finalI).getEndHours()
                                     && transportationPlans.get(finalJ).getStartMinutes() < transportationPlans.get(finalI).getEndMinutes()))
                             {
-                                System.out.println(transportationPlans.get(finalJ).getStartHours()+":"+transportationPlans.get(finalJ).getStartMinutes() );
-                                while(currentHours != transportationPlans.get(finalJ).getStartHours()
-                                        || currentMinutes != transportationPlans.get(finalJ).getStartMinutes()){}
+                                System.out.println(transportationPlans.get(finalJ).getStartHours() + ":" + transportationPlans.get(finalJ).getStartMinutes());
+                                while (currentHours != transportationPlans.get(finalJ).getStartHours()
+                                        || currentMinutes != transportationPlans.get(finalJ).getStartMinutes()) {
+                                }
                                 executor.shutdownNow();
                                 errorMessages.add("A terv nem indulhat el amig a másik be nem fejeződött");
                             }
@@ -226,7 +227,8 @@ public class Simulation  {
                 Future<Boolean> future = executor.submit(runSimulation);
                 futureList.add(future);
             }else{
-                System.out.println("yeeeeeeeeeeeeeeeeeeeeeeeet");
+                errorMessages.add("Hiba a szimuláció inditásában!");
+                return false;
             }
         }
         for (Future future : futureList){
@@ -245,7 +247,6 @@ public class Simulation  {
         return true;
     }
 
-
     private class RunSimulation implements Callable<Boolean> {
         TransportationPlan t;
         int pipeLength = 0, pipeDiameter = 0;
@@ -262,7 +263,7 @@ public class Simulation  {
             this.t = t;
             this.startDepo = startDepo;
             this.endDepo = endDepo;
-            pipeID = getPipeID(startDepo.getDepoID(),endDepo.getDepoID());
+            pipeID = t.getPipeID();
             pipeLength = depoConnections.get(pipeID).getPipeLength();
             pipeDiameter = depoConnections.get(pipeID).getPipeDiameter();
             flowVelocity = Simulation.volumeFlowRate / (Math.PI * Math.pow(((double) pipeDiameter / 2), 2));
@@ -295,6 +296,9 @@ public class Simulation  {
                     }
                     currentMinutes = minutes;
                     minutes++;
+//                    for (Map.Entry<Integer, List<Double>> entry : depoConnections.get(pipeID).getHeadAndTailOfTheFluidRelativeToLeftDepo().entrySet()) {
+//                        System.out.println("Fuel ID: "+entry.getKey()+"   "+entry.getValue().get(0)+";"+entry.getValue().get(1));
+//                    }
                 }
                 hours++;
                 currentHours = hours;

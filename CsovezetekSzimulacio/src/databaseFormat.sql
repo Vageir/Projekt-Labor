@@ -56,14 +56,17 @@ CREATE TABLE `transportationplan` (
                                       `startDate` datetime NOT NULL,
                                       `endDdate` datetime NOT NULL,
                                       `operatorID` varchar(30) NOT NULL,
+                                      `pipeID` varchar(30) DEFAULT NULL,
                                       PRIMARY KEY (`transportationID`),
                                       UNIQUE KEY `transportationID_UNIQUE` (`transportationID`),
-                                      KEY `startdepoidfk_idx` (`startdepoID`,`endDepoID`),
+                                      KEY `stardepoidfk_idx` (`startdepoID`,`endDepoID`),
                                       KEY `endepoidfk_idx` (`endDepoID`),
                                       KEY `fuelidfk_idx` (`fuelID`),
                                       KEY `operatoridfk_idx` (`operatorID`),
+                                      KEY `pipeidfk_idx` (`pipeID`),
                                       CONSTRAINT `endepoidfk` FOREIGN KEY (`endDepoID`) REFERENCES `depo` (`DepoID`) ON DELETE CASCADE ON UPDATE CASCADE,
                                       CONSTRAINT `operatoridfk` FOREIGN KEY (`operatorID`) REFERENCES `operator` (`OperatorID`) ON DELETE CASCADE ON UPDATE CASCADE,
+                                      CONSTRAINT `pipeidfk` FOREIGN KEY (`pipeID`) REFERENCES `connecteddepos` (`PipeID`) ON DELETE CASCADE ON UPDATE CASCADE,
                                       CONSTRAINT `startdepoidfk` FOREIGN KEY (`startdepoID`) REFERENCES `depo` (`DepoID`) ON DELETE CASCADE ON UPDATE CASCADE,
                                       CONSTRAINT `tfuelidfk` FOREIGN KEY (`fuelID`) REFERENCES `fuel` (`fuelID`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
