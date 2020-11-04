@@ -19,9 +19,6 @@ public class DepoConnection {
         ls.add((double) 0);
         headAndTailOfTheFluidRelativeToLeftDepo.put(2,ls);
     }
-    public void setHeadOfTheFluid(int fuelID, List<Double> location){
-        headAndTailOfTheFluidRelativeToLeftDepo.put(fuelID,location);
-    }
     public String getLeftDepoID() {
         return leftDepoID;
     }
@@ -35,8 +32,7 @@ public class DepoConnection {
         return pipeDiameter;
     }
     public Map<Integer, List<Double>> getHeadAndTailOfTheFluidRelativeToLeftDepo() {
-        return headAndTailOfTheFluidRelativeToLeftDepo;
-    }
+        return headAndTailOfTheFluidRelativeToLeftDepo;    }
     public List<Integer> getFuelIDBefore(){
         List<Integer> ls = new ArrayList<>();
         for (Map.Entry<Integer,List<Double>> entry : headAndTailOfTheFluidRelativeToLeftDepo.entrySet()){
@@ -61,7 +57,6 @@ public class DepoConnection {
             Double tail = entry.getValue().get(1);
             if (head.equals(tail) || tail.compareTo(head) > 0) {
                 ll.add(entry.getKey());
-                System.out.println("YEET");
             }
 
         }

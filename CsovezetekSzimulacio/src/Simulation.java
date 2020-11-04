@@ -88,7 +88,7 @@ public class Simulation  {
             if (t.getTransportationID().equals(tID)){
                 for (Depo d:depos){
                     if (t.getStartDepoID().equals(d.getDepoID())){
-                        System.out.println("Start Depo Fuel and Container Check");
+//                        System.out.println("Start Depo Fuel and Container Check");
                         if (!checkStartFuelAndCapacity(t,d)){
                             return false;
                         }
@@ -96,7 +96,7 @@ public class Simulation  {
                 }
                 for (Depo d:depos){
                     if (t.getEndDepoID().equals(d.getDepoID())){
-                        System.out.println("End Depo Fuel and Container Check");
+//                        System.out.println("End Depo Fuel and Container Check");
                         if (!checkEndFuelAndCapacity(t,d)){
                             return false;
                         }
@@ -109,33 +109,33 @@ public class Simulation  {
     private boolean checkEndFuelAndCapacity(TransportationPlan t, Depo d) {
         for (Map.Entry<String, Depo.DepoContainer> entry : d.getContainers().entrySet()){
             if (entry.getValue().getFuelID() == t.getFuelID() && entry.getValue().getCurrentCapacity()+t.getFuelAmount() <= entry.getValue().getMaxCapacity()){
-                System.out.println("End Container Fuel and Capacity.....OK");
+//                System.out.println("End Container Fuel and Capacity.....OK");
                 return true;
             }
         }
-        System.out.println("End Container Fuel and Capacity.....Failed");
+//        System.out.println("End Container Fuel and Capacity.....Failed");
         errorMessages.add("Nincs elég kapacitás/nem létezik olyan tipusú tartály a vételi oldalon. Ellenőrizze a "+t.getTransportationID()+" tervet!");
         return false;
     }
     private boolean checkStartFuelAndCapacity(TransportationPlan t, Depo d) {
         for (Map.Entry<String, Depo.DepoContainer> entry : d.getContainers().entrySet()){
             if (entry.getValue().getFuelID()== t.getFuelID() && entry.getValue().getCurrentCapacity() >= t.getFuelAmount()){
-                System.out.println("Start Container Fuel and Capacity.....OK");
+//                System.out.println("Start Container Fuel and Capacity.....OK");
                 return true;
             }
         }
-        System.out.println("Start Container Fuel and Capacity.....Failed");
+//        System.out.println("Start Container Fuel and Capacity.....Failed");
         errorMessages.add("Nincs elég kapacitás/nem létezik olyan tipusú tartály a küldő oldalon. Ellenőrizze a "+t.getTransportationID()+" tervet!");
         return false;
     }
     private boolean checkConnection(String tID){
-        System.out.println("Depo Connection Check");
+//        System.out.println("Depo Connection Check");
         for (TransportationPlan t : transportationPlans){
             if (t.getTransportationID().equals(tID)){
                 if (getPipeID(t.getStartDepoID(),t.getEndDepoID()) != null) return true;
             }
         }
-        System.out.println("Depo Connection.....Failed");
+//        System.out.println("Depo Connection.....Failed");
         errorMessages.add("A küldő és vételi oldal között nincs összeköttetés. Ellenőrizze a "+ tID+" tervet!");
         return false;
     }
@@ -143,7 +143,7 @@ public class Simulation  {
         for (int i = 0; i < transportationPlans.size(); i++ ) {
             System.out.println("\nTid:" + transportationPlans.get(i).getTransportationID());
             if (checkConnection(transportationPlans.get(i).getTransportationID()) && checkContainer(transportationPlans.get(i).getTransportationID())) {
-                System.out.println("All check.....OK\n");
+//                System.out.println("All check.....OK\n");
                 List<TransportationPlan> runTransportationPlans = new ArrayList<>();
                 int j = i + 1;
                 runTransportationPlans.add(transportationPlans.get(i));
@@ -195,13 +195,13 @@ public class Simulation  {
                 });
                 t.start();
                 if (!startSimulation(runTransportationPlans)){
-                 System.out.println("Hiba a szimulációban");
+//                 System.out.println("Hiba a szimulációban");
                  return false;
              }
             }
             else {
-                System.out.println("All check.....Failed");
-                System.out.println("Hiba! Ellenőrzie a : " + transportationPlans.get(i).getTransportationID() + " tervet");
+//                System.out.println("All check.....Failed");
+//                System.out.println("Hiba! Ellenőrzie a : " + transportationPlans.get(i).getTransportationID() + " tervet");
                 return false;
             }
 
@@ -266,12 +266,15 @@ public class Simulation  {
             pipeLength = depoConnections.get(pipeID).getPipeLength();
             pipeDiameter = depoConnections.get(pipeID).getPipeDiameter();
             flowVelocity = Simulation.volumeFlowRate / (Math.PI * Math.pow(((double) pipeDiameter / 2), 2));
-            System.out.println("Flow velocity: " + flowVelocity);
+//            System.out.println("Flow velocity: " + flowVelocity);
             startDepoContainerID = startDepo.getContainerID(t);
             endDepoContainerID = endDepo.getContainerID(t);
             highestContainerCapacityID = startDepo.getHighestCurrentCapacityContainer();
             currentHours = t.getStartHours();
             currentMinutes = t.getStartMinutes();
+            for (Map.Entry<Integer, List<Double>> entry : depoConnections.get(pipeID).getHeadAndTailOfTheFluidRelativeToLeftDepo().entrySet()) {
+                System.out.println("Fuel ID: "+entry.getKey()+"   "+entry.getValue().get(0)+";"+entry.getValue().get(1));
+            }
         }
         @Override
         public Boolean call()  {
@@ -307,15 +310,9 @@ public class Simulation  {
                 minutes++;
                 currentMinutes = minutes;
             }
-            for (Map.Entry<Integer, List<Double>> entry : depoConnections.get(pipeID).getHeadAndTailOfTheFluidRelativeToLeftDepo().entrySet()) {
-                System.out.println("Fuel ID: "+entry.getKey()+"   "+entry.getValue().get(0)+";"+entry.getValue().get(1));
-            }
             if (tailOfTheFluid >= pipeLength){
                 System.out.println("Transportation Complete");
                 depoConnections.get(pipeID).setCurrentFuelID();
-                for (Map.Entry<Integer, List<Double>> entry : depoConnections.get(pipeID).getHeadAndTailOfTheFluidRelativeToLeftDepo().entrySet()) {
-                    System.out.println("Fuel ID: "+entry.getKey()+"   "+entry.getValue().get(0)+";"+entry.getValue().get(1));
-                }
                 return true;
             }
             else{
