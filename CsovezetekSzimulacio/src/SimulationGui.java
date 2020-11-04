@@ -7,7 +7,7 @@ public class SimulationGui {
 
     private static void setGUIatStart() {
         simulation = new Simulation();
-        frame = new Graph("Depos and pipes", simulation);
+        frame = new Graph("A szimuláció állapota:", simulation);
         frame.setSize(1200,900);
         frame.setVisible(true);
         frame.loadGraph();
