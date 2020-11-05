@@ -4,7 +4,7 @@ import java.awt.event.ActionListener;
 
 public class MenuGui extends JFrame {
     private JPanel mainPanel;
-    private JButton adminButton;
+    private JButton newDataButton;
     private JButton planInputButton;
     private JButton simulationButton;
     private JButton logoutButton;
@@ -17,10 +17,10 @@ public class MenuGui extends JFrame {
         this.pack();
         this.setLocationRelativeTo(null);
 
-        adminButton.addActionListener(new ActionListener() {
+        newDataButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                JFrame admin = new AdminGui("Admin");
+                JFrame admin = new AdminGui("Új adat");
                 admin.setVisible(true);
                 MenuGui.super.dispose();
             }
@@ -55,7 +55,7 @@ public class MenuGui extends JFrame {
         alterDatabaseButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                JFrame alter = new AlterDatabaseGui("Módosítás");
+                JFrame alter = new AlterDatabaseGui("Adatok");
                 alter.setVisible(true);
                 MenuGui.super.dispose();
             }

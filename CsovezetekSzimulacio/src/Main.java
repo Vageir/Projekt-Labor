@@ -6,7 +6,7 @@ public class Main {
 //        JFrame frame = new LoginGui("Login");
 //        JFrame frame = new MenuGui("Menü");
 //        JFrame frame = new AdminGui("Admin");
-        JFrame frame = new AlterDatabaseGui("Módosítás");
+        JFrame frame = new AlterDatabaseGui("Adatok");
 //        JFrame frame = new planInput("Plan input");
         frame.setVisible(true);
     }
