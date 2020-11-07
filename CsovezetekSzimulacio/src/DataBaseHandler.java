@@ -146,10 +146,10 @@ public class DataBaseHandler {
                     } else if (columnType.get(j).equals("DATETIME")) {
 //                        System.out.println(resultSet.getTimestamp(columName.get(j)));
                         tmp.add(String.valueOf(resultSet.getTimestamp(columName.get(j))));
-                    }   else if (columnType.get(j).equals("DATE")) {
+                    } else if (columnType.get(j).equals("DATE")) {
 //                        System.out.println(resultSet.getTimestamp(columName.get(j)));
-                    tmp.add(String.valueOf(resultSet.getString(columName.get(j))));
-                }
+                        tmp.add(String.valueOf(resultSet.getString(columName.get(j))));
+                    }
                 }
 //                System.out.println(tmp);
                 result.put(i,tmp);
@@ -199,6 +199,8 @@ public class DataBaseHandler {
                         record.add(resultSet.getString(columName.get(j)));
                     } else if (columnType.get(j).equals("DATETIME")) {
                         record.add(String.valueOf(resultSet.getTimestamp(columName.get(j))));
+                    } else if (columnType.get(j).equals("DATE")) {
+                        record.add(String.valueOf(resultSet.getString(columName.get(j))));
                     }
                 }
             }
@@ -227,7 +229,7 @@ public class DataBaseHandler {
             return;
         }
         try {
-            String sql = "UPDATE "+tableName+" SET "+columName+" = "+value+" WHERE "+condition;
+            String sql = "UPDATE "+tableName+" SET "+columName+" = '"+value+"' WHERE "+condition;
 //            System.out.println(sql);
             stmt.executeUpdate(sql);
             stmt.close();

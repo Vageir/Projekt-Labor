@@ -277,6 +277,13 @@ public class AlterDatabaseGui extends JFrame {
         backButton.setBounds(230,100,100,25);
         dialog.add(backButton);
 
+        String condition;
+        if (!tableName.equals("depocontainer")) {
+            condition = col1 + " = '" + value1 + "'";
+        } else {
+            condition = col1 + " = '" + value1 + "' AND " + col2 + " = '" + value2 + "'";
+        }
+
         deleteButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -286,12 +293,6 @@ public class AlterDatabaseGui extends JFrame {
                                                                         JOptionPane.QUESTION_MESSAGE);
                 if (result == JOptionPane.YES_OPTION) {
 //                    System.out.println("YES");
-                    String condition;
-                    if (!tableName.equals("depocontainer")) {
-                        condition = col1 + " = '" + value1 + "'";
-                    } else {
-                        condition = col1 + " = '" + value1 + "' AND " + col2 + " = '" + value2 + "'";
-                    }
                     new DataBaseHandler().deleteRecord(tableName, condition);
                     fillTables();
                     dialog.dispose();
@@ -309,12 +310,408 @@ public class AlterDatabaseGui extends JFrame {
         alterButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
+//                alterOperator(condition);
+                switch (tableName) {
+                    case "operator":
+                        alterOperator(condition);
+                        break;
+                    case "depo":
+                        alterDepo(condition);
+                        break;
+                    case "depocontainer":
+                        alterContainer(condition);
+                        break;
+                    case "connecteddepos":
+                        alterPipe(condition);
+                        break;
+                    case "fuel":
+                        alterFuel(condition);
+                        break;
+                    case "transportationplan":
+                        alterPlan(condition);
+                        break;
+                    default:
+                        JOptionPane.showMessageDialog(null,"ERROR: Hibás táblanév!");
+                }
 
+
+                dialog.dispose();
             }
         });
 
         dialog.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
         dialog.setVisible(true);
+    }
+
+    public void alterOperator(String condition) {
+        ArrayList<String> columns = new DataBaseHandler().getTableMetaData("operator",1);
+        ArrayList<String> record = new DataBaseHandler().readRecordWithCondition("operator", condition);
+
+        JDialog alterDia = new JDialog();
+        alterDia.setSize(355,220);
+        alterDia.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        alterDia.setLocationRelativeTo(null);
+        alterDia.setLayout(null);
+
+        JLabel label1 = new JLabel(columns.get(0) + ":"); label1.setBounds(10,20,100,25); alterDia.add(label1);
+        JLabel label2 = new JLabel(columns.get(1) + ":"); label2.setBounds(10,55,100,25); alterDia.add(label2);
+        JLabel label3 = new JLabel(columns.get(2) + ":"); label3.setBounds(10,90,100,25); alterDia.add(label3);
+
+        JTextField field1 = new JTextField(record.get(0)); field1.setBounds(120,20,200,25); alterDia.add(field1);
+        JTextField field2 = new JTextField(record.get(1)); field2.setBounds(120,55,200,25); alterDia.add(field2);
+        JTextField field3 = new JTextField(record.get(2)); field3.setBounds(120,90,200,25); alterDia.add(field3);
+
+        JButton confirmButton = new JButton("Módosít"); confirmButton.setBounds(65,135,100,25); alterDia.add(confirmButton);
+        JButton backButton = new JButton("Mégse"); backButton.setBounds(175,135,100,25); alterDia.add(backButton);
+
+        confirmButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                if (!(field1.getText().equals("")) && !(field2.getText().equals("")) && !(field3.getText().equals(""))) {
+                    // ha egyik mező sem üres
+                    if (!(field1.getText().equals(record.get(0))) || !(field2.getText().equals(record.get(1))) || !(field3.getText().equals(record.get(2)))) {
+                        // ha bármelyik adat változott
+                        // String sql = "UPDATE "+tableName+" SET "+columName+" = "+value+" WHERE "+condition;
+                        String alterCond = columns.get(0) + " = '" + record.get(0) + "'";
+                        new DataBaseHandler().updateRecord("operator", columns.get(0), field1.getText(), alterCond);
+                        new DataBaseHandler().updateRecord("operator", columns.get(1), field2.getText(), alterCond);
+                        new DataBaseHandler().updateRecord("operator", columns.get(2), String.valueOf(field3.getText()), alterCond);
+                        fillTables();
+                        alterDia.dispose();
+                    } else {
+                        JOptionPane.showMessageDialog(alterDia, "A rekord nem módosult");
+                        alterDia.dispose();
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Egy mezőt sem hagyhat üresen!");
+                }
+            }
+        });
+
+        backButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                alterDia.dispose();
+            }
+        });
+
+        alterDia.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
+        alterDia.setVisible(true);
+    }
+
+    public void alterDepo(String condition) {
+        ArrayList<String> columns = new DataBaseHandler().getTableMetaData("depo",1);
+        ArrayList<String> record = new DataBaseHandler().readRecordWithCondition("depo", condition);
+
+        JDialog alterDia = new JDialog();
+        alterDia.setSize(355,220);
+        alterDia.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        alterDia.setLocationRelativeTo(null);
+        alterDia.setLayout(null);
+
+        JLabel label1 = new JLabel(columns.get(0) + ":"); label1.setBounds(10,20,100,25); alterDia.add(label1);
+        JLabel label2 = new JLabel(columns.get(1) + ":"); label2.setBounds(10,55,100,25); alterDia.add(label2);
+        JLabel label3 = new JLabel(columns.get(2) + ":"); label3.setBounds(10,90,100,25); alterDia.add(label3);
+
+        JTextField field1 = new JTextField(record.get(0)); field1.setBounds(120,20,200,25); alterDia.add(field1);
+        JTextField field2 = new JTextField(record.get(1)); field2.setBounds(120,55,200,25); alterDia.add(field2);
+        JTextField field3 = new JTextField(record.get(2)); field3.setBounds(120,90,200,25); alterDia.add(field3);
+
+        JButton confirmButton = new JButton("Módosít"); confirmButton.setBounds(65,135,100,25); alterDia.add(confirmButton);
+        JButton backButton = new JButton("Mégse"); backButton.setBounds(175,135,100,25); alterDia.add(backButton);
+
+        confirmButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                if (!(field1.getText().equals("")) && !(field2.getText().equals("")) && !(field3.getText().equals(""))) {
+                    // ha egyik mező sem üres
+                    if (!(field1.getText().equals(record.get(0))) || !(field2.getText().equals(record.get(1))) || !(field3.getText().equals(record.get(2)))) {
+                        // ha bármelyik adat változott
+                        // String sql = "UPDATE "+tableName+" SET "+columName+" = "+value+" WHERE "+condition;
+                        String alterCond = columns.get(0) + " = '" + record.get(0) + "'";
+                        new DataBaseHandler().updateRecord("depo", columns.get(0), field1.getText(), alterCond);
+                        new DataBaseHandler().updateRecord("depo", columns.get(1), field2.getText(), alterCond);
+                        new DataBaseHandler().updateRecord("depo", columns.get(2), field3.getText(), alterCond);
+                        fillTables();
+                        alterDia.dispose();
+                    } else {
+                        JOptionPane.showMessageDialog(alterDia, "A rekord nem módosult");
+                        alterDia.dispose();
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Egy mezőt sem hagyhat üresen!");
+                }
+            }
+        });
+
+        backButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                alterDia.dispose();
+            }
+        });
+
+        alterDia.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
+        alterDia.setVisible(true);
+    }
+
+    public void alterContainer(String condition) {
+        ArrayList<String> columns = new DataBaseHandler().getTableMetaData("depocontainer",1);
+        ArrayList<String> record = new DataBaseHandler().readRecordWithCondition("depocontainer", condition);
+
+        JDialog alterDia = new JDialog();
+        alterDia.setSize(355,290);
+        alterDia.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        alterDia.setLocationRelativeTo(null);
+        alterDia.setLayout(null);
+
+        JLabel label1 = new JLabel(columns.get(0) + ":"); label1.setBounds(10,20,100,25); alterDia.add(label1);
+        JLabel label2 = new JLabel(columns.get(1) + ":"); label2.setBounds(10,55,100,25); alterDia.add(label2);
+        JLabel label3 = new JLabel(columns.get(2) + ":"); label3.setBounds(10,90,100,25); alterDia.add(label3);
+        JLabel label4 = new JLabel(columns.get(3) + ":"); label4.setBounds(10,125,100,25); alterDia.add(label4);
+        JLabel label5 = new JLabel(columns.get(4) + ":"); label5.setBounds(10,160,100,25); alterDia.add(label5);
+
+        JTextField field1 = new JTextField(record.get(0)); field1.setBounds(120,20,200,25); alterDia.add(field1);
+        JTextField field2 = new JTextField(record.get(1)); field2.setBounds(120,55,200,25); alterDia.add(field2);
+        JTextField field3 = new JTextField(record.get(2)); field3.setBounds(120,90,200,25); alterDia.add(field3);
+        JTextField field4 = new JTextField(record.get(3)); field4.setBounds(120,125,200,25); alterDia.add(field4);
+        JTextField field5 = new JTextField(record.get(4)); field5.setBounds(120,160,200,25); alterDia.add(field5);
+
+        JButton confirmButton = new JButton("Módosít"); confirmButton.setBounds(65,205,100,25); alterDia.add(confirmButton);
+        JButton backButton = new JButton("Mégse"); backButton.setBounds(175,205,100,25); alterDia.add(backButton);
+
+        confirmButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                if (!(field1.getText().equals("")) && !(field2.getText().equals("")) && !(field3.getText().equals(""))
+                        && !(field4.getText().equals("")) && !(field5.getText().equals(""))) {
+                    // ha egyik mező sem üres
+                    if (!(field1.getText().equals(record.get(0))) || !(field2.getText().equals(record.get(1))) || !(field3.getText().equals(record.get(2)))
+                            || !(field4.getText().equals(record.get(3))) || !(field5.getText().equals(record.get(4)))) {
+                        // ha bármelyik adat változott
+                        // String sql = "UPDATE "+tableName+" SET "+columName+" = "+value+" WHERE "+condition;
+                        String alterCond = columns.get(0) + " = '" + record.get(0) + "' AND " + columns.get(1) + " = '" + record.get(1) + "'";
+                        new DataBaseHandler().updateRecord("depocontainer", columns.get(0), field1.getText(), alterCond);
+                        new DataBaseHandler().updateRecord("depocontainer", columns.get(1), field2.getText(), alterCond);
+                        new DataBaseHandler().updateRecord("depocontainer", columns.get(2), field3.getText(), alterCond);
+                        new DataBaseHandler().updateRecord("depocontainer", columns.get(3), field4.getText(), alterCond);
+                        new DataBaseHandler().updateRecord("depocontainer", columns.get(4), field5.getText(), alterCond);
+                        fillTables();
+                        alterDia.dispose();
+                    } else {
+                        JOptionPane.showMessageDialog(alterDia, "A rekord nem módosult");
+                        alterDia.dispose();
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Egy mezőt sem hagyhat üresen!");
+                }
+            }
+        });
+
+        backButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                alterDia.dispose();
+            }
+        });
+
+        alterDia.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
+        alterDia.setVisible(true);
+    }
+
+    public void alterPipe(String condition) {
+        ArrayList<String> columns = new DataBaseHandler().getTableMetaData("connecteddepos",1);
+        ArrayList<String> record = new DataBaseHandler().readRecordWithCondition("connecteddepos", condition);
+
+        JDialog alterDia = new JDialog();
+        alterDia.setSize(355,290);
+        alterDia.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        alterDia.setLocationRelativeTo(null);
+        alterDia.setLayout(null);
+
+        JLabel label1 = new JLabel(columns.get(0) + ":"); label1.setBounds(10,20,100,25); alterDia.add(label1);
+        JLabel label2 = new JLabel(columns.get(1) + ":"); label2.setBounds(10,55,100,25); alterDia.add(label2);
+        JLabel label3 = new JLabel(columns.get(2) + ":"); label3.setBounds(10,90,100,25); alterDia.add(label3);
+        JLabel label4 = new JLabel(columns.get(3) + ":"); label4.setBounds(10,125,100,25); alterDia.add(label4);
+        JLabel label5 = new JLabel(columns.get(4) + ":"); label5.setBounds(10,160,100,25); alterDia.add(label5);
+
+        JTextField field1 = new JTextField(record.get(0)); field1.setBounds(120,20,200,25); alterDia.add(field1);
+        JTextField field2 = new JTextField(record.get(1)); field2.setBounds(120,55,200,25); alterDia.add(field2);
+        JTextField field3 = new JTextField(record.get(2)); field3.setBounds(120,90,200,25); alterDia.add(field3);
+        JTextField field4 = new JTextField(record.get(3)); field4.setBounds(120,125,200,25); alterDia.add(field4);
+        JTextField field5 = new JTextField(record.get(4)); field5.setBounds(120,160,200,25); alterDia.add(field5);
+
+        JButton confirmButton = new JButton("Módosít"); confirmButton.setBounds(65,205,100,25); alterDia.add(confirmButton);
+        JButton backButton = new JButton("Mégse"); backButton.setBounds(175,205,100,25); alterDia.add(backButton);
+
+        confirmButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                if (!(field1.getText().equals("")) && !(field2.getText().equals("")) && !(field3.getText().equals(""))
+                        && !(field4.getText().equals("")) && !(field5.getText().equals(""))) {
+                    // ha egyik mező sem üres
+                    if (!(field1.getText().equals(record.get(0))) || !(field2.getText().equals(record.get(1))) || !(field3.getText().equals(record.get(2)))
+                            || !(field4.getText().equals(record.get(3))) || !(field5.getText().equals(record.get(4)))) {
+                        // ha bármelyik adat változott
+                        // String sql = "UPDATE "+tableName+" SET "+columName+" = "+value+" WHERE "+condition;
+                        String alterCond = columns.get(0) + " = '" + record.get(0) + "'";
+                        new DataBaseHandler().updateRecord("connecteddepos", columns.get(0), field1.getText(), alterCond);
+                        new DataBaseHandler().updateRecord("connecteddepos", columns.get(1), field2.getText(), alterCond);
+                        new DataBaseHandler().updateRecord("connecteddepos", columns.get(2), field3.getText(), alterCond);
+                        new DataBaseHandler().updateRecord("connecteddepos", columns.get(3), field4.getText(), alterCond);
+                        new DataBaseHandler().updateRecord("connecteddepos", columns.get(4), field5.getText(), alterCond);
+                        fillTables();
+                        alterDia.dispose();
+                    } else {
+                        JOptionPane.showMessageDialog(alterDia, "A rekord nem módosult");
+                        alterDia.dispose();
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Egy mezőt sem hagyhat üresen!");
+                }
+            }
+        });
+
+        backButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                alterDia.dispose();
+            }
+        });
+
+        alterDia.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
+        alterDia.setVisible(true);
+    }
+
+    public void alterFuel(String condition) {
+        ArrayList<String> columns = new DataBaseHandler().getTableMetaData("fuel",1);
+        ArrayList<String> record = new DataBaseHandler().readRecordWithCondition("fuel", condition);
+
+        JDialog alterDia = new JDialog();
+        alterDia.setSize(355,220);
+        alterDia.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        alterDia.setLocationRelativeTo(null);
+        alterDia.setLayout(null);
+
+        JLabel label1 = new JLabel(columns.get(0) + ":"); label1.setBounds(10,20,100,25); alterDia.add(label1);
+        JLabel label2 = new JLabel(columns.get(1) + ":"); label2.setBounds(10,55,100,25); alterDia.add(label2);
+
+        JTextField field1 = new JTextField(record.get(0)); field1.setBounds(120,20,200,25); alterDia.add(field1);
+        JTextField field2 = new JTextField(record.get(1)); field2.setBounds(120,55,200,25); alterDia.add(field2);
+
+        JButton confirmButton = new JButton("Módosít"); confirmButton.setBounds(65,135,100,25); alterDia.add(confirmButton);
+        JButton backButton = new JButton("Mégse"); backButton.setBounds(175,135,100,25); alterDia.add(backButton);
+
+        confirmButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                if (!(field1.getText().equals("")) && !(field2.getText().equals(""))) {
+                    // ha egyik mező sem üres
+                    if (!(field1.getText().equals(record.get(0))) || !(field2.getText().equals(record.get(1)))) {
+                        // ha bármelyik adat változott
+                        // String sql = "UPDATE "+tableName+" SET "+columName+" = "+value+" WHERE "+condition;
+                        String alterCond = columns.get(0) + " = '" + record.get(0) + "'";
+                        new DataBaseHandler().updateRecord("fuel", columns.get(0), field1.getText(), alterCond);
+                        new DataBaseHandler().updateRecord("fuel", columns.get(1), field2.getText(), alterCond);
+                        fillTables();
+                        alterDia.dispose();
+                    } else {
+                        JOptionPane.showMessageDialog(alterDia, "A rekord nem módosult");
+                        alterDia.dispose();
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Egy mezőt sem hagyhat üresen!");
+                }
+            }
+        });
+
+        backButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                alterDia.dispose();
+            }
+        });
+
+        alterDia.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
+        alterDia.setVisible(true);
+    }
+
+    public void alterPlan(String condition) {
+        ArrayList<String> columns = new DataBaseHandler().getTableMetaData("transportationplan",1);
+        ArrayList<String> record = new DataBaseHandler().readRecordWithCondition("transportationplan", condition);
+
+        JDialog alterDia = new JDialog();
+        alterDia.setSize(355,430);
+        alterDia.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        alterDia.setLocationRelativeTo(null);
+        alterDia.setLayout(null);
+
+        JLabel label1 = new JLabel(columns.get(0) + ":"); label1.setBounds(10,20,100,25); alterDia.add(label1);
+        JLabel label2 = new JLabel(columns.get(1) + ":"); label2.setBounds(10,55,100,25); alterDia.add(label2);
+        JLabel label3 = new JLabel(columns.get(2) + ":"); label3.setBounds(10,90,100,25); alterDia.add(label3);
+        JLabel label4 = new JLabel(columns.get(3) + ":"); label4.setBounds(10,125,100,25); alterDia.add(label4);
+        JLabel label5 = new JLabel(columns.get(4) + ":"); label5.setBounds(10,160,100,25); alterDia.add(label5);
+        JLabel label6 = new JLabel(columns.get(5) + ":"); label6.setBounds(10,195,100,25); alterDia.add(label6);
+        JLabel label7 = new JLabel(columns.get(6) + ":"); label7.setBounds(10,230,100,25); alterDia.add(label7);
+        JLabel label8 = new JLabel(columns.get(7) + ":"); label8.setBounds(10,265,100,25); alterDia.add(label8);
+        JLabel label9 = new JLabel(columns.get(8) + ":"); label9.setBounds(10,300,100,25); alterDia.add(label9);
+
+        JTextField field1 = new JTextField(record.get(0)); field1.setBounds(120,20,200,25); alterDia.add(field1);
+        JTextField field2 = new JTextField(record.get(1)); field2.setBounds(120,55,200,25); alterDia.add(field2);
+        JTextField field3 = new JTextField(record.get(2)); field3.setBounds(120,90,200,25); alterDia.add(field3);
+        JTextField field4 = new JTextField(record.get(3)); field4.setBounds(120,125,200,25); alterDia.add(field4);
+        JTextField field5 = new JTextField(record.get(4)); field5.setBounds(120,160,200,25); alterDia.add(field5);
+        JTextField field6 = new JTextField(record.get(5)); field6.setBounds(120,195,200,25); alterDia.add(field6);
+        JTextField field7 = new JTextField(record.get(6)); field7.setBounds(120,230,200,25); alterDia.add(field7);
+        JTextField field8 = new JTextField(record.get(7)); field8.setBounds(120,265,200,25); alterDia.add(field8);
+        JTextField field9 = new JTextField(record.get(8)); field9.setBounds(120,300,200,25); alterDia.add(field9);
+
+        JButton confirmButton = new JButton("Módosít"); confirmButton.setBounds(65,345,100,25); alterDia.add(confirmButton);
+        JButton backButton = new JButton("Mégse"); backButton.setBounds(175,345,100,25); alterDia.add(backButton);
+
+        confirmButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                if (!(field1.getText().equals("")) && !(field2.getText().equals("")) && !(field3.getText().equals(""))
+                        && !(field4.getText().equals("")) && !(field5.getText().equals("")) && !(field6.getText().equals(""))
+                        && !(field7.getText().equals("")) && !(field8.getText().equals("")) && !(field9.getText().equals(""))) {
+                    // ha egyik mező sem üres
+                    if (!(field1.getText().equals(record.get(0))) || !(field2.getText().equals(record.get(1))) || !(field3.getText().equals(record.get(2)))
+                            || !(field4.getText().equals(record.get(3))) || !(field5.getText().equals(record.get(4))) || !(field6.getText().equals(record.get(5)))
+                            || !(field7.getText().equals(record.get(6))) || !(field8.getText().equals(record.get(7))) || !(field9.getText().equals(record.get(8)))) {
+                        // ha bármelyik adat változott
+                        // String sql = "UPDATE "+tableName+" SET "+columName+" = "+value+" WHERE "+condition;
+                        String alterCond = columns.get(0) + " = '" + record.get(0) + "'";
+                        new DataBaseHandler().updateRecord("transportationplan", columns.get(0), field1.getText(), alterCond);
+                        new DataBaseHandler().updateRecord("transportationplan", columns.get(1), field2.getText(), alterCond);
+                        new DataBaseHandler().updateRecord("transportationplan", columns.get(2), field3.getText(), alterCond);
+                        new DataBaseHandler().updateRecord("transportationplan", columns.get(3), field4.getText(), alterCond);
+                        new DataBaseHandler().updateRecord("transportationplan", columns.get(4), field5.getText(), alterCond);
+                        new DataBaseHandler().updateRecord("transportationplan", columns.get(5), field6.getText(), alterCond);
+                        new DataBaseHandler().updateRecord("transportationplan", columns.get(6), field7.getText(), alterCond);
+                        new DataBaseHandler().updateRecord("transportationplan", columns.get(7), field8.getText(), alterCond);
+                        new DataBaseHandler().updateRecord("transportationplan", columns.get(8), field9.getText(), alterCond);
+                        fillTables();
+                        alterDia.dispose();
+                    } else {
+                        JOptionPane.showMessageDialog(alterDia, "A rekord nem módosult");
+                        alterDia.dispose();
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Egy mezőt sem hagyhat üresen!");
+                }
+            }
+        });
+
+        backButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                alterDia.dispose();
+            }
+        });
+
+        alterDia.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
+        alterDia.setVisible(true);
     }
 
 }
