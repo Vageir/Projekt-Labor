@@ -260,21 +260,22 @@ public class AlterDatabaseGui extends JFrame {
         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         dialog.setLocationRelativeTo(null);
         dialog.setLayout(null);
+        dialog.setTitle("Na most mit akarsz?");
 
-        JLabel messageLabel = new JLabel("<insert random szöveg here>");
-        messageLabel.setBounds(50,30,300,25);
+        JLabel messageLabel = new JLabel("Mit kíván tenni a rekorddal?");
+        messageLabel.setBounds(95,30,300,25);
         dialog.add(messageLabel);
 
         JButton deleteButton = new JButton("Töröl");
-        deleteButton.setBounds(10,100,100,25);
+        deleteButton.setBounds(10,90,100,25);
         dialog.add(deleteButton);
 
         JButton alterButton = new JButton("Módosít");
-        alterButton.setBounds(120,100,100,25);
+        alterButton.setBounds(120,90,100,25);
         dialog.add(alterButton);
 
         JButton backButton = new JButton("Mégse");
-        backButton.setBounds(230,100,100,25);
+        backButton.setBounds(230,90,100,25);
         dialog.add(backButton);
 
         String condition;
@@ -371,13 +372,18 @@ public class AlterDatabaseGui extends JFrame {
                     // ha egyik mező sem üres
                     if (!(field1.getText().equals(record.get(0))) || !(field2.getText().equals(record.get(1))) || !(field3.getText().equals(record.get(2)))) {
                         // ha bármelyik adat változott
-                        // String sql = "UPDATE "+tableName+" SET "+columName+" = "+value+" WHERE "+condition;
-                        String alterCond = columns.get(0) + " = '" + record.get(0) + "'";
-                        new DataBaseHandler().updateRecord("operator", columns.get(0), field1.getText(), alterCond);
-                        new DataBaseHandler().updateRecord("operator", columns.get(1), field2.getText(), alterCond);
-                        new DataBaseHandler().updateRecord("operator", columns.get(2), String.valueOf(field3.getText()), alterCond);
-                        fillTables();
-                        alterDia.dispose();
+                        int result = JOptionPane.showConfirmDialog(null, "Biztos hogy módosítja a rekordot?", "Biztos?",
+                                                                                JOptionPane.YES_NO_OPTION,
+                                                                                JOptionPane.QUESTION_MESSAGE);
+                        if (result == JOptionPane.YES_OPTION) {
+//                          System.out.println("YES");
+                            String alterCond = columns.get(0) + " = '" + record.get(0) + "'";
+                            new DataBaseHandler().updateRecord("operator", columns.get(0), field1.getText(), alterCond);
+                            new DataBaseHandler().updateRecord("operator", columns.get(1), field2.getText(), alterCond);
+                            new DataBaseHandler().updateRecord("operator", columns.get(2), String.valueOf(field3.getText()), alterCond);
+                            fillTables();
+                            alterDia.dispose();
+                        } else { /*System.out.println("NO"); */}
                     } else {
                         JOptionPane.showMessageDialog(alterDia, "A rekord nem módosult");
                         alterDia.dispose();
@@ -427,13 +433,18 @@ public class AlterDatabaseGui extends JFrame {
                     // ha egyik mező sem üres
                     if (!(field1.getText().equals(record.get(0))) || !(field2.getText().equals(record.get(1))) || !(field3.getText().equals(record.get(2)))) {
                         // ha bármelyik adat változott
-                        // String sql = "UPDATE "+tableName+" SET "+columName+" = "+value+" WHERE "+condition;
-                        String alterCond = columns.get(0) + " = '" + record.get(0) + "'";
-                        new DataBaseHandler().updateRecord("depo", columns.get(0), field1.getText(), alterCond);
-                        new DataBaseHandler().updateRecord("depo", columns.get(1), field2.getText(), alterCond);
-                        new DataBaseHandler().updateRecord("depo", columns.get(2), field3.getText(), alterCond);
-                        fillTables();
-                        alterDia.dispose();
+                        int result = JOptionPane.showConfirmDialog(null, "Biztos hogy módosítja a rekordot?", "Biztos?",
+                                                                                JOptionPane.YES_NO_OPTION,
+                                                                                JOptionPane.QUESTION_MESSAGE);
+                        if (result == JOptionPane.YES_OPTION) {
+//                          System.out.println("YES");
+                            String alterCond = columns.get(0) + " = '" + record.get(0) + "'";
+                            new DataBaseHandler().updateRecord("depo", columns.get(0), field1.getText(), alterCond);
+                            new DataBaseHandler().updateRecord("depo", columns.get(1), field2.getText(), alterCond);
+                            new DataBaseHandler().updateRecord("depo", columns.get(2), field3.getText(), alterCond);
+                            fillTables();
+                            alterDia.dispose();
+                        } else { /*System.out.println("NO"); */}
                     } else {
                         JOptionPane.showMessageDialog(alterDia, "A rekord nem módosult");
                         alterDia.dispose();
@@ -489,15 +500,20 @@ public class AlterDatabaseGui extends JFrame {
                     if (!(field1.getText().equals(record.get(0))) || !(field2.getText().equals(record.get(1))) || !(field3.getText().equals(record.get(2)))
                             || !(field4.getText().equals(record.get(3))) || !(field5.getText().equals(record.get(4)))) {
                         // ha bármelyik adat változott
-                        // String sql = "UPDATE "+tableName+" SET "+columName+" = "+value+" WHERE "+condition;
-                        String alterCond = columns.get(0) + " = '" + record.get(0) + "' AND " + columns.get(1) + " = '" + record.get(1) + "'";
-                        new DataBaseHandler().updateRecord("depocontainer", columns.get(0), field1.getText(), alterCond);
-                        new DataBaseHandler().updateRecord("depocontainer", columns.get(1), field2.getText(), alterCond);
-                        new DataBaseHandler().updateRecord("depocontainer", columns.get(2), field3.getText(), alterCond);
-                        new DataBaseHandler().updateRecord("depocontainer", columns.get(3), field4.getText(), alterCond);
-                        new DataBaseHandler().updateRecord("depocontainer", columns.get(4), field5.getText(), alterCond);
-                        fillTables();
-                        alterDia.dispose();
+                        int result = JOptionPane.showConfirmDialog(null, "Biztos hogy módosítja a rekordot?", "Biztos?",
+                                                                                JOptionPane.YES_NO_OPTION,
+                                                                                JOptionPane.QUESTION_MESSAGE);
+                        if (result == JOptionPane.YES_OPTION) {
+//                          System.out.println("YES");
+                            String alterCond = columns.get(0) + " = '" + record.get(0) + "' AND " + columns.get(1) + " = '" + record.get(1) + "'";
+                            new DataBaseHandler().updateRecord("depocontainer", columns.get(0), field1.getText(), alterCond);
+                            new DataBaseHandler().updateRecord("depocontainer", columns.get(1), field2.getText(), alterCond);
+                            new DataBaseHandler().updateRecord("depocontainer", columns.get(2), field3.getText(), alterCond);
+                            new DataBaseHandler().updateRecord("depocontainer", columns.get(3), field4.getText(), alterCond);
+                            new DataBaseHandler().updateRecord("depocontainer", columns.get(4), field5.getText(), alterCond);
+                            fillTables();
+                            alterDia.dispose();
+                        } else { /*System.out.println("NO"); */}
                     } else {
                         JOptionPane.showMessageDialog(alterDia, "A rekord nem módosult");
                         alterDia.dispose();
@@ -553,15 +569,20 @@ public class AlterDatabaseGui extends JFrame {
                     if (!(field1.getText().equals(record.get(0))) || !(field2.getText().equals(record.get(1))) || !(field3.getText().equals(record.get(2)))
                             || !(field4.getText().equals(record.get(3))) || !(field5.getText().equals(record.get(4)))) {
                         // ha bármelyik adat változott
-                        // String sql = "UPDATE "+tableName+" SET "+columName+" = "+value+" WHERE "+condition;
-                        String alterCond = columns.get(0) + " = '" + record.get(0) + "'";
-                        new DataBaseHandler().updateRecord("connecteddepos", columns.get(0), field1.getText(), alterCond);
-                        new DataBaseHandler().updateRecord("connecteddepos", columns.get(1), field2.getText(), alterCond);
-                        new DataBaseHandler().updateRecord("connecteddepos", columns.get(2), field3.getText(), alterCond);
-                        new DataBaseHandler().updateRecord("connecteddepos", columns.get(3), field4.getText(), alterCond);
-                        new DataBaseHandler().updateRecord("connecteddepos", columns.get(4), field5.getText(), alterCond);
-                        fillTables();
-                        alterDia.dispose();
+                        int result = JOptionPane.showConfirmDialog(null, "Biztos hogy módosítja a rekordot?", "Biztos?",
+                                                                                JOptionPane.YES_NO_OPTION,
+                                                                                JOptionPane.QUESTION_MESSAGE);
+                        if (result == JOptionPane.YES_OPTION) {
+//                          System.out.println("YES");
+                            String alterCond = columns.get(0) + " = '" + record.get(0) + "'";
+                            new DataBaseHandler().updateRecord("connecteddepos", columns.get(0), field1.getText(), alterCond);
+                            new DataBaseHandler().updateRecord("connecteddepos", columns.get(1), field2.getText(), alterCond);
+                            new DataBaseHandler().updateRecord("connecteddepos", columns.get(2), field3.getText(), alterCond);
+                            new DataBaseHandler().updateRecord("connecteddepos", columns.get(3), field4.getText(), alterCond);
+                            new DataBaseHandler().updateRecord("connecteddepos", columns.get(4), field5.getText(), alterCond);
+                            fillTables();
+                            alterDia.dispose();
+                        } else { /*System.out.println("NO"); */}
                     } else {
                         JOptionPane.showMessageDialog(alterDia, "A rekord nem módosult");
                         alterDia.dispose();
@@ -609,12 +630,17 @@ public class AlterDatabaseGui extends JFrame {
                     // ha egyik mező sem üres
                     if (!(field1.getText().equals(record.get(0))) || !(field2.getText().equals(record.get(1)))) {
                         // ha bármelyik adat változott
-                        // String sql = "UPDATE "+tableName+" SET "+columName+" = "+value+" WHERE "+condition;
-                        String alterCond = columns.get(0) + " = '" + record.get(0) + "'";
-                        new DataBaseHandler().updateRecord("fuel", columns.get(0), field1.getText(), alterCond);
-                        new DataBaseHandler().updateRecord("fuel", columns.get(1), field2.getText(), alterCond);
-                        fillTables();
-                        alterDia.dispose();
+                        int result = JOptionPane.showConfirmDialog(null, "Biztos hogy módosítja a rekordot?", "Biztos?",
+                                JOptionPane.YES_NO_OPTION,
+                                JOptionPane.QUESTION_MESSAGE);
+                        if (result == JOptionPane.YES_OPTION) {
+//                          System.out.println("YES");
+                            String alterCond = columns.get(0) + " = '" + record.get(0) + "'";
+                            new DataBaseHandler().updateRecord("fuel", columns.get(0), field1.getText(), alterCond);
+                            new DataBaseHandler().updateRecord("fuel", columns.get(1), field2.getText(), alterCond);
+                            fillTables();
+                            alterDia.dispose();
+                        } else { /*System.out.println("NO"); */}
                     } else {
                         JOptionPane.showMessageDialog(alterDia, "A rekord nem módosult");
                         alterDia.dispose();
@@ -680,19 +706,24 @@ public class AlterDatabaseGui extends JFrame {
                             || !(field4.getText().equals(record.get(3))) || !(field5.getText().equals(record.get(4))) || !(field6.getText().equals(record.get(5)))
                             || !(field7.getText().equals(record.get(6))) || !(field8.getText().equals(record.get(7))) || !(field9.getText().equals(record.get(8)))) {
                         // ha bármelyik adat változott
-                        // String sql = "UPDATE "+tableName+" SET "+columName+" = "+value+" WHERE "+condition;
-                        String alterCond = columns.get(0) + " = '" + record.get(0) + "'";
-                        new DataBaseHandler().updateRecord("transportationplan", columns.get(0), field1.getText(), alterCond);
-                        new DataBaseHandler().updateRecord("transportationplan", columns.get(1), field2.getText(), alterCond);
-                        new DataBaseHandler().updateRecord("transportationplan", columns.get(2), field3.getText(), alterCond);
-                        new DataBaseHandler().updateRecord("transportationplan", columns.get(3), field4.getText(), alterCond);
-                        new DataBaseHandler().updateRecord("transportationplan", columns.get(4), field5.getText(), alterCond);
-                        new DataBaseHandler().updateRecord("transportationplan", columns.get(5), field6.getText(), alterCond);
-                        new DataBaseHandler().updateRecord("transportationplan", columns.get(6), field7.getText(), alterCond);
-                        new DataBaseHandler().updateRecord("transportationplan", columns.get(7), field8.getText(), alterCond);
-                        new DataBaseHandler().updateRecord("transportationplan", columns.get(8), field9.getText(), alterCond);
-                        fillTables();
-                        alterDia.dispose();
+                        int result = JOptionPane.showConfirmDialog(null, "Biztos hogy módosítja a rekordot?", "Biztos?",
+                                                                                JOptionPane.YES_NO_OPTION,
+                                                                                JOptionPane.QUESTION_MESSAGE);
+                        if (result == JOptionPane.YES_OPTION) {
+//                          System.out.println("YES");
+                            String alterCond = columns.get(0) + " = '" + record.get(0) + "'";
+                            new DataBaseHandler().updateRecord("transportationplan", columns.get(0), field1.getText(), alterCond);
+                            new DataBaseHandler().updateRecord("transportationplan", columns.get(1), field2.getText(), alterCond);
+                            new DataBaseHandler().updateRecord("transportationplan", columns.get(2), field3.getText(), alterCond);
+                            new DataBaseHandler().updateRecord("transportationplan", columns.get(3), field4.getText(), alterCond);
+                            new DataBaseHandler().updateRecord("transportationplan", columns.get(4), field5.getText(), alterCond);
+                            new DataBaseHandler().updateRecord("transportationplan", columns.get(5), field6.getText(), alterCond);
+                            new DataBaseHandler().updateRecord("transportationplan", columns.get(6), field7.getText(), alterCond);
+                            new DataBaseHandler().updateRecord("transportationplan", columns.get(7), field8.getText(), alterCond);
+                            new DataBaseHandler().updateRecord("transportationplan", columns.get(8), field9.getText(), alterCond);
+                            fillTables();
+                            alterDia.dispose();
+                        } else { /*System.out.println("NO"); */}
                     } else {
                         JOptionPane.showMessageDialog(alterDia, "A rekord nem módosult");
                         alterDia.dispose();
