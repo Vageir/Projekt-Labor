@@ -84,15 +84,16 @@ public class Graph extends JFrame {
 
                 int leftX = leftAttr.get("cCenterX"), leftY = leftAttr.get("cCenterY");
                 int rightX = rightAttr.get("cCenterX"), rightY = rightAttr.get("cCenterY");
-
-                if(count != 0) {
-                    leftX += count * 20;
-                    rightX += count * 20;
-                    leftY += count * 20;
-                    rightY += count * 20;
-                }
-
                 double dx = rightX - leftX, dy = rightY - leftY;
+                int step = count;
+                if (count != 0 && count % 2 == 0)
+                    step--;
+                int offsetX = (int) (Math.pow(-1, count) * step * dy * 0.05);
+                int offsetY = (int) (Math.pow(-1, count) * step * -dx * 0.05);
+
+                leftX += offsetX; rightX += offsetX;
+                leftY += offsetY; rightY += offsetY;
+
                 int len = (int) Math.hypot(dx, dy) - (leftAttr.get("cDiameter") + rightAttr.get("cDiameter")) / 2;
                 int dia = conn.getValue().getPipeDiameter();
 
@@ -392,7 +393,7 @@ public class Graph extends JFrame {
             tmp = leftY;
             leftY = rightY;
             rightY = tmp;
-            System.out.println("back");
+            //System.out.println("back");
         }
 
         double dx = rightX - leftX, dy = rightY - leftY;
@@ -407,7 +408,7 @@ public class Graph extends JFrame {
         tail = pos.getValue().get(1);
         int fuelID = pos.getKey() % 100;
 
-        int len = (int) (pipe.getLength() * 0.975);
+        int len = (int) (pipe.getLength() * 0.95);
         int correction = (int) (Math.hypot(dx, dy) - len) / 2;
 
         double headRatio = head / pipeLen;

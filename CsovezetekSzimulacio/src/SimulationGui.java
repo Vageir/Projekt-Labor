@@ -1,3 +1,6 @@
+import javax.swing.*;
+import java.awt.*;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -24,8 +27,17 @@ public class SimulationGui {
         repaintTask.cancel();
     }
 
+    private static void popUp() {
+        List<String> errorMessages = simulation.getErrorMessages();
+        if (!errorMessages.isEmpty())
+            JOptionPane.showMessageDialog(frame, errorMessages, "Hiba!", JOptionPane.ERROR_MESSAGE);
+        else
+            JOptionPane.showMessageDialog(frame, "Minden szállítási terv teljesíthető.", "Sikeres lefutás!", JOptionPane.INFORMATION_MESSAGE);
+    }
+
     public static void main(String[] args) {
         setGUIatStart();
         drawSimulation();
+        popUp();
     }
 }
