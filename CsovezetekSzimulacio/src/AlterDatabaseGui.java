@@ -4,7 +4,11 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Map;
 
 public class AlterDatabaseGui extends JFrame {
@@ -131,69 +135,33 @@ public class AlterDatabaseGui extends JFrame {
 
         ArrayList<String> opArray = new DataBaseHandler().getTableMetaData("operator",1);
         String operatorCol[] = {opArray.get(0), opArray.get(1), opArray.get(2)};
-//        DefaultTableModel operatorModel = (DefaultTableModel) operatorTable.getModel();
         DefaultTableModel operatorModel = new DefaultTableModel(operatorCol, 0);
         operatorTable.setModel(operatorModel);
-//        operatorModel.addColumn("OperatorID");
-//        operatorModel.addColumn("OperatorName");
-//        operatorModel.addColumn("OperatorBirth");
-//        Map<Integer, ArrayList<String>> opMap = new DataBaseHandler().readRecords("operator");
-//        for (Map.Entry<Integer,ArrayList<String>> entry : opMap.entrySet()){
-//            String id = entry.getValue().get(0), name = entry.getValue().get(1), birth = entry.getValue().get(2);
-//            operatorModel.addRow(new Object[] {id, name, birth});
-//        }
 
         ArrayList<String> depoArray = new DataBaseHandler().getTableMetaData("depo",1);
         String depoCol[] = {depoArray.get(0), depoArray.get(1), depoArray.get(2)};
         DefaultTableModel depoModel = new DefaultTableModel(depoCol, 0);
         depoTable.setModel(depoModel);
-//        Map<Integer, ArrayList<String>> depMap = new DataBaseHandler().readRecords("depo");
-//        for (Map.Entry<Integer,ArrayList<String>> entry : depMap.entrySet()){
-//            String id = entry.getValue().get(0), name = entry.getValue().get(1), location= entry.getValue().get(2);
-//            depoModel.addRow(new Object[] {id, name, location});
-//        }
 
         ArrayList<String> contArray = new DataBaseHandler().getTableMetaData("depocontainer",1);
         String contCol[] = {contArray.get(0), contArray.get(1), contArray.get(2), contArray.get(3), contArray.get(4)};
         DefaultTableModel contModel = new DefaultTableModel(contCol, 0);
         containerTable.setModel(contModel);
-//        Map<Integer, ArrayList<String>> contMap = new DataBaseHandler().readRecords("depocontainer");
-//        for (Map.Entry<Integer,ArrayList<String>> entry : contMap.entrySet()){
-//            String did = entry.getValue().get(0), cid = entry.getValue().get(1), ccap= entry.getValue().get(2), mcap = entry.getValue().get(3), fid = entry.getValue().get(4);
-//            contModel.addRow(new Object[] {did, cid, ccap, mcap, fid});
-//        }
 
         ArrayList<String> fuelArray = new DataBaseHandler().getTableMetaData("fuel",1);
         String fuelCol[] = {fuelArray.get(0), fuelArray.get(1)};
         DefaultTableModel fuelModel = new DefaultTableModel(fuelCol, 0);
         fuelTable.setModel(fuelModel);
-//        Map<Integer, ArrayList<String>> fuelMap = new DataBaseHandler().readRecords("fuel");
-//        for (Map.Entry<Integer,ArrayList<String>> entry : fuelMap.entrySet()){
-//            String id = entry.getValue().get(0), name = entry.getValue().get(1);
-//            fuelModel.addRow(new Object[] {id, name});
-//        }
 
         ArrayList<String> planArray = new DataBaseHandler().getTableMetaData("transportationplan", 1);
         String planCol[] = {planArray.get(0), planArray.get(1), planArray.get(2), planArray.get(3), planArray.get(4), planArray.get(5), planArray.get(6), planArray.get(7)};
         DefaultTableModel planModel = new DefaultTableModel(planCol,0);
         planTable.setModel(planModel);
-//        Map<Integer, ArrayList<String>> planMap = new DataBaseHandler().readRecords("transportationplan");
-//        for (Map.Entry<Integer,ArrayList<String>> entry : planMap.entrySet()){
-//            String trid = entry.getValue().get(0), sdid = entry.getValue().get(1), edid = entry.getValue().get(2), fid = entry.getValue().get(3), fam = entry.getValue().get(4);
-//            String sdate = entry.getValue().get(5), edate = entry.getValue().get(6), oid = entry.getValue().get(7);
-//            planModel.addRow(new Object[] {trid, sdid, edid, fid, fam, sdate, edate, oid});
-//        }
 
         ArrayList<String> connecArray = new DataBaseHandler().getTableMetaData("connecteddepos", 1);
         String connCol[] = {connecArray.get(0), connecArray.get(1), connecArray.get(2), connecArray.get(3), connecArray.get(4)};
         DefaultTableModel connModel = new DefaultTableModel(connCol, 0);
         connectionsTable.setModel(connModel);
-//        Map<Integer, ArrayList<String>> connMap = new DataBaseHandler().readRecords("connecteddepos");
-//        for (Map.Entry<Integer,ArrayList<String>> entry : connMap.entrySet()){
-//            String pid = entry.getValue().get(0), ldid = entry.getValue().get(1), rdid = entry.getValue().get(2), plen = entry.getValue().get(3), pdia = entry.getValue().get(4);
-//            connModel.addRow(new Object[] {pid, ldid, rdid, plen, pdia});
-//        }
-
     }
 
     public void fillTables() {
@@ -260,7 +228,7 @@ public class AlterDatabaseGui extends JFrame {
         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         dialog.setLocationRelativeTo(null);
         dialog.setLayout(null);
-        dialog.setTitle("Na most mit akarsz?");
+        dialog.setTitle("Mit kíván tenni?");
 
         JLabel messageLabel = new JLabel("Mit kíván tenni a rekorddal?");
         messageLabel.setBounds(95,30,300,25);
@@ -334,8 +302,6 @@ public class AlterDatabaseGui extends JFrame {
                     default:
                         JOptionPane.showMessageDialog(null,"ERROR: Hibás táblanév!");
                 }
-
-
                 dialog.dispose();
             }
         });
@@ -353,6 +319,7 @@ public class AlterDatabaseGui extends JFrame {
         alterDia.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         alterDia.setLocationRelativeTo(null);
         alterDia.setLayout(null);
+        alterDia.setTitle("Módosítás");
 
         JLabel label1 = new JLabel(columns.get(0) + ":"); label1.setBounds(10,20,100,25); alterDia.add(label1);
         JLabel label2 = new JLabel(columns.get(1) + ":"); label2.setBounds(10,55,100,25); alterDia.add(label2);
@@ -414,6 +381,7 @@ public class AlterDatabaseGui extends JFrame {
         alterDia.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         alterDia.setLocationRelativeTo(null);
         alterDia.setLayout(null);
+        alterDia.setTitle("Módosítás");
 
         JLabel label1 = new JLabel(columns.get(0) + ":"); label1.setBounds(10,20,100,25); alterDia.add(label1);
         JLabel label2 = new JLabel(columns.get(1) + ":"); label2.setBounds(10,55,100,25); alterDia.add(label2);
@@ -475,6 +443,7 @@ public class AlterDatabaseGui extends JFrame {
         alterDia.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         alterDia.setLocationRelativeTo(null);
         alterDia.setLayout(null);
+        alterDia.setTitle("Módosítás");
 
         JLabel label1 = new JLabel(columns.get(0) + ":"); label1.setBounds(10,20,100,25); alterDia.add(label1);
         JLabel label2 = new JLabel(columns.get(1) + ":"); label2.setBounds(10,55,100,25); alterDia.add(label2);
@@ -544,6 +513,7 @@ public class AlterDatabaseGui extends JFrame {
         alterDia.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         alterDia.setLocationRelativeTo(null);
         alterDia.setLayout(null);
+        alterDia.setTitle("Módosítás");
 
         JLabel label1 = new JLabel(columns.get(0) + ":"); label1.setBounds(10,20,100,25); alterDia.add(label1);
         JLabel label2 = new JLabel(columns.get(1) + ":"); label2.setBounds(10,55,100,25); alterDia.add(label2);
@@ -613,6 +583,7 @@ public class AlterDatabaseGui extends JFrame {
         alterDia.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         alterDia.setLocationRelativeTo(null);
         alterDia.setLayout(null);
+        alterDia.setTitle("Módosítás");
 
         JLabel label1 = new JLabel(columns.get(0) + ":"); label1.setBounds(10,20,100,25); alterDia.add(label1);
         JLabel label2 = new JLabel(columns.get(1) + ":"); label2.setBounds(10,55,100,25); alterDia.add(label2);
@@ -671,6 +642,7 @@ public class AlterDatabaseGui extends JFrame {
         alterDia.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         alterDia.setLocationRelativeTo(null);
         alterDia.setLayout(null);
+        alterDia.setTitle("Módosítás");
 
         JLabel label1 = new JLabel(columns.get(0) + ":"); label1.setBounds(10,20,100,25); alterDia.add(label1);
         JLabel label2 = new JLabel(columns.get(1) + ":"); label2.setBounds(10,55,100,25); alterDia.add(label2);
@@ -682,15 +654,15 @@ public class AlterDatabaseGui extends JFrame {
         JLabel label8 = new JLabel(columns.get(7) + ":"); label8.setBounds(10,265,100,25); alterDia.add(label8);
         JLabel label9 = new JLabel(columns.get(8) + ":"); label9.setBounds(10,300,100,25); alterDia.add(label9);
 
-        JTextField field1 = new JTextField(record.get(0)); field1.setBounds(120,20,200,25); alterDia.add(field1);
-        JTextField field2 = new JTextField(record.get(1)); field2.setBounds(120,55,200,25); alterDia.add(field2);
-        JTextField field3 = new JTextField(record.get(2)); field3.setBounds(120,90,200,25); alterDia.add(field3);
-        JTextField field4 = new JTextField(record.get(3)); field4.setBounds(120,125,200,25); alterDia.add(field4);
-        JTextField field5 = new JTextField(record.get(4)); field5.setBounds(120,160,200,25); alterDia.add(field5);
-        JTextField field6 = new JTextField(record.get(5)); field6.setBounds(120,195,200,25); alterDia.add(field6);
-        JTextField field7 = new JTextField(record.get(6)); field7.setBounds(120,230,200,25); alterDia.add(field7);
-        JTextField field8 = new JTextField(record.get(7)); field8.setBounds(120,265,200,25); alterDia.add(field8);
-        JTextField field9 = new JTextField(record.get(8)); field9.setBounds(120,300,200,25); alterDia.add(field9);
+        JTextField transidField = new JTextField(record.get(0)); transidField.setBounds(120,20,200,25); alterDia.add(transidField);
+        JTextField startDepoField = new JTextField(record.get(1)); startDepoField.setBounds(120,55,200,25); alterDia.add(startDepoField);
+        JTextField endDepoField = new JTextField(record.get(2)); endDepoField.setBounds(120,90,200,25); alterDia.add(endDepoField);
+        JTextField fuelidField = new JTextField(record.get(3)); fuelidField.setBounds(120,125,200,25); alterDia.add(fuelidField);
+        JTextField volumeField = new JTextField(record.get(4)); volumeField.setBounds(120,160,200,25); alterDia.add(volumeField);
+        JTextField startDateField = new JTextField(record.get(5).substring(0, 16)); startDateField.setBounds(120,195,200,25); alterDia.add(startDateField);
+        JTextField endDateField = new JTextField(record.get(6).substring(0, 16)); endDateField.setBounds(120,230,200,25); alterDia.add(endDateField);
+        JTextField opidField = new JTextField(record.get(7)); opidField.setBounds(120,265,200,25); alterDia.add(opidField);
+        JTextField pipeidField = new JTextField(record.get(8)); pipeidField.setBounds(120,300,200,25); alterDia.add(pipeidField);
 
         JButton confirmButton = new JButton("Módosít"); confirmButton.setBounds(65,345,100,25); alterDia.add(confirmButton);
         JButton backButton = new JButton("Mégse"); backButton.setBounds(175,345,100,25); alterDia.add(backButton);
@@ -698,39 +670,74 @@ public class AlterDatabaseGui extends JFrame {
         confirmButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                if (!(field1.getText().equals("")) && !(field2.getText().equals("")) && !(field3.getText().equals(""))
-                        && !(field4.getText().equals("")) && !(field5.getText().equals("")) && !(field6.getText().equals(""))
-                        && !(field7.getText().equals("")) && !(field8.getText().equals("")) && !(field9.getText().equals(""))) {
+                if (!(transidField.getText().equals("")) && !(startDepoField.getText().equals("")) && !(endDepoField.getText().equals(""))
+                        && !(fuelidField.getText().equals("")) && !(volumeField.getText().equals("")) && !(startDateField.getText().equals(""))
+                        && !(endDateField.getText().equals("")) && !(opidField.getText().equals("")) && !(pipeidField.getText().equals(""))) {
                     // ha egyik mező sem üres
-                    if (!(field1.getText().equals(record.get(0))) || !(field2.getText().equals(record.get(1))) || !(field3.getText().equals(record.get(2)))
-                            || !(field4.getText().equals(record.get(3))) || !(field5.getText().equals(record.get(4))) || !(field6.getText().equals(record.get(5)))
-                            || !(field7.getText().equals(record.get(6))) || !(field8.getText().equals(record.get(7))) || !(field9.getText().equals(record.get(8)))) {
+                    if (!(transidField.getText().equals(record.get(0))) || !(startDepoField.getText().equals(record.get(1))) || !(endDepoField.getText().equals(record.get(2)))
+                            || !(fuelidField.getText().equals(record.get(3))) || !(volumeField.getText().equals(record.get(4))) || !(startDateField.getText().equals(record.get(5).substring(0, 16)))
+                            || !(endDateField.getText().equals(record.get(6).substring(0, 16))) || !(opidField.getText().equals(record.get(7))) || !(pipeidField.getText().equals(record.get(8)))) {
                         // ha bármelyik adat változott
-                        int result = JOptionPane.showConfirmDialog(null, "Biztos hogy módosítja a rekordot?", "Biztos?",
-                                                                                JOptionPane.YES_NO_OPTION,
-                                                                                JOptionPane.QUESTION_MESSAGE);
-                        if (result == JOptionPane.YES_OPTION) {
-//                          System.out.println("YES");
-                            String alterCond = columns.get(0) + " = '" + record.get(0) + "'";
-                            new DataBaseHandler().updateRecord("transportationplan", columns.get(0), field1.getText(), alterCond);
-                            new DataBaseHandler().updateRecord("transportationplan", columns.get(1), field2.getText(), alterCond);
-                            new DataBaseHandler().updateRecord("transportationplan", columns.get(2), field3.getText(), alterCond);
-                            new DataBaseHandler().updateRecord("transportationplan", columns.get(3), field4.getText(), alterCond);
-                            new DataBaseHandler().updateRecord("transportationplan", columns.get(4), field5.getText(), alterCond);
-                            new DataBaseHandler().updateRecord("transportationplan", columns.get(5), field6.getText(), alterCond);
-                            new DataBaseHandler().updateRecord("transportationplan", columns.get(6), field7.getText(), alterCond);
-                            new DataBaseHandler().updateRecord("transportationplan", columns.get(7), field8.getText(), alterCond);
-                            new DataBaseHandler().updateRecord("transportationplan", columns.get(8), field9.getText(), alterCond);
-                            fillTables();
-                            alterDia.dispose();
-                        } else { /*System.out.println("NO"); */}
+
+                        boolean dateFormatError = false;
+                        Date start = new Date();
+                        Date end = new Date();
+                        String startDate = startDateField.getText();
+                        String endDate = endDateField.getText();
+                        try {
+                            start = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(startDate);
+                            end = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(endDate);
+                        } catch (ParseException parseException) {
+                            parseException.printStackTrace();
+                            dateFormatError = true;
+                        }
+
+                        LocalDateTime time = LocalDateTime.now();
+                        String rn = time.getYear() + "-" + time.getMonth().getValue() + "-" + time.getDayOfMonth() + " "
+                                + time.getHour() + ":" + time.getMinute();
+                        Date now = new Date();
+                        try {
+                            now = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(rn);
+                        } catch (ParseException parseException) {
+                            parseException.printStackTrace();
+                        }
+
+                        boolean isVolumeValid;
+                        if (Integer.parseInt(volumeField.getText()) > 0) {
+                            isVolumeValid = true;
+                        } else isVolumeValid = false;
+
+                        if (!dateFormatError) {
+                            if (isVolumeValid) {
+                                if (start.after(now)) {
+                                    if (end.after(start)) {
+                                        int result = JOptionPane.showConfirmDialog(null, "Biztos hogy módosítja a rekordot?", "Biztos?",
+                                                                                                JOptionPane.YES_NO_OPTION,
+                                                                                                JOptionPane.QUESTION_MESSAGE);
+                                        if (result == JOptionPane.YES_OPTION) {
+                                            String alterCond = columns.get(0) + " = '" + record.get(0) + "'";
+                                            new DataBaseHandler().updateRecord("transportationplan", columns.get(0), transidField.getText(), alterCond);
+                                            new DataBaseHandler().updateRecord("transportationplan", columns.get(1), startDepoField.getText(), alterCond);
+                                            new DataBaseHandler().updateRecord("transportationplan", columns.get(2), endDepoField.getText(), alterCond);
+                                            new DataBaseHandler().updateRecord("transportationplan", columns.get(3), fuelidField.getText(), alterCond);
+                                            new DataBaseHandler().updateRecord("transportationplan", columns.get(4), volumeField.getText(), alterCond);
+                                            new DataBaseHandler().updateRecord("transportationplan", columns.get(5), startDateField.getText(), alterCond);
+                                            new DataBaseHandler().updateRecord("transportationplan", columns.get(6), endDateField.getText(), alterCond);
+                                            new DataBaseHandler().updateRecord("transportationplan", columns.get(7), opidField.getText(), alterCond);
+                                            new DataBaseHandler().updateRecord("transportationplan", columns.get(8), pipeidField.getText(), alterCond);
+                                            fillTables();
+                                            alterDia.dispose();
+                                        } else { /*System.out.println("NO"); */}
+                                    } else JOptionPane.showMessageDialog(null, "A befejezési dátumnak későbbinek kell lennie a kezdődátumnál!");
+                                } else JOptionPane.showMessageDialog(null, "A kezdési dátum nem lehet a mai dátumnál korábban!");
+                            } else JOptionPane.showMessageDialog(null, "A megadott mennyiség helytelen!");
+                        } else JOptionPane.showMessageDialog(null, "Hibás dátumformátum!");
                     } else {
                         JOptionPane.showMessageDialog(alterDia, "A rekord nem módosult");
                         alterDia.dispose();
                     }
-                } else {
-                    JOptionPane.showMessageDialog(null, "Egy mezőt sem hagyhat üresen!");
-                }
+                } else JOptionPane.showMessageDialog(null, "Egy mezőt sem hagyhat üresen!");
+
             }
         });
 

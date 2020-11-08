@@ -43,7 +43,7 @@
             </constraints>
             <properties>
               <editable value="false"/>
-              <text value="1"/>
+              <text value=""/>
             </properties>
           </component>
           <component id="2c80d" class="javax.swing.JTextField" binding="pipeDiameterField">
@@ -54,7 +54,7 @@
             </constraints>
             <properties>
               <editable value="false"/>
-              <text value="50"/>
+              <text value=""/>
             </properties>
           </component>
           <component id="13a38" class="javax.swing.JLabel">
@@ -66,7 +66,7 @@
             <properties>
               <font size="14"/>
               <foreground color="-15132391"/>
-              <text value="km"/>
+              <text value="m"/>
             </properties>
           </component>
           <component id="ceafd" class="javax.swing.JLabel">
@@ -78,7 +78,7 @@
             <properties>
               <font size="14"/>
               <foreground color="-15132391"/>
-              <text value="cm"/>
+              <text value="m"/>
             </properties>
           </component>
           <hspacer id="66947">
@@ -98,7 +98,7 @@
           </component>
         </children>
       </grid>
-      <grid id="1402d" layout-manager="GridLayoutManager" row-count="4" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="1402d" layout-manager="GridLayoutManager" row-count="5" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
           <grid row="0" column="0" row-span="4" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
@@ -123,7 +123,7 @@
           </component>
           <component id="2687" class="javax.swing.JLabel">
             <constraints>
-              <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="1" use-parent-layout="false"/>
+              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="1" use-parent-layout="false"/>
             </constraints>
             <properties>
               <font size="14"/>
@@ -143,7 +143,7 @@
           </component>
           <component id="66aea" class="javax.swing.JLabel">
             <constraints>
-              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="1" use-parent-layout="false"/>
+              <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="1" use-parent-layout="false"/>
             </constraints>
             <properties>
               <font size="14"/>
@@ -153,7 +153,7 @@
           </component>
           <component id="1e4d2" class="javax.swing.JTextField" binding="volumeField">
             <constraints>
-              <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+              <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
               </grid>
             </constraints>
@@ -163,7 +163,7 @@
           </component>
           <component id="8ac3c" class="javax.swing.JComboBox" binding="fluidComboBox">
             <constraints>
-              <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <model>
@@ -174,17 +174,17 @@
           </component>
           <component id="104f3" class="javax.swing.JLabel">
             <constraints>
-              <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <font size="14"/>
               <foreground color="-12500671"/>
-              <text value="l"/>
+              <text value="m3"/>
             </properties>
           </component>
           <hspacer id="c6c5f">
             <constraints>
-              <grid row="3" column="3" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="4" column="3" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
           </hspacer>
           <component id="81700" class="javax.swing.JComboBox" binding="startDepoComboBox">
@@ -200,6 +200,23 @@
             <properties>
               <model/>
             </properties>
+          </component>
+          <component id="e8191" class="javax.swing.JLabel">
+            <constraints>
+              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="1" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <focusTraversalPolicyProvider value="true"/>
+              <font size="14"/>
+              <foreground color="-16777216"/>
+              <text value="Cső:"/>
+            </properties>
+          </component>
+          <component id="ecb5d" class="javax.swing.JComboBox" binding="pipeComboBox">
+            <constraints>
+              <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties/>
           </component>
         </children>
       </grid>

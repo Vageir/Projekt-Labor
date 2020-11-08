@@ -34,6 +34,7 @@ public class planInput extends JFrame {
     private JComboBox endDepoComboBox;
     private JLabel operatorNameLabel;
     private JButton menuButton;
+    private JComboBox pipeComboBox;
 
     public planInput(String title) {
         super(title);
@@ -49,8 +50,8 @@ public class planInput extends JFrame {
         clearButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                pipeLengthField.setText("1");
-                pipeDiameterField.setText("50");
+                pipeLengthField.setText("");
+                pipeDiameterField.setText("");
                 startDepoComboBox.setSelectedIndex(0);
                 endDepoComboBox.setSelectedIndex(1);
                 volumeField.setText("");
@@ -92,20 +93,100 @@ public class planInput extends JFrame {
 //                else{
 //                    System.out.println("wtf");
 //                }
-                if (end.after(start)) {
-                    tmp.addAll(Arrays.asList(
-                            operatorIDComboBox.getSelectedItem().toString() + monthStart + startDayComboBox.getSelectedItem().toString()
-                                    + monthEnd + endDayComboBox.getSelectedItem().toString() + startDepoComboBox.getSelectedItem().toString()
-                                    + endDepoComboBox.getSelectedItem().toString(),
-                            startDepoComboBox.getSelectedItem().toString(),
-                            endDepoComboBox.getSelectedItem().toString(),
-                            String.valueOf(fluidComboBox.getSelectedIndex() + 1),
-                            volumeField.getText(),
-                            startDate,
-                            endDate,
-                            operatorIDComboBox.getSelectedItem().toString()));
-                    new DataBaseHandler().insertRecord("transportationplan", tmp);
-                } else showMessageDialog(null, "A befejezési dátumnak későbbinek kell lennie a kezdődátumnál!");
+                LocalDateTime time = LocalDateTime.now();
+                String rn = time.getYear() + "-" + time.getMonth().getValue() + "-" + time.getDayOfMonth() + " "
+                        + time.getHour() + ":" + time.getMinute();
+                Date now = new Date();
+                try {
+                    now = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(rn);
+                } catch (ParseException parseException) {
+                    parseException.printStackTrace();
+                }
+
+                boolean emptyInputField;
+                if ((startDepoComboBox.getSelectedIndex() == 0) || (endDepoComboBox.getSelectedIndex() == 0) || (pipeComboBox.getSelectedIndex() == 0)
+                        || (volumeField.getText().toString().equals("")) || (startHourSpinner.getValue().toString().equals(""))
+                        || (startMinuteSpinner.getValue().toString().equals("")) || (endHourSpinner.getValue().toString().equals(""))
+                        || (endMinuteSpinner.getValue().toString().equals(""))) {
+                    emptyInputField = true;
+                } else emptyInputField = false;
+
+                boolean isDataNegative;
+                if ((Integer.parseInt(volumeField.getText()) < 0) || (Integer.parseInt(startHourSpinner.getValue().toString()) < 0)
+                        || (Integer.parseInt(startMinuteSpinner.getValue().toString()) < 0) || (Integer.parseInt(endHourSpinner.getValue().toString()) < 0)
+                        || (Integer.parseInt(endMinuteSpinner.getValue().toString()) < 0)) {
+                    isDataNegative = true;
+                } else isDataNegative = false;
+
+                boolean isVolumeZero;
+                if (volumeField.getText() == "0") {
+                    isVolumeZero = true;
+                } else isVolumeZero = false;
+
+                if (!emptyInputField) {
+                    if (!isDataNegative) {
+                        if (!isVolumeZero) {
+                            if (start.after(now)) {
+                                if (end.after(start)) {
+                                    tmp.addAll(Arrays.asList(
+                                            operatorIDComboBox.getSelectedItem().toString() + monthStart + startDayComboBox.getSelectedItem().toString()
+                                                    + monthEnd + endDayComboBox.getSelectedItem().toString() + startDepoComboBox.getSelectedItem().toString()
+                                                    + endDepoComboBox.getSelectedItem().toString(),
+                                            startDepoComboBox.getSelectedItem().toString(),
+                                            endDepoComboBox.getSelectedItem().toString(),
+                                            String.valueOf(fluidComboBox.getSelectedIndex() + 1),
+                                            volumeField.getText(),
+                                            startDate,
+                                            endDate,
+                                            operatorIDComboBox.getSelectedItem().toString(),
+                                            pipeComboBox.getSelectedItem().toString()));
+                                    new DataBaseHandler().insertRecord("transportationplan", tmp);
+                                } else showMessageDialog(null, "A befejezési dátumnak későbbinek kell lennie a kezdődátumnál!");
+                            } else showMessageDialog(null, "A kezdési dátum nem lehet a mai dátumnál korábban!");
+                        } else showMessageDialog(null, "A szállított mennyiség nem lehet nulla");
+                    } else showMessageDialog(null, "Egyik érték sem lehet negatív!");
+                } else showMessageDialog(null, "Minden mezőt ki kell tölteni!");
+            }
+        });
+
+        ActionListener depoEvent = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                if ((startDepoComboBox.getSelectedIndex() != 0) && (endDepoComboBox.getSelectedIndex() != 0)) {
+                    // ha mindkét depo ki van választva
+                    LinkedHashMap<Integer, ArrayList<String>> result = new LinkedHashMap<>();
+                    result = new DataBaseHandler().readRecords("connecteddepos");
+                    for (Map.Entry<Integer, ArrayList<String>> entry : result.entrySet()) {
+                        if (((startDepoComboBox.getSelectedItem().toString().equals(entry.getValue().get(1)))
+                                && (endDepoComboBox.getSelectedItem().toString().equals(entry.getValue().get(2))))
+                                || ((startDepoComboBox.getSelectedItem().toString().equals(entry.getValue().get(2)))
+                                && (endDepoComboBox.getSelectedItem().toString().equals(entry.getValue().get(1))))) {
+                            // ha a startDepo egyezik a leftDepo-val és az endDepo egyezik a rightDepo-val, vagy fordítva, akkor van köztük cső
+                            pipeComboBox.addItem(new ComboItem(entry.getValue().get(0)));
+                        }
+                    }
+                } else {
+                    pipeComboBox.removeAllItems();
+                    pipeComboBox.addItem(new ComboItem(""));
+                }
+            }
+        };
+
+        startDepoComboBox.addActionListener(depoEvent);
+        endDepoComboBox.addActionListener(depoEvent);
+
+        pipeComboBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                if ((pipeComboBox.getSelectedIndex() != 0) && (pipeComboBox.getItemCount() >= 1)) {
+                    String condition = "PipeID = '" + pipeComboBox.getSelectedItem().toString() + "'";
+                    ArrayList<String> record = new DataBaseHandler().readRecordWithCondition("connecteddepos", condition);
+                    pipeLengthField.setText(record.get(3));
+                    pipeDiameterField.setText(record.get(4));
+                } else {
+                    pipeLengthField.setText("");
+                    pipeDiameterField.setText("");
+                }
             }
         });
 
@@ -155,6 +236,7 @@ public class planInput extends JFrame {
         }
         startDepoComboBox.addItem(new ComboItem(""));
         endDepoComboBox.addItem(new ComboItem(""));
+        pipeComboBox.addItem(new ComboItem(""));
         operatorNameLabel.setText(result.entrySet().iterator().next().getValue().get(1));
         result = new DataBaseHandler().readRecords("depo");
         for (Map.Entry<Integer, ArrayList<String>> entry : result.entrySet()) {
@@ -162,7 +244,8 @@ public class planInput extends JFrame {
             endDepoComboBox.addItem(new ComboItem(entry.getValue().get(0)));
         }
         startDepoComboBox.setSelectedIndex(0);
-        endDepoComboBox.setSelectedIndex(1);
+        endDepoComboBox.setSelectedIndex(0);
+        pipeComboBox.setSelectedIndex(0);
     }
 
     private class ComboItem {
