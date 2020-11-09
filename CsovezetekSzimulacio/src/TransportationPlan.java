@@ -1,6 +1,3 @@
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class TransportationPlan {
@@ -13,8 +10,22 @@ public class TransportationPlan {
     private String endDate;
     private String operatorID;
     private String pipeID;
+    private String highestContainerCapacityID;
+    private boolean finished;
+    private boolean timeToRun;
+    private double tailOfTheFluid;
+    private double headOfTheFluid;
+    private double flowVelocity;
+    private double startDepoMovedFuelAmount;
+    private double endDepoMovedFuelAmount;
 
+    public String getHighestContainerCapacityID() {
+        return highestContainerCapacityID;
+    }
 
+    public void setHighestContainerCapacityID(String highestContainerCapacityID) {
+        this.highestContainerCapacityID = highestContainerCapacityID;
+    }
 
     public TransportationPlan(ArrayList<String> ls){
         this.transportationID = ls.get(0);
@@ -26,9 +37,80 @@ public class TransportationPlan {
         this.endDate = ls.get(6);
         this.operatorID = ls.get(7);
         this.pipeID = ls.get(8);
+        this.finished = false;
+        this.tailOfTheFluid = 0.0;
+        this.headOfTheFluid = 0.0;
+        this.flowVelocity = 0.0;
+        this.startDepoMovedFuelAmount = 0.0;
+        this.endDepoMovedFuelAmount = 0.0;
+        this.timeToRun =  false;
+        this.highestContainerCapacityID = null;
     }
 
-//    public  ArrayList<Integer> dateComponent(String date){
+    public boolean isTimeToRun() {
+        return timeToRun;
+    }
+
+    public void setTimeToRun(boolean timeToRun) {
+        this.timeToRun = timeToRun;
+    }
+
+    public void addStartDepoVolumeFlowRate(int volumeFlowRate){
+        startDepoMovedFuelAmount+= volumeFlowRate;
+    }
+    public void addEndDepoVolumeFlowRate(int volumeFlowRate){
+        endDepoMovedFuelAmount += volumeFlowRate;
+    }
+    public void setFlowVelocity(double flowVelocity) {
+        this.flowVelocity = flowVelocity;
+    }
+    public void addHeadOfTheFluid(double flowVelocity){
+        headOfTheFluid+=flowVelocity;
+    }
+    public void addTailOfTheFluid(double flowVelocity){
+        tailOfTheFluid+=flowVelocity;
+    }
+
+    public void setTailOfTheFluid(double tailOfTheFluid) {
+        this.tailOfTheFluid = tailOfTheFluid;
+    }
+
+    public void setHeadOfTheFluid(double headOfTheFluid) {
+        this.headOfTheFluid = headOfTheFluid;
+    }
+
+    public double getFlowVelocity() {
+        return flowVelocity;
+    }
+
+    public double getStartDepoMovedFuelAmount() {
+        return startDepoMovedFuelAmount;
+    }
+
+    public double getEndDepoMovedFuelAmount() {
+        return endDepoMovedFuelAmount;
+    }
+
+    public boolean isFinished() {
+        return finished;
+    }
+
+    public void setFinished(boolean finished) {
+        this.finished = finished;
+    }
+
+    public double getTailOfTheFluid() {
+        return tailOfTheFluid;
+    }
+
+
+    public double getHeadOfTheFluid() {
+        return headOfTheFluid;
+    }
+
+
+
+    //    public  ArrayList<Integer> dateComponent(String date){
 //        ArrayList<Integer> ls = new ArrayList<>();
 //        String[] s = date.substring(0,10).split("-");
 //        for (String ss : s){

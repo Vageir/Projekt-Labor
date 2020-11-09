@@ -48,8 +48,8 @@ public class DepoConnection {
             if (entry.getKey() > 100)
                 ls.add(entry.getKey());
         }
-        for (int i : ls ) {
-            headAndTailOfTheFluidRelativeToLeftDepo.put(i-100,headAndTailOfTheFluidRelativeToLeftDepo.get(i));
+        for (int i : ls) {
+            headAndTailOfTheFluidRelativeToLeftDepo.put(i - 100, headAndTailOfTheFluidRelativeToLeftDepo.get(i));
             headAndTailOfTheFluidRelativeToLeftDepo.remove(i);
         }
         for (Map.Entry<Integer, List<Double>> entry : headAndTailOfTheFluidRelativeToLeftDepo.entrySet()) {
@@ -60,9 +60,11 @@ public class DepoConnection {
             }
 
         }
-        for (int i : ll){
+        for (int i : ll) {
             headAndTailOfTheFluidRelativeToLeftDepo.remove(i);
         }
+        for (Map.Entry<Integer, List<Double>> entry : headAndTailOfTheFluidRelativeToLeftDepo.entrySet()) {
+            System.out.println("FUELID: " + entry.getKey() + " HEAD: " + entry.getValue().get(0) + " TAIL:" + entry.getValue().get(1));
+        }
     }
-
 }

@@ -26,7 +26,9 @@ public class Simulation  {
         depoConnections = new LinkedHashMap<>();
         errorMessages = new ArrayList<>();
         readData();
+        setVelocity();
     }
+
     public List<String> getErrorMessages() {
         return errorMessages;
     }
@@ -38,14 +40,6 @@ public class Simulation  {
     }
     public int getCurrentMinutes() {
         return currentMinutes;
-    }
-    public String getPipeID(String startDepoID, String endDepoID){
-        for (Map.Entry<String,DepoConnection> entry : depoConnections.entrySet()){
-            if (entry.getValue().getLeftDepoID().equals(startDepoID) && entry.getValue().getRightDepoID().equals(endDepoID)) return entry.getKey();
-            else if(entry.getValue().getLeftDepoID().equals(endDepoID) && entry.getValue().getRightDepoID().equals(startDepoID)) return entry.getKey();
-
-        }
-        return null;
     }
     public List<TransportationPlan> getTransportationPlans() {
         return transportationPlans;
@@ -59,11 +53,15 @@ public class Simulation  {
 //        } catch (InterruptedException interruptedException) {
 //            interruptedException.printStackTrace();
 //        }
-        if (runSimulations()){
-            System.out.println("Sikeres lefutás");
-            //database update
-        }else {
-            System.out.println("Hibás lefutás az adatbázis nem módosult");
+        try {
+            if (runSimulations()){
+                System.out.println("Sikeres lefutás");
+                //database update
+            }else {
+                System.out.println("Hibás lefutás az adatbázis nem módosult");
+            }
+        } catch (InterruptedException interruptedException) {
+            interruptedException.printStackTrace();
         }
     }
     private void readData(){
@@ -79,168 +77,220 @@ public class Simulation  {
             DepoConnection dc = new DepoConnection(ls.get(1),ls.get(2),Integer.parseInt(ls.get(3)),Integer.parseInt(ls.get(4)));
             depoConnections.put(ls.get(0),dc);
         }
-//        for (Depo d:depos){
-//            d.readDepoDatas();
-//        }
     }
-    private boolean checkContainer(String tID){
-        for(TransportationPlan t : transportationPlans){
-            if (t.getTransportationID().equals(tID)){
-                for (Depo d:depos){
-                    if (t.getStartDepoID().equals(d.getDepoID())){
-//                        System.out.println("Start Depo Fuel and Container Check");
-                        if (!checkStartFuelAndCapacity(t,d)){
-                            return false;
+//    private boolean checkContainer(String tID){
+//        for(TransportationPlan t : transportationPlans){
+//            if (t.getTransportationID().equals(tID)){
+//                for (Depo d:depos){
+//                    if (t.getStartDepoID().equals(d.getDepoID())){
+////                        System.out.println("Start Depo Fuel and Container Check");
+//                        if (!checkStartFuelAndCapacity(t,d)){
+//                            return false;
+//                        }
+//                    }
+//                }
+//                for (Depo d:depos){
+//                    if (t.getEndDepoID().equals(d.getDepoID())){
+////                        System.out.println("End Depo Fuel and Container Check");
+//                        if (!checkEndFuelAndCapacity(t,d)){
+//                            return false;
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//        return true;
+//    }
+//    private boolean checkEndFuelAndCapacity(TransportationPlan t, Depo d) {
+//        for (Map.Entry<String, Depo.DepoContainer> entry : d.getContainers().entrySet()){
+//            if (entry.getValue().getFuelID() == t.getFuelID() && entry.getValue().getCurrentCapacity()+t.getFuelAmount() <= entry.getValue().getMaxCapacity()){
+////                System.out.println("End Container Fuel and Capacity.....OK");
+//                return true;
+//            }
+//        }
+////        System.out.println("End Container Fuel and Capacity.....Failed");
+//        errorMessages.add("Nincs elég kapacitás/nem létezik olyan tipusú tartály a vételi oldalon. Ellenőrizze a "+t.getTransportationID()+" tervet!");
+//        return false;
+//    }
+//    private boolean checkStartFuelAndCapacity(TransportationPlan t, Depo d) {
+//        for (Map.Entry<String, Depo.DepoContainer> entry : d.getContainers().entrySet()){
+//            if (entry.getValue().getFuelID()== t.getFuelID() && entry.getValue().getCurrentCapacity() >= t.getFuelAmount()){
+////                System.out.println("Start Container Fuel and Capacity.....OK");
+//                return true;
+//            }
+//        }
+////        System.out.println("Start Container Fuel and Capacity.....Failed");
+//        errorMessages.add("Nincs elég kapacitás/nem létezik olyan tipusú tartály a küldő oldalon. Ellenőrizze a "+t.getTransportationID()+" tervet!");
+//        return false;
+//    }
+    private void setVelocity() {
+        for (TransportationPlan t : transportationPlans){
+            double flowVelocity = 0.0;
+            flowVelocity = Simulation.volumeFlowRate / (Math.PI * Math.pow(((double) depoConnections.get(t.getPipeID()).getPipeDiameter() / 2), 2));
+            t.setFlowVelocity(flowVelocity);
+        }
+    }
+    private Depo getDepo(String depoID){
+        for (Depo d : depos){
+            if (d.getDepoID().equals(depoID))
+                return d;
+        }
+        return null;
+    }
+    private boolean runSimulations() throws InterruptedException {
+        currentHours = transportationPlans.get(0).getStartHours();
+        currentMinutes = transportationPlans.get(0).getStartMinutes();
+        while (currentHours < transportationPlans.get(transportationPlans.size()-1).getEndHours()){
+//            System.out.println("Current Hours: "+currentHours);
+            currentMinutes = 0;
+            while (currentMinutes < 60){
+                sleep(timeSpeed);
+                for (TransportationPlan t : transportationPlans){
+                    if (t.getStartHours()== currentHours && t.getStartMinutes() == currentMinutes){
+                        t.setTimeToRun(true);
+                        t.setHighestContainerCapacityID(getDepo(t.getStartDepoID()).getHighestCurrentCapacityContainer());
+                    }
+                    if (t.isTimeToRun()){
+                        if(!process(t)) return false;
+                        if (!t.isFinished()){
+                            if (t.getTailOfTheFluid() >= depoConnections.get(t.getPipeID()).getPipeLength()){
+//                                System.out.println("TAIL:"+t.getTailOfTheFluid()+" PLength:"+depoConnections.get(t.getPipeID()).getPipeLength());
+//                                System.out.println(t.getEndHours());
+                                if (t.getEndHours() >= currentHours) {
+                                    t.setFinished(true);
+//                                    System.out.println("TID:"+t.getTransportationID());
+                                    depoConnections.get(t.getPipeID()).setCurrentFuelID();
+                                }
+                                else{
+                                    System.out.println("Nem volt elég idő");
+                                    errorMessages.add("Nincs elég idő a(z) "+t.getTransportationID()+" terv végerhajtására.");
+                                    return false;
+                                }
+                            }
                         }
                     }
                 }
-                for (Depo d:depos){
-                    if (t.getEndDepoID().equals(d.getDepoID())){
-//                        System.out.println("End Depo Fuel and Container Check");
-                        if (!checkEndFuelAndCapacity(t,d)){
-                            return false;
-                        }
-                    }
-                }
+                currentMinutes++;
             }
+            currentHours++;
+        }
+        for (TransportationPlan t: transportationPlans){
+            if (!t.isFinished()) return false;
         }
         return true;
     }
-    private boolean checkEndFuelAndCapacity(TransportationPlan t, Depo d) {
-        for (Map.Entry<String, Depo.DepoContainer> entry : d.getContainers().entrySet()){
-            if (entry.getValue().getFuelID() == t.getFuelID() && entry.getValue().getCurrentCapacity()+t.getFuelAmount() <= entry.getValue().getMaxCapacity()){
-//                System.out.println("End Container Fuel and Capacity.....OK");
-                return true;
-            }
+    private boolean process(TransportationPlan t){
+        int pipeLength = depoConnections.get(t.getPipeID()).getPipeLength();
+        Depo startDepo = getDepo(t.getStartDepoID());
+        Depo endDepo = getDepo(t.getEndDepoID());
+        String startDepoContainerID = startDepo.getContainerID(t);
+        String endDepoContainerID = endDepo.getContainerID(t);
+        String highestContainerCapacityID = t.getHighestContainerCapacityID();
+        String pipeID = t.getPipeID();
+//        System.out.println("TID:"+t.getTransportationID()+" STARtDEPO: "+startDepo.getDepoID());
+        double flowVelocity = t.getFlowVelocity();
+        if (t.getStartDepoMovedFuelAmount() != t.getFuelAmount()) {
+            t.addStartDepoVolumeFlowRate(volumeFlowRate);
+            startDepo.getContainers().get(startDepoContainerID).substractCurrentCapacity(volumeFlowRate);
         }
-//        System.out.println("End Container Fuel and Capacity.....Failed");
-        errorMessages.add("Nincs elég kapacitás/nem létezik olyan tipusú tartály a vételi oldalon. Ellenőrizze a "+t.getTransportationID()+" tervet!");
-        return false;
-    }
-    private boolean checkStartFuelAndCapacity(TransportationPlan t, Depo d) {
-        for (Map.Entry<String, Depo.DepoContainer> entry : d.getContainers().entrySet()){
-            if (entry.getValue().getFuelID()== t.getFuelID() && entry.getValue().getCurrentCapacity() >= t.getFuelAmount()){
-//                System.out.println("Start Container Fuel and Capacity.....OK");
-                return true;
-            }
-        }
-//        System.out.println("Start Container Fuel and Capacity.....Failed");
-        errorMessages.add("Nincs elég kapacitás/nem létezik olyan tipusú tartály a küldő oldalon. Ellenőrizze a "+t.getTransportationID()+" tervet!");
-        return false;
-    }
-    private boolean checkConnection(String tID){
-//        System.out.println("Depo Connection Check");
-        for (TransportationPlan t : transportationPlans){
-            if (t.getTransportationID().equals(tID)){
-                if (getPipeID(t.getStartDepoID(),t.getEndDepoID()) != null) return true;
-            }
-        }
-//        System.out.println("Depo Connection.....Failed");
-        errorMessages.add("A küldő és vételi oldal között nincs összeköttetés. Ellenőrizze a "+ tID+" tervet!");
-        return false;
-    }
-    private boolean runSimulations(){
-        for (int i = 0; i < transportationPlans.size(); i++ ) {
-            System.out.println("\nTid:" + transportationPlans.get(i).getTransportationID());
-            if (checkConnection(transportationPlans.get(i).getTransportationID()) && checkContainer(transportationPlans.get(i).getTransportationID())) {
-//                System.out.println("All check.....OK\n");
-                List<TransportationPlan> runTransportationPlans = new ArrayList<>();
-                int j = i + 1;
-                runTransportationPlans.add(transportationPlans.get(i));
-                while (j < transportationPlans.size() && transportationPlans.get(i).getStartHours() == transportationPlans.get(j).getStartHours()
-                        && transportationPlans.get(i).getStartMinutes() == transportationPlans.get(j).getStartMinutes()) {
-                        if (transportationPlans.get(i).getStartDepoID().equals(transportationPlans.get(j).getStartDepoID())
-                                && transportationPlans.get(i).equals(transportationPlans.get(j).getEndDepoID())){
-                            System.out.println("Ugyanazon az időben, ugyanabban az irányban nem mehet két terv egyszere");
-                            System.out.println("Hibás tervek:"+transportationPlans.get(i).getTransportationID()
-                                    + " , "+transportationPlans.get(j).getTransportationID());
-                            errorMessages.add("Ugyanazon időpillantban egyszerre nem mehet két terv. Ellenőrizze a "
-                                    +transportationPlans.get(i).getTransportationID()
-                                    + " és a "+transportationPlans.get(j).getTransportationID()+" terveket!");
-                            return false;
-                        }
-                        else if (transportationPlans.get(i).getStartDepoID().equals(transportationPlans.get(j).getStartDepoID())
-                                && !(transportationPlans.get(i).equals(transportationPlans.get(j).getEndDepoID()))){
-                            System.out.println("\nTid:" + transportationPlans.get(j).getTransportationID());
-                            if(checkConnection(transportationPlans.get(j).getTransportationID()) && checkContainer(transportationPlans.get(j).getTransportationID())){
-                                runTransportationPlans.add(transportationPlans.get(j));
-                                j++; i++;
-                            }
-                            else{
-                                System.out.println("Hiba! Ellenőrizze a "+transportationPlans.get(j).getTransportationID()+ " tervet");
-                                return false;
-                            }
-
-                        }else break;
-
-                }
-                int finalI = i;
-                int finalJ = j;
-                Thread t = new Thread(() -> {
-                    if (transportationPlans.size() > finalJ){
-                        if (transportationPlans.get(finalJ).getStartHours() < transportationPlans.get(finalI).getEndHours()
-                                ||(transportationPlans.get(finalJ).getStartHours() == transportationPlans.get(finalI).getEndHours()
-                                && transportationPlans.get(finalJ).getStartMinutes() < transportationPlans.get(finalI).getEndMinutes()))
-                        {
-                            System.out.println(transportationPlans.get(finalJ).getStartHours() + ":" + transportationPlans.get(finalJ).getStartMinutes());
-                            while (currentHours != transportationPlans.get(finalJ).getStartHours()
-                                    || currentMinutes != transportationPlans.get(finalJ).getStartMinutes()) {
-                            }
-                            executor.shutdownNow();
-                            errorMessages.add("A terv nem indulhat el amig a másik be nem fejeződött");
-                        }
+        else {
+            if (t.getTailOfTheFluid() < (double)pipeLength){
+                if ((startDepo.getContainers().get(highestContainerCapacityID).getCurrentCapacity()-volumeFlowRate) < 0) {
+                    highestContainerCapacityID = startDepo.getHighestCurrentCapacityContainer();
+                    t.setHighestContainerCapacityID(highestContainerCapacityID);
+                    if (highestContainerCapacityID == null)
+                        return false;
+                    if ((startDepo.getContainers().get(highestContainerCapacityID).getCurrentCapacity() - volumeFlowRate) < 0) {
+                        errorMessages.add("Nincs elég üzemanyag az induló oldalon, hogy át lehessen vinni a tervben szereplő üzemanyagot. " +
+                                "Ellenőrizze a "+t.getTransportationID()+" tervet!");
+                        System.out.println("Alulcsordulás");
+                        return false;
                     }
-                });
-                t.start();
-                if (!startSimulation(runTransportationPlans)){
-//                 System.out.println("Hiba a szimulációban");
-                 return false;
-             }
+                }
+                t.addTailOfTheFluid(flowVelocity);
+//                System.out.println("BEFORE MOVE: "+startDepo.getContainers().get(highestContainerCapacityID).getCurrentCapacity());
+                startDepo.getContainers().get(highestContainerCapacityID).substractCurrentCapacity(volumeFlowRate);
+//                System.out.println("AFTER MOVE: "+startDepo.getContainers().get(highestContainerCapacityID).getCurrentCapacity());
+                List<Double> ls = new ArrayList<>();
+                ls.add(t.getTailOfTheFluid());
+                ls.add((double) 0);
+                depoConnections.get(pipeID).getHeadAndTailOfTheFluidRelativeToLeftDepo()
+                        .put(startDepo.getContainers().get(highestContainerCapacityID).getFuelID()+100,ls);
+                if (t.getTransportationID().equals("3")) {
+                    System.out.println("CONTAINERID: " + highestContainerCapacityID);
+                    System.out.println("FUELID:" + (startDepo.getContainers().get(highestContainerCapacityID).getFuelID() + 100) + " HEAD: " + depoConnections.get(pipeID).getHeadAndTailOfTheFluidRelativeToLeftDepo().get(
+                            startDepo.getContainers().get(highestContainerCapacityID).getFuelID() + 100).get(0)
+                            + " TAIL: " + depoConnections.get(pipeID).getHeadAndTailOfTheFluidRelativeToLeftDepo().get(
+                            startDepo.getContainers().get(highestContainerCapacityID).getFuelID() + 100).get(1));
+                }
             }
             else {
-//                System.out.println("All check.....Failed");
-//                System.out.println("Hiba! Ellenőrzie a : " + transportationPlans.get(i).getTransportationID() + " tervet");
-                return false;
-            }
-
-        }
-        return true;
-    }
-    private boolean startSimulation(List<TransportationPlan> runTransportationPlans){
-        executor = Executors.newFixedThreadPool(runTransportationPlans.size());
-        futureList = new ArrayList<>();
-        for (TransportationPlan t : runTransportationPlans){
-            Depo startDepo=null,endDepo=null;
-            for (Depo d : depos){
-                if (d.getDepoID().equals(t.getStartDepoID()))
-                    startDepo=d;
-            }
-            for (Depo d : depos){
-                if (d.getDepoID().equals(t.getEndDepoID()))
-                    endDepo=d;
-            }
-            if (startDepo != null && endDepo != null){
-                RunSimulation runSimulation = new RunSimulation(t, startDepo, endDepo);
-                Future<Boolean> future = executor.submit(runSimulation);
-                futureList.add(future);
-            }else{
-                errorMessages.add("Hiba a szimuláció inditásában!");
-                return false;
+                t.setTailOfTheFluid(pipeLength);
+                List<Double> ls = new ArrayList<>();
+                ls.add(t.getTailOfTheFluid());
+                ls.add((double) 0);
+                depoConnections.get(pipeID).getHeadAndTailOfTheFluidRelativeToLeftDepo()
+                        .put(startDepo.getContainers().get(highestContainerCapacityID).getFuelID()+100,ls);
             }
         }
-        for (Future future : futureList){
-            try {
-                if(!(Boolean)future.get()){
+        if (t.getHeadOfTheFluid() < pipeLength) {
+            t.addHeadOfTheFluid(flowVelocity);
+            List<Integer> ls = depoConnections.get(pipeID).getFuelIDBefore();
+            if (!ls.isEmpty()){
+                for (int i : ls){
+//                    System.out.println("END DEPO CONTAINER ID:"+endDepo.getContainerID(i));
+//                    System.out.println("CURRENT CAPACITY:"+endDepo.getContainers().get(endDepo.getContainerID(i)).getCurrentCapacity());
+//                    System.out.println("MAX CAPACITY"+endDepo.getContainers().get(endDepo.getContainerID(i)).getMaxCapacity());
+                    if ((endDepo.getContainers().get(endDepo.getContainerID(i)).getCurrentCapacity()+volumeFlowRate) >
+                            endDepo.getContainers().get(endDepo.getContainerID(i)).getMaxCapacity()) {
+                        errorMessages.add("A vételi oldalon megtelt a tartály! ");
+                        System.out.println("Túlcsordulás");
+                        return false;
+                    }
+                    endDepo.getContainers().get(endDepo.getContainerID(i)).addCurrentCapacity(volumeFlowRate);
+                    List<Double> ll = new ArrayList<>();
+                    ll.add(depoConnections.get(pipeID).getHeadAndTailOfTheFluidRelativeToLeftDepo().get(i).get(0));
+                    ll.add(depoConnections.get(pipeID).getHeadAndTailOfTheFluidRelativeToLeftDepo().get(i).get(1)+flowVelocity);
+//                    System.out.println(ll.get(1));
+                    depoConnections.get(pipeID).getHeadAndTailOfTheFluidRelativeToLeftDepo().put(i,ll);
+                }
+            }
+        }
+        else {
+            if (t.getEndDepoMovedFuelAmount() != t.getFuelAmount()){
+                if (endDepo.getContainers().get(endDepoContainerID).getCurrentCapacity()+volumeFlowRate
+                        <= endDepo.getContainers().get(endDepoContainerID).getMaxCapacity()) {
+                    endDepo.getContainers().get(endDepoContainerID).addCurrentCapacity(volumeFlowRate);
+                }
+                else{
+                    errorMessages.add("A vételi oldalon megtelt a tartály!");
                     return false;
                 }
-            } catch (InterruptedException | ExecutionException interruptedException) {
-                interruptedException.printStackTrace();
-
+                t.addEndDepoVolumeFlowRate(volumeFlowRate);
+            }
+            t.setHeadOfTheFluid(pipeLength);
+            List<Integer> ls = depoConnections.get(pipeID).getFuelIDBefore();
+            if (!ls.isEmpty()){
+                for (int i : ls){
+                    depoConnections.get(pipeID).getHeadAndTailOfTheFluidRelativeToLeftDepo().remove(i);
+                }
             }
         }
-        executor.shutdown();
+        List<Double> ls = new ArrayList<>();
+        ls.add(t.getHeadOfTheFluid());
+        ls.add(t.getTailOfTheFluid());
+        depoConnections.get(pipeID).getHeadAndTailOfTheFluidRelativeToLeftDepo().put(t.getFuelID()+100,ls);
+//        System.out.println(depoConnections.get(pipeID).getHeadAndTailOfTheFluidRelativeToLeftDepo().get(t.getFuelID()+100).get(0)+" ; "
+//                            +depoConnections.get(pipeID).getHeadAndTailOfTheFluidRelativeToLeftDepo().get(t.getFuelID()+100).get(1));
+//        List<Integer> test = depoConnections.get(pipeID).getFuelIDBefore();
+//        for (int i : test) {
+//            System.out.println("TID: " + t.getTransportationID()
+//                    +" FUELID: "+i+" HEAD: " + depoConnections.get(pipeID).getHeadAndTailOfTheFluidRelativeToLeftDepo().get(i).get(0)
+//                    + " TAIL: " + depoConnections.get(pipeID).getHeadAndTailOfTheFluidRelativeToLeftDepo().get(i).get(1));
+//        }
         return true;
     }
+
 
     private class RunSimulation implements Callable<Boolean> {
         TransportationPlan t;
