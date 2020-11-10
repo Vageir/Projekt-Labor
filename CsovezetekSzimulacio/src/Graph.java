@@ -68,7 +68,18 @@ public class Graph extends JFrame {
 
             int x = (int) Math.round(a + r * Math.cos(t));
             int y = (int) Math.round(b + r * Math.sin(t));
-            addDepoVertex(depo.getDepoID(), x, y, depo.getContainers().keySet());
+
+            List<Map.Entry<String, Depo.DepoContainer>> toSort = new ArrayList<>();
+            for (Map.Entry<String, Depo.DepoContainer> stringDepoContainerEntry : depo.getContainers().entrySet()) {
+                toSort.add(stringDepoContainerEntry);
+            }
+            toSort.sort(Comparator.comparingInt(e -> e.getValue().getFuelID()));
+            LinkedHashSet<String> cont = new LinkedHashSet<>();
+            for (Map.Entry<String, Depo.DepoContainer> stringDepoContainerEntry : toSort) {
+                cont.add(stringDepoContainerEntry.getKey());
+            }
+
+            addDepoVertex(depo.getDepoID(), x, y, cont);
             attributes.put(depo.getDepoID(), getDepoVertexAttributes(getGraphics(), getDepoVertexEntry(depo.getDepoID())));
         }
 
@@ -91,8 +102,10 @@ public class Graph extends JFrame {
                 int offsetX = (int) (Math.pow(-1, count) * step * dy * 0.05);
                 int offsetY = (int) (Math.pow(-1, count) * step * -dx * 0.05);
 
-                leftX += offsetX; rightX += offsetX;
-                leftY += offsetY; rightY += offsetY;
+                leftX += offsetX;
+                rightX += offsetX;
+                leftY += offsetY;
+                rightY += offsetY;
 
                 int len = (int) Math.hypot(dx, dy) - (leftAttr.get("cDiameter") + rightAttr.get("cDiameter")) / 2;
                 int dia = conn.getValue().getPipeDiameter();
@@ -101,6 +114,8 @@ public class Graph extends JFrame {
                 addPipe(conn.getKey(), leftX, leftY, rightX, rightY, dia, len, leftDepo, rightDepo);
             }
         }
+
+        initPaint(getGraphics());
     }
 
     public Map<String, Integer> getDepoVertexAttributes(Graphics g, Map.Entry<String, DepoVertex> depoVertex) {
@@ -115,7 +130,7 @@ public class Graph extends JFrame {
 
         int rHeight = (int) (f.getHeight() * 1.1);
         int fWidth = (int) (tmp * 2.4);
-        int mOffset = depoVertex.getValue().getContainerVertices().size();
+        int mOffset = depoVertex.getValue().getContainers().size();
         int fHeight = mOffset * rHeight;
         int cDiameter = (int) Math.hypot(fHeight, fWidth);
         int cCenterX = depoVertex.getValue().getX();
@@ -134,14 +149,14 @@ public class Graph extends JFrame {
     public Set<Map<String, DepoConnection>> getPipesBetweenSameDepos() {
         Set<Map<String, DepoConnection>> result = new HashSet<>();
 
-        for(DepoConnection conn : simulation.getDepoConnections().values()) {
+        for (DepoConnection conn : simulation.getDepoConnections().values()) {
             Map<String, DepoConnection> tmp = new HashMap<String, DepoConnection>();
             String left, right;
             left = conn.getLeftDepoID();
             right = conn.getRightDepoID();
 
-            for(Map.Entry<String, DepoConnection> fin : simulation.getDepoConnections().entrySet()) {
-                if(fin.getValue().getLeftDepoID().equals(left) && fin.getValue().getRightDepoID().equals(right) ||
+            for (Map.Entry<String, DepoConnection> fin : simulation.getDepoConnections().entrySet()) {
+                if (fin.getValue().getLeftDepoID().equals(left) && fin.getValue().getRightDepoID().equals(right) ||
                         fin.getValue().getRightDepoID().equals(left) && fin.getValue().getLeftDepoID().equals(right)) {
                     tmp.put(fin.getKey(), fin.getValue());
                 }
@@ -159,10 +174,25 @@ public class Graph extends JFrame {
         return null;
     }
 
+    public Depo.DepoContainer getContainer(String id) {
+        for (Depo depo : simulation.getDepos()) {
+            for (Map.Entry<String, Depo.DepoContainer> entry : depo.getContainers().entrySet()) {
+                if (entry.getKey().equals(id))
+                    return entry.getValue();
+            }
+        }
+        return null;
+    }
+
     public String getCurrentTime() {
         String hh, mm;
         hh = Integer.toString(simulation.getCurrentHours());
         mm = Integer.toString(simulation.getCurrentMinutes());
+        if (mm.equals("60")) {
+            mm = "59";
+            //mm = "00";
+            //hh = Integer.toString(simulation.getCurrentHours() + 1);
+        }
         if (hh.length() == 1)
             hh = "0" + hh;
         if (mm.length() == 1)
@@ -177,14 +207,14 @@ public class Graph extends JFrame {
 
     class DepoVertex {
         private final int x, y;
-        private final ArrayList<String> containerVertices;
+        private final ArrayList<String> containers;
 
         public DepoVertex(int x, int y, Set<String> containerNames) {
             this.x = x;
             this.y = y;
-            this.containerVertices = new ArrayList<String>();
+            this.containers = new ArrayList<String>();
             for (String name : containerNames) {
-                this.containerVertices.add(name);
+                this.containers.add(name);
             }
         }
 
@@ -196,8 +226,8 @@ public class Graph extends JFrame {
             return y;
         }
 
-        public ArrayList<String> getContainerVertices() {
-            return containerVertices;
+        public ArrayList<String> getContainers() {
+            return containers;
         }
     }
 
@@ -236,7 +266,9 @@ public class Graph extends JFrame {
             return diameter;
         }
 
-        public int getLength() { return length; }
+        public int getLength() {
+            return length;
+        }
 
         public String getLeftDepo() {
             return leftDepo;
@@ -265,7 +297,7 @@ public class Graph extends JFrame {
         }
     }
 
-    public void addDepoVertex(String depoID, int x, int y, Set<String> containerNames) {
+    public void addDepoVertex(String depoID, int x, int y, LinkedHashSet<String> containerNames) {
         depoVertices.put(depoID, new DepoVertex(x, y, containerNames));
         this.repaint();
     }
@@ -283,8 +315,8 @@ public class Graph extends JFrame {
     }
 
     public Map.Entry<String, DepoVertex> getDepoVertexEntry(String id) {
-        for(Map.Entry<String, DepoVertex> entry : depoVertices.entrySet())
-            if(entry.getKey().equals(id))
+        for (Map.Entry<String, DepoVertex> entry : depoVertices.entrySet())
+            if (entry.getKey().equals(id))
                 return entry;
         return null;
     }
@@ -293,7 +325,9 @@ public class Graph extends JFrame {
         return pipes.get(id);
     }
 
-    public Fuel getFuelType(int id) { return fuels.get(id); }
+    public Fuel getFuelType(int id) {
+        return fuels.get(id);
+    }
 
     void drawLegend(Graphics g, int x, int y) {
         g.setFont(new Font("sans", Font.PLAIN, legendFontSize));
@@ -319,8 +353,10 @@ public class Graph extends JFrame {
         for (Fuel fuel : fuels.values()) {
             g.setColor(fuel.getColor());
             g.fillRect(x, y + cHeight * offset, cWidth, cHeight);
+
             g.setColor(Color.black);
             g.drawRect(x, y + cHeight * offset, cWidth, cHeight);
+
             g.setColor(getContrastColor(fuel.getColor()));
             g.drawString(fuel.getName(), x + f.stringWidth("/"), y + cHeight * offset + (int) (f.getHeight() * 0.85));
 
@@ -356,7 +392,8 @@ public class Graph extends JFrame {
         g.setStroke(new BasicStroke((float) 1));
 
         int offset = 1;
-        for (Depo.DepoContainer dc : getContainersOfDepo(depoVertex.getKey()).values()) {
+        for (String dcName : depoVertex.getValue().getContainers()) {
+            Depo.DepoContainer dc = getContainer(dcName);
             String current = Integer.toString(dc.getCurrentCapacity());
             String max = Integer.toString(dc.getMaxCapacity());
             int level = Math.round(attr.get("fWidth") * dc.getCurrentCapacity() / dc.getMaxCapacity());
@@ -386,14 +423,13 @@ public class Graph extends JFrame {
         rightX = pipe.getRightX();
         rightY = pipe.getRightY();
 
-        if(pipe.getRightDepo().equals(start)) {
+        if (pipe.getRightDepo().equals(start)) {
             int tmp = leftX;
             leftX = rightX;
             rightX = tmp;
             tmp = leftY;
             leftY = rightY;
             rightY = tmp;
-            //System.out.println("back");
         }
 
         double dx = rightX - leftX, dy = rightY - leftY;
@@ -413,9 +449,9 @@ public class Graph extends JFrame {
 
         double headRatio = head / pipeLen;
         double tailRatio = tail / pipeLen;
-        if (headRatio > 1.0)
+        if (headRatio > 0.99)
             headRatio = 1.0;
-        if (tailRatio > 1.0)
+        if (tailRatio > 0.99)
             tailRatio = 1.0;
 
         AffineTransform at2 = AffineTransform.getTranslateInstance(correction, 0);
@@ -433,34 +469,39 @@ public class Graph extends JFrame {
         g.dispose();
     }
 
-    public void paint(Graphics g) {
+    public void initPaint(Graphics g) {
         drawLegend(g, getWidth(), 0);
         for (Map.Entry<String, DepoVertex> dv : depoVertices.entrySet()) {
             drawDepo(g, dv);
         }
 
-
-        for (Map.Entry<String, Pipe> pipe : pipes.entrySet()) {
-            Map<Integer, List<Double>> positions = new HashMap<Integer, List<Double>>();
-            ArrayList<Double> list = new ArrayList<Double>();
-            list.add(0.0);
-            list.add(10000.0);
-            positions.put(2, list);
+        for (Map.Entry<String, DepoConnection> depoConn : simulation.getDepoConnections().entrySet()) {
+            Map<Integer, List<Double>> positions = depoConn.getValue().getHeadAndTailOfTheFluidRelativeToLeftDepo();
+            int length = depoConn.getValue().getPipeLength();
+            String start = depoConn.getValue().getLeftDepoID();
 
             for (Map.Entry<Integer, List<Double>> pos : positions.entrySet()) {
-                drawFuel(g, pipe.getValue().getLeftDepo(), pipe.getValue(), 100, pos);
+                drawFuel(g, start, getPipe(depoConn.getKey()), length, pos);
             }
         }
+    }
 
+    public void paint(Graphics g) {
+        for (Map.Entry<String, DepoVertex> dv : depoVertices.entrySet()) {
+            drawDepo(g, dv);
+        }
 
         for (TransportationPlan tPlan : simulation.getTransportationPlans()) {
-            DepoConnection depoConn = simulation.getDepoConnections().get(tPlan.getPipeID());
-            Map<Integer, List<Double>> positions = depoConn.getHeadAndTailOfTheFluidRelativeToLeftDepo();
-            int length = depoConn.getPipeLength();
-            String start = tPlan.getStartDepoID();
+            if(tPlan.isTimeToRun() && !tPlan.isFinished()) {
+                DepoConnection depoConn = simulation.getDepoConnections().get(tPlan.getPipeID());
+                Map<Integer, List<Double>> positions = depoConn.getHeadAndTailOfTheFluidRelativeToLeftDepo();
+                int length = depoConn.getPipeLength();
+                String start = tPlan.getStartDepoID();
 
-            for (Map.Entry<Integer, List<Double>> pos : positions.entrySet()) {
-                drawFuel(g, start, getPipe(tPlan.getPipeID()), length, pos);
+                for (Map.Entry<Integer, List<Double>> pos : positions.entrySet()) {
+                    if(!pos.getValue().get(0).equals(pos.getValue().get(1)))
+                        drawFuel(g, start, getPipe(tPlan.getPipeID()), length, pos);
+                }
             }
         }
         setTitle(windowName + ": " + getCurrentTime());

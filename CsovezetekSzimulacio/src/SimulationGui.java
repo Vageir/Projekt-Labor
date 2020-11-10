@@ -1,5 +1,4 @@
 import javax.swing.*;
-import java.awt.*;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -11,7 +10,7 @@ public class SimulationGui {
     private static void setGUIatStart() {
         simulation = new Simulation();
         frame = new Graph("A szimuláció állapota:", simulation);
-        frame.setSize(1200,900);
+        frame.setSize(1200, 900);
         frame.setVisible(true);
         frame.loadGraph();
     }
