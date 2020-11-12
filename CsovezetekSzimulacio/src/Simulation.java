@@ -17,8 +17,6 @@ public class Simulation  {
     private Map<String, DepoConnection> depoConnections;
     private int currentHours, currentMinutes;
     private List<String> errorMessages;
-    private ExecutorService executor;
-    private List<Future<Boolean>> futureList;
 
     public Simulation() {
         transportationPlans = new ArrayList<>();
