@@ -157,15 +157,14 @@ public class Simulation  {
         String highestContainerCapacityID = t.getHighestContainerCapacityID();
         String pipeID = t.getPipeID();
         double flowVelocity = t.getFlowVelocity();
-        if (t.getTransportationID().equals("2")){
+//        if (t.getTransportationID().equals("2")){
 //            for (Map.Entry<Integer,List<Double>> entry : depoConnections.get(pipeID).getHeadAndTailOfTheFluidRelativeToLeftDepo().entrySet()) {
 //                System.out.println("FUELID: " + entry.getKey());
 //                System.out.println("HEAD: " + entry.getValue().get(0) + " TAIL: " + entry.getValue().get(1));
 //
 //            }
 //            System.out.println("-------------");
-        }
-
+//        }
         if (t.getStartDepoMovedFuelAmount() != t.getFuelAmount()) {
             if (startDepo.getContainers().get(startDepoContainerID).getCurrentCapacity()-volumeFlowRate < 0){
                 errorMessages.add("Nincs elég üzemanyag az induló oldalon! Ellenőrizze a "+t.getTransportationID()+" tervet!");
@@ -177,7 +176,7 @@ public class Simulation  {
         else {
             if (t.getTailOfTheFluid() < (double)pipeLength){
                 if ((startDepo.getContainers().get(highestContainerCapacityID).getCurrentCapacity()-volumeFlowRate) < 0) {
-                    System.out.println(t.getTransportationID()+" :lmao");
+//                    System.out.println(t.getTransportationID()+" :lmao");
                     highestContainerCapacityID = startDepo.getHighestCurrentCapacityContainer();
                     t.setHighestContainerCapacityID(highestContainerCapacityID);
                     if (highestContainerCapacityID == null) {
@@ -199,7 +198,7 @@ public class Simulation  {
                 t.addTailOfTheFluid(flowVelocity);
                 startDepo.getContainers().get(highestContainerCapacityID).substractCurrentCapacity(volumeFlowRate);
                 if (!depoConnections.get(pipeID).getPushFluidID().isEmpty()){
-                    System.out.println("yo");
+//                    System.out.println("yo");
                     for (int i: depoConnections.get(pipeID).getPushFluidID()) {
                         List<Double> l = new ArrayList<>();
 
@@ -221,9 +220,9 @@ public class Simulation  {
                     }
                 }
                 else {
-                    if (t.getTransportationID().equals("2")) {
-                        System.out.println("nice");
-                    }
+//                    if (t.getTransportationID().equals("2")) {
+//                        System.out.println("nice");
+//                    }
                     List<Double> ls = new ArrayList<>();
                     ls.add(t.getTailOfTheFluid());
                     ls.add(0.0);
