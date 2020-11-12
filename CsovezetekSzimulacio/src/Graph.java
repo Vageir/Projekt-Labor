@@ -423,14 +423,14 @@ public class Graph extends JFrame {
         rightX = pipe.getRightX();
         rightY = pipe.getRightY();
 
-//        if (pipe.getRightDepo().equals(start)) {
-//            int tmp = leftX;
-//            leftX = rightX;
-//            rightX = tmp;
-//            tmp = leftY;
-//            leftY = rightY;
-//            rightY = tmp;
-//        }
+        if (pipe.getRightDepo().equals(start)) {
+            int tmp = leftX;
+            leftX = rightX;
+            rightX = tmp;
+            tmp = leftY;
+            leftY = rightY;
+            rightY = tmp;
+        }
 
         double dx = rightX - leftX, dy = rightY - leftY;
         double angle = Math.atan2(dy, dx);
