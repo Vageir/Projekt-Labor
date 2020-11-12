@@ -17,6 +17,5 @@ INSERT INTO projektlabor.depocontainer (depoID, containerID, CurrentCapacity, Ma
 INSERT INTO projektlabor.depocontainer (depoID, containerID, CurrentCapacity, MaxCapacity, fuelID) VALUES ('DSA', 'DSA1M8000', 6000, 10000, 1);
 INSERT INTO projektlabor.depocontainer (depoID, containerID, CurrentCapacity, MaxCapacity, fuelID) VALUES ('DSA', 'DSA2M10000', 6000, 10000, 2);
 
-INSERT INTO projektlabor.transportationplan (transportationID, startdepoID, endDepoID, fuelID, fuelAmount, startDate, endDdate, operatorID) VALUES ('1', 'DSA', 'CSA', 1, 1000, '2020-01-01 10:00:00', '2020-01-01 12:00:00', 'AD123');
-INSERT INTO projektlabor.transportationplan (transportationID, startdepoID, endDepoID, fuelID, fuelAmount, startDate, endDdate, operatorID) VALUES ('2', 'BSA', 'DSA', 2, 3000, '2020-01-01 12:00:00', '2020-01-01 14:00:00', 'AD123');
-INSERT INTO projektlabor.transportationplan (transportationID, startdepoID, endDepoID, fuelID, fuelAmount, startDate, endDdate, operatorID) VALUES ('3', 'DSA', 'BSA', 1, 2000, '2020-01-01 14:00:00', '2020-01-01 16:00:00', 'JSP23');
+INSERT INTO projektlabor.transportationplan (transportationID, startdepoID, endDepoID, fuelID, fuelAmount, startDate, endDdate, operatorID, pipeID) VALUES ('1', 'DSA', 'CSA', 1, 1000, '2020-01-01 10:00:00', '2020-01-01 11:00:00', 'AD123', '1DSA5000CSA1');
+INSERT INTO projektlabor.transportationplan (transportationID, startdepoID, endDepoID, fuelID, fuelAmount, startDate, endDdate, operatorID, pipeID) VALUES ('2', 'CSA', 'DSA', 1, 1000, '2020-01-01 11:00:00', '2020-01-01 12:00:00', 'AD123', '1DSA5000CSA1');
