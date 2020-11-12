@@ -31,18 +31,6 @@ public class DataBaseHandler {
             return false;
         }
     }
-    private void closeConnection(){
-        try {
-            stmt.close();
-            con.close();
-        }
-        catch (SQLException se){
-            se.printStackTrace();
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
     public ArrayList<String> getTableMetaData(String tableName, int typeOrNameOrColumns){
         //0 = columnTypeName, 1 = columnName, 2 = columnCount
         setConnection();

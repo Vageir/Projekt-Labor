@@ -19,14 +19,13 @@ public class TransportationPlan {
     private double startDepoMovedFuelAmount;
     private double endDepoMovedFuelAmount;
 
+
     public String getHighestContainerCapacityID() {
         return highestContainerCapacityID;
     }
-
     public void setHighestContainerCapacityID(String highestContainerCapacityID) {
         this.highestContainerCapacityID = highestContainerCapacityID;
     }
-
     public TransportationPlan(ArrayList<String> ls){
         this.transportationID = ls.get(0);
         this.startDepoID = ls.get(1);
@@ -46,15 +45,12 @@ public class TransportationPlan {
         this.timeToRun =  false;
         this.highestContainerCapacityID = null;
     }
-
     public boolean isTimeToRun() {
         return timeToRun;
     }
-
     public void setTimeToRun(boolean timeToRun) {
         this.timeToRun = timeToRun;
     }
-
     public void addStartDepoVolumeFlowRate(int volumeFlowRate){
         startDepoMovedFuelAmount+= volumeFlowRate;
     }
@@ -70,54 +66,33 @@ public class TransportationPlan {
     public void addTailOfTheFluid(double flowVelocity){
         tailOfTheFluid+=flowVelocity;
     }
-
     public void setTailOfTheFluid(double tailOfTheFluid) {
         this.tailOfTheFluid = tailOfTheFluid;
     }
-
     public void setHeadOfTheFluid(double headOfTheFluid) {
         this.headOfTheFluid = headOfTheFluid;
     }
-
     public double getFlowVelocity() {
         return flowVelocity;
     }
-
     public double getStartDepoMovedFuelAmount() {
         return startDepoMovedFuelAmount;
     }
-
     public double getEndDepoMovedFuelAmount() {
         return endDepoMovedFuelAmount;
     }
-
     public boolean isFinished() {
         return finished;
     }
-
     public void setFinished(boolean finished) {
         this.finished = finished;
     }
-
     public double getTailOfTheFluid() {
         return tailOfTheFluid;
     }
-
-
     public double getHeadOfTheFluid() {
         return headOfTheFluid;
     }
-
-
-
-    //    public  ArrayList<Integer> dateComponent(String date){
-//        ArrayList<Integer> ls = new ArrayList<>();
-//        String[] s = date.substring(0,10).split("-");
-//        for (String ss : s){
-//            ls.add(Integer.parseInt(ss));
-//        }
-//        return ls;
-//    }
     public String getPipeID() {
         return pipeID;
     }
