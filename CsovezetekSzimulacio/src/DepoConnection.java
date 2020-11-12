@@ -48,10 +48,10 @@ public class DepoConnection {
     public void setCurrentFuelID() {
         List<Integer> ls = new ArrayList<>();
         List<Integer> ll = new ArrayList<>();
-        System.out.println("BEFORE");
-        for (Map.Entry<Integer, List<Double>> entry : headAndTailOfTheFluidRelativeToLeftDepo.entrySet()) {
-            System.out.println("FUELID: " + entry.getKey() + " HEAD: " + entry.getValue().get(0) + " TAIL:" + entry.getValue().get(1));
-        }
+//        System.out.println("BEFORE");
+//        for (Map.Entry<Integer, List<Double>> entry : headAndTailOfTheFluidRelativeToLeftDepo.entrySet()) {
+//            System.out.println("FUELID: " + entry.getKey() + " HEAD: " + entry.getValue().get(0) + " TAIL:" + entry.getValue().get(1));
+//        }
         for (Map.Entry<Integer, List<Double>> entry : headAndTailOfTheFluidRelativeToLeftDepo.entrySet()) {
             if (entry.getKey() > 100)
                 ls.add(entry.getKey());
@@ -86,11 +86,12 @@ public class DepoConnection {
         for (int i : ll) {
             headAndTailOfTheFluidRelativeToLeftDepo.remove(i);
         }
-        System.out.println("AFTER");
-        for (Map.Entry<Integer, List<Double>> entry : headAndTailOfTheFluidRelativeToLeftDepo.entrySet()) {
-            System.out.println("FUELID: " + entry.getKey() + " HEAD: " + entry.getValue().get(0) + " TAIL:" + entry.getValue().get(1));
-        }
-        System.out.println(".........");
+        pushFluidID.clear();
+//        System.out.println("AFTER");
+//        for (Map.Entry<Integer, List<Double>> entry : headAndTailOfTheFluidRelativeToLeftDepo.entrySet()) {
+//            System.out.println("FUELID: " + entry.getKey() + " HEAD: " + entry.getValue().get(0) + " TAIL:" + entry.getValue().get(1));
+//        }
+//        System.out.println(".........");
     }
     public void addPushFluidID(int fuelID){
         pushFluidID.add(fuelID);
@@ -117,11 +118,11 @@ public class DepoConnection {
                 }
                 entry.setValue(list);
             }
-            System.out.println("AFTER THE SWAP");
-            for (Map.Entry<Integer, List<Double>> entry : headAndTailOfTheFluidRelativeToLeftDepo.entrySet()) {
-                System.out.println("FUELID: " + entry.getKey() + " HEAD: " + entry.getValue().get(0) + " TAIL:" + entry.getValue().get(1));
-            }
-            System.out.println(".........");
+//            System.out.println("AFTER THE SWAP");
+//            for (Map.Entry<Integer, List<Double>> entry : headAndTailOfTheFluidRelativeToLeftDepo.entrySet()) {
+//                System.out.println("FUELID: " + entry.getKey() + " HEAD: " + entry.getValue().get(0) + " TAIL:" + entry.getValue().get(1));
+//            }
+//            System.out.println(".........");
         }
 
     }

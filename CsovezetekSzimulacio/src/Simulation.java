@@ -177,6 +177,7 @@ public class Simulation  {
         else {
             if (t.getTailOfTheFluid() < (double)pipeLength){
                 if ((startDepo.getContainers().get(highestContainerCapacityID).getCurrentCapacity()-volumeFlowRate) < 0) {
+                    System.out.println(t.getTransportationID()+" :lmao");
                     highestContainerCapacityID = startDepo.getHighestCurrentCapacityContainer();
                     t.setHighestContainerCapacityID(highestContainerCapacityID);
                     if (highestContainerCapacityID == null) {
@@ -198,15 +199,15 @@ public class Simulation  {
                 t.addTailOfTheFluid(flowVelocity);
                 startDepo.getContainers().get(highestContainerCapacityID).substractCurrentCapacity(volumeFlowRate);
                 if (!depoConnections.get(pipeID).getPushFluidID().isEmpty()){
-//                    System.out.println("yo");
+                    System.out.println("yo");
                     for (int i: depoConnections.get(pipeID).getPushFluidID()) {
                         List<Double> l = new ArrayList<>();
-                        if (depoConnections.get(pipeID).getHeadAndTailOfTheFluidRelativeToLeftDepo(). get(i) != null) {
+
                             l.add(depoConnections.get(pipeID).getHeadAndTailOfTheFluidRelativeToLeftDepo().
                                     get(i).get(0) + flowVelocity);
                             l.add(0.0);
                             depoConnections.get(pipeID).getHeadAndTailOfTheFluidRelativeToLeftDepo().put(i, l);
-                        }
+
                     }
                     if (depoConnections.get(pipeID).getHeadAndTailOfTheFluidRelativeToLeftDepo().
                             get(t.getFuelID()+1000) != null) {
@@ -220,6 +221,9 @@ public class Simulation  {
                     }
                 }
                 else {
+                    if (t.getTransportationID().equals("2")) {
+                        System.out.println("nice");
+                    }
                     List<Double> ls = new ArrayList<>();
                     ls.add(t.getTailOfTheFluid());
                     ls.add(0.0);
