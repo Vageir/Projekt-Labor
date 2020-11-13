@@ -13,13 +13,19 @@ public class TransportationPlan {
     private String highestContainerCapacityID;
     private boolean finished;
     private boolean timeToRun;
+    private boolean reverse;
     private double tailOfTheFluid;
     private double headOfTheFluid;
     private double flowVelocity;
     private double startDepoMovedFuelAmount;
     private double endDepoMovedFuelAmount;
 
-
+    public boolean isReverse() {
+        return reverse;
+    }
+    public void setReverse(boolean reverse) {
+        this.reverse = reverse;
+    }
     public String getHighestContainerCapacityID() {
         return highestContainerCapacityID;
     }
@@ -44,6 +50,7 @@ public class TransportationPlan {
         this.endDepoMovedFuelAmount = 0.0;
         this.timeToRun =  false;
         this.highestContainerCapacityID = null;
+        this.reverse = false;
     }
     public boolean isTimeToRun() {
         return timeToRun;

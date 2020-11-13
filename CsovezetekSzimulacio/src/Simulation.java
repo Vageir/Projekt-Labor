@@ -98,6 +98,18 @@ public class Simulation  {
         }
         return null;
     }
+    private boolean isPipeUsed(TransportationPlan t){
+        for (TransportationPlan transportationPlan : transportationPlans){
+            if (transportationPlan.isTimeToRun() && !transportationPlan.isFinished()
+                    && !transportationPlan.getTransportationID().equals(t.getTransportationID())
+                    && transportationPlan.getPipeID().equals(t.getPipeID())) {
+                errorMessages.add("Egyszer nemm használhatja több terv ugyanazt a csőt ugyanabban a pillanatban!" +
+                        "Ellenőrizze a "+transportationPlan.getTransportationID()+", "+t.getTransportationID()+" terveket!");
+                return true;
+            }
+        }
+        return false;
+    }
     private boolean runSimulations() throws InterruptedException {
         currentHours = transportationPlans.get(0).getStartHours();
         currentMinutes = transportationPlans.get(0).getStartMinutes();
@@ -109,6 +121,7 @@ public class Simulation  {
                 for (TransportationPlan t : transportationPlans){
                     if (t.getStartHours()== currentHours && t.getStartMinutes() == currentMinutes){
 //                        System.out.println(currentHours+":"+currentMinutes);
+                        if(isPipeUsed(t)) return false;
                         t.setTimeToRun(true);
                         t.setHighestContainerCapacityID(getDepo(t.getStartDepoID()).getHighestCurrentCapacityContainer());
                         depoConnections.get(t.getPipeID()).setDirection(t);
@@ -124,6 +137,8 @@ public class Simulation  {
                                     t.setTimeToRun(false);
 //                                    System.out.println("TID:"+t.getTransportationID());
                                     depoConnections.get(t.getPipeID()).setCurrentFuelID();
+                                    if (t.isReverse())
+                                        depoConnections.get(t.getPipeID()).setDirection(t);
                                 }
                                 else{
                                     System.out.println("Nem volt elég idő");

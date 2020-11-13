@@ -99,6 +99,7 @@ public class DepoConnection {
     public List<Integer> getPushFluidID() {
         return pushFluidID;
     }
+
     public void setDirection(TransportationPlan t) {
         if (!t.getStartDepoID().equals(leftDepoID)) {
             for (Map.Entry<Integer, List<Double>> entry : headAndTailOfTheFluidRelativeToLeftDepo.entrySet()) {
@@ -118,6 +119,7 @@ public class DepoConnection {
                 }
                 entry.setValue(list);
             }
+            t.setReverse(true);
 //            System.out.println("AFTER THE SWAP");
 //            for (Map.Entry<Integer, List<Double>> entry : headAndTailOfTheFluidRelativeToLeftDepo.entrySet()) {
 //                System.out.println("FUELID: " + entry.getKey() + " HEAD: " + entry.getValue().get(0) + " TAIL:" + entry.getValue().get(1));
