@@ -34,9 +34,9 @@ public class SimulationGui {
             JOptionPane.showMessageDialog(frame, "Minden szállítási terv teljesíthető.", "Sikeres lefutás!", JOptionPane.INFORMATION_MESSAGE);
     }
 
-    public static void main(String[] args) {
-        setGUIatStart();
-        drawSimulation();
-        popUp();
-    }
+//    public static void main(String[] args) {
+//        setGUIatStart();
+//        drawSimulation();
+//        popUp();
+//    }
 }
