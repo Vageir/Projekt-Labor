@@ -16,7 +16,7 @@ public class Graph extends JFrame {
         this.windowName = windowName;
         this.setTitle(windowName);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
+//        this.setLocationRelativeTo(null);
         this.width = 60;
         this.height = 60;
         this.depoFontSize = 22;

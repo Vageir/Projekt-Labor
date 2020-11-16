@@ -117,46 +117,61 @@ public class Simulation  {
 //            System.out.println("Current Hours: "+currentHours);
             currentMinutes = 0;
             while (currentMinutes < 60){
-                sleep(timeSpeed);
-                for (TransportationPlan t : transportationPlans){
-                    if (t.getStartHours()== currentHours && t.getStartMinutes() == currentMinutes){
-//                        System.out.println(currentHours+":"+currentMinutes);
-                        if(isPipeUsed(t)) return false;
-                        t.setTimeToRun(true);
-                        t.setHighestContainerCapacityID(getDepo(t.getStartDepoID()).getHighestCurrentCapacityContainer());
-                        depoConnections.get(t.getPipeID()).setDirection(t);
-                    }
-                    if (t.isTimeToRun()){
-                        if(!process(t)) return false;
-                        if (!t.isFinished()){
-                            if (t.getTailOfTheFluid() >= depoConnections.get(t.getPipeID()).getPipeLength()){
-//                                System.out.println("TAIL:"+t.getTailOfTheFluid()+" PLength:"+depoConnections.get(t.getPipeID()).getPipeLength());
-//                                System.out.println(t.getEndHours());
-                                if (t.getEndHours() >= currentHours) {
-                                    t.setFinished(true);
-                                    t.setTimeToRun(false);
-//                                    System.out.println("TID:"+t.getTransportationID());
-                                    depoConnections.get(t.getPipeID()).setCurrentFuelID();
-                                    if (t.isReverse())
-                                        depoConnections.get(t.getPipeID()).setDirection(t);
-                                }
-                                else{
-                                    System.out.println("Nem volt elég idő");
-                                    errorMessages.add("Nincs elég idő a(z) "+t.getTransportationID()+" terv végerhajtására.");
-                                    return false;
-                                }
-                            }
-                        }
-                    }
-                }
+                if (!run()) return false;
                 currentMinutes++;
             }
             currentHours++;
+        }
+        currentMinutes = 0;
+        while (currentMinutes < transportationPlans.get(transportationPlans.size()-1).getEndMinutes()){
+            if (!run()) return false;
+            currentMinutes++;
         }
         for (TransportationPlan t: transportationPlans){
             if (!t.isFinished()) {
                 errorMessages.add("Nincs elég idő a teveket lefuttatásához");
                 return false;
+            }
+        }
+        return true;
+    }
+    private boolean run() throws InterruptedException {
+        sleep(timeSpeed);
+        for (TransportationPlan t : transportationPlans){
+            if (t.getStartHours()== currentHours && t.getStartMinutes() == currentMinutes){
+//                        System.out.println(currentHours+":"+currentMinutes);
+                if(isPipeUsed(t)) return false;
+                t.setTimeToRun(true);
+                t.setHighestContainerCapacityID(getDepo(t.getStartDepoID()).getHighestCurrentCapacityContainer());
+                depoConnections.get(t.getPipeID()).setDirection(t);
+            }
+            if (t.isTimeToRun()){
+                if(!process(t)) return false;
+                if (!t.isFinished()){
+                    if (t.getTailOfTheFluid() >= depoConnections.get(t.getPipeID()).getPipeLength()){
+//                                System.out.println("TAIL:"+t.getTailOfTheFluid()+" PLength:"+depoConnections.get(t.getPipeID()).getPipeLength());
+//                                System.out.println(t.getEndHours());
+                        if (t.getEndHours() >= currentHours) {
+                            t.setFinished(true);
+                            t.setTimeToRun(false);
+//                                    System.out.println("TID:"+t.getTransportationID());
+                            depoConnections.get(t.getPipeID()).setCurrentFuelID();
+                            if (t.isReverse())
+                                depoConnections.get(t.getPipeID()).setDirection(t);
+                        }
+                        else if (t.getEndMinutes() <= currentMinutes){
+                            t.setFinished(true);
+                            t.setTimeToRun(false);
+                            depoConnections.get(t.getPipeID()).setCurrentFuelID();
+                            if (t.isReverse())
+                                depoConnections.get(t.getPipeID()).setDirection(t);
+                        }
+                    }
+                    else if (t.getEndHours() == currentHours && t.getEndMinutes() == currentMinutes){
+                        errorMessages.add("Nincs elég idő a(z) "+t.getTransportationID()+" azonosítójú terv végerhajtására.");
+                        return false;
+                    }
+                }
             }
         }
         return true;
@@ -180,7 +195,7 @@ public class Simulation  {
 //        }
         if (t.getStartDepoMovedFuelAmount() != t.getFuelAmount()) {
             if (startDepo.getContainers().get(startDepoContainerID).getCurrentCapacity()-volumeFlowRate < 0){
-                errorMessages.add("Nincs elég üzemanyag az induló oldalon! Ellenőrizze a "+t.getTransportationID()+" tervet!");
+                errorMessages.add("Nincs elég üzemanyag az induló oldalon! Ellenőrizze a(z) "+t.getTransportationID()+" azonosítójú tervet!");
                 return false;
             }
             t.addStartDepoVolumeFlowRate(volumeFlowRate);
@@ -194,13 +209,12 @@ public class Simulation  {
                     t.setHighestContainerCapacityID(highestContainerCapacityID);
                     if (highestContainerCapacityID == null) {
                         errorMessages.add("Nincs elég üzemanyag az induló oldalon, hogy át lehessen vinni a tervben szereplő üzemanyagot. " +
-                                "Ellenőrizze a "+t.getTransportationID()+" tervet!");
+                                "Ellenőrizze a(z) "+t.getTransportationID()+" azonosítójú tervet!");
                         return false;
                     }
                     if ((startDepo.getContainers().get(highestContainerCapacityID).getCurrentCapacity() - volumeFlowRate) < 0) {
                         errorMessages.add("Nincs elég üzemanyag az induló oldalon, hogy át lehessen vinni a tervben szereplő üzemanyagot. " +
-                                "Ellenőrizze a "+t.getTransportationID()+" tervet!");
-                        System.out.println("Alulcsordulás");
+                                "Ellenőrizze a(z) "+t.getTransportationID()+" azonosítójú tervet!");
                         return false;
                     }
                     depoConnections.get(pipeID).addPushFluidID(startDepo.getContainers().get(highestContainerCapacityID).getFuelID()+100);
@@ -277,8 +291,7 @@ public class Simulation  {
                                     depoConnections.get(pipeID).getHeadAndTailOfTheFluidRelativeToLeftDepo().get(i).get(0)) {
                         if ((endDepo.getContainers().get(endDepo.getContainerID(i)).getCurrentCapacity() + volumeFlowRate) >
                                 endDepo.getContainers().get(endDepo.getContainerID(i)).getMaxCapacity()) {
-                            errorMessages.add("A vételi oldalon megtelt a tartály! ");
-                            System.out.println("Túlcsordulás");
+                            errorMessages.add("A vételi oldalon megtelt a tartály! Ellenőrizze a(z) "+t.getTransportationID()+" azonosítójú tervet!");
                             return false;
                         }
                         endDepo.getContainers().get(endDepo.getContainerID(i)).addCurrentCapacity(volumeFlowRate);
@@ -304,7 +317,7 @@ public class Simulation  {
                     endDepo.getContainers().get(endDepoContainerID).addCurrentCapacity(volumeFlowRate);
                 }
                 else{
-                    errorMessages.add("A vételi oldalon megtelt a tartály!");
+                    errorMessages.add("A vételi oldalon megtelt a tartály! Ellenőrizze a(z) "+t.getTransportationID()+" azonosítójú tervet!");
                     return false;
                 }
                 t.addEndDepoVolumeFlowRate(volumeFlowRate);

@@ -1,19 +1,40 @@
-INSERT INTO projektlabor.depo (DepoID, DepoName, DepoLocation) VALUES ('BSA', 'Budapest', 'Budapest');
-INSERT INTO projektlabor.depo (DepoID, DepoName, DepoLocation) VALUES ('DSA', 'Debrecen', 'Debrecen');
-INSERT INTO projektlabor.fuel (fuelID, fuelName) VALUES (1, 'Dízel');
-INSERT INTO projektlabor.fuel (fuelID, fuelName) VALUES (2, 'Benzin');
-INSERT INTO projektlabor.depocontainer (depoID, containerID, CurrentCapacity, MaxCapacity, fuelID) VALUES ('BSA', 'BSA1M4000', 2000, 4000, 1);
-INSERT INTO projektlabor.depocontainer (depoID, containerID, CurrentCapacity, MaxCapacity, fuelID) VALUES ('BSA', 'BSA2M50000', 2000, 5000, 2);
-INSERT INTO projektlabor.depocontainer (depoID, containerID, CurrentCapacity, MaxCapacity, fuelID) VALUES ('DSA', 'DSA1M8000', 5000, 8000, 1);
-INSERT INTO projektlabor.depocontainer (depoID, containerID, CurrentCapacity, MaxCapacity, fuelID) VALUES ('DSA', 'DSA2M10000', 5000, 10000, 2);
-INSERT INTO projektlabor.operator (OperatorID, OperatorName, OperatorBirth) VALUES ('AD123', 'Adam', '1956-10-25');
-INSERT INTO projektlabor.operator (OperatorID, OperatorName, OperatorBirth) VALUES ('JSP23', 'Joseph', '1998-10-25');
-INSERT INTO projektlabor.connecteddepos (PipeID, LeftDepoID, RightDepoID, PipeLength, PipeDiameter) VALUES ('1BSA5000DSA1', 'BSA', 'DSA', 5000, 1);
-INSERT INTO projektlabor.connecteddepos (PipeID, LeftDepoID, RightDepoID, PipeLength, PipeDiameter) VALUES ('1DSA5000BSA1', 'DSA', 'BSA', 5000, 1);
-INSERT INTO projektlabor.transportationplan (transportationID, startdepoID, endDepoID, fuelID, fuelAmount, startDate, endDdate, operatorID, pipeID) VALUES ('AD1231111BSABSA', 'BSA', 'DSA', 2, 3000, '2020-01-01 18:00:00', '2020-01-01 19:00:00', 'AD123', '1BSA5000DSA1');
-INSERT INTO projektlabor.transportationplan (transportationID, startdepoID, endDepoID, fuelID, fuelAmount, startDate, endDdate, operatorID, pipeID) VALUES ('AD1231111BSADSA', 'BSA', 'DSA', 1, 1000, '2020-01-01 10:00:00', '2020-01-01 12:00:00', 'AD123', '1BSA5000DSA1');
-INSERT INTO projektlabor.transportationplan (transportationID, startdepoID, endDepoID, fuelID, fuelAmount, startDate, endDdate, operatorID, pipeID) VALUES ('AD1231111DSADSA', 'DSA', 'BSA', 2, 3000, '2020-01-01 17:00:00', '2020-01-01 18:00:00', 'AD123', '1DSA5000BSA1');
-INSERT INTO projektlabor.transportationplan (transportationID, startdepoID, endDepoID, fuelID, fuelAmount, startDate, endDdate, operatorID, pipeID) VALUES ('JSP231111BSADSA', 'BSA', 'DSA', 2, 2000, '2020-01-01 12:00:00', '2020-01-01 15:00:00', 'JSP23', '1BSA5000DSA1');
-INSERT INTO projektlabor.transportationplan (transportationID, startdepoID, endDepoID, fuelID, fuelAmount, startDate, endDdate, operatorID, pipeID) VALUES ('JSP231111DSADSA', 'DSA', 'DSA', 1, 6000, '2020-01-01 15:00:00', '2020-01-01 17:00:00', 'JSP23', '1DSA5000BSA1');
-INSERT INTO projektlabor.user (uname, password) VALUES ('Adam', 'adampa55');
-INSERT INTO projektlabor.user (uname, password) VALUES ('Joseph', 'josephpa55');
+INSERT INTO projektlabor.depo (DepoID, DepoName, DepoLocation) VALUES ('BSA', 'BSA', 'BSA');
+INSERT INTO projektlabor.depo (DepoID, DepoName, DepoLocation) VALUES ('CSA', 'CSA', 'CSA');
+INSERT INTO projektlabor.depo (DepoID, DepoName, DepoLocation) VALUES ('DSA', 'DSA', 'DSA');
+
+INSERT INTO projektlabor.connecteddepos (PipeID, LeftDepoID, RightDepoID, PipeLength, PipeDiameter) VALUES ('BSADSA1', 'BSA', 'DSA', 5000, 1);
+INSERT INTO projektlabor.connecteddepos (PipeID, LeftDepoID, RightDepoID, PipeLength, PipeDiameter) VALUES ('BSADSA2', 'BSA', 'DSA', 5000, 1);
+INSERT INTO projektlabor.connecteddepos (PipeID, LeftDepoID, RightDepoID, PipeLength, PipeDiameter) VALUES ('DSACSA1', 'DSA', 'CSA', 6000, 1);
+INSERT INTO projektlabor.connecteddepos (PipeID, LeftDepoID, RightDepoID, PipeLength, PipeDiameter) VALUES ('DSACSA2', 'DSA', 'CSA', 6000, 1);
+-- CONTAINERS
+INSERT INTO projektlabor.depocontainer (depoID, containerID, CurrentCapacity, MaxCapacity, fuelID) VALUES ('BSA', 'BSA1M15000', 8000, 15000, 1);
+INSERT INTO projektlabor.depocontainer (depoID, containerID, CurrentCapacity, MaxCapacity, fuelID) VALUES ('BSA', 'BSA2M9000', 4000, 9000, 2);
+INSERT INTO projektlabor.depocontainer (depoID, containerID, CurrentCapacity, MaxCapacity, fuelID) VALUES ('CSA', 'CSA1M12000', 10000, 12000, 1);
+INSERT INTO projektlabor.depocontainer (depoID, containerID, CurrentCapacity, MaxCapacity, fuelID) VALUES ('CSA', 'CSA2M13000', 7000, 13000, 2);
+INSERT INTO projektlabor.depocontainer (depoID, containerID, CurrentCapacity, MaxCapacity, fuelID) VALUES ('DSA', 'DSA1M20000', 4000, 20000, 1);
+INSERT INTO projektlabor.depocontainer (depoID, containerID, CurrentCapacity, MaxCapacity, fuelID) VALUES ('DSA', 'DSA2M10000', 4000, 10000, 2);
+
+-- TRANSPORTAIONPLANS Vételi oldalon megtelik a tartály
+INSERT INTO projektlabor.transportationplan (transportationID, startdepoID, endDepoID, fuelID, fuelAmount, startDate, endDdate, operatorID, pipeID) VALUES ('1', 'BSA', 'DSA', 1, 3000, '2020-11-16 13:00:00', '2020-11-16 15:00:00', 'AD123', 'BSADSA1');
+INSERT INTO projektlabor.transportationplan (transportationID, startdepoID, endDepoID, fuelID, fuelAmount, startDate, endDdate, operatorID, pipeID) VALUES ('2', 'DSA', 'CSA', 2, 2000, '2020-11-16 14:00:00', '2020-11-16 16:00:00', 'AD123', 'DSACSA1');
+INSERT INTO projektlabor.transportationplan (transportationID, startdepoID, endDepoID, fuelID, fuelAmount, startDate, endDdate, operatorID, pipeID) VALUES ('3', 'DSA', 'BSA', 2, 4000, '2020-11-16 16:00:00', '2020-11-16 18:00:00', 'AD123', 'BSADSA2');
+
+-- TRANSPORTATIONPLANS Az induló oldalon nincs elég üzemanyag
+INSERT INTO projektlabor.transportationplan (transportationID, startdepoID, endDepoID, fuelID, fuelAmount, startDate, endDdate, operatorID, pipeID) VALUES ('1', 'BSA', 'DSA', 1, 3000, '2020-11-16 13:00:00', '2020-11-16 15:00:00', 'AD123', 'BSADSA1');
+INSERT INTO projektlabor.transportationplan (transportationID, startdepoID, endDepoID, fuelID, fuelAmount, startDate, endDdate, operatorID, pipeID) VALUES ('2', 'DSA', 'CSA', 2, 1000, '2020-11-16 14:00:00', '2020-11-16 16:00:00', 'AD123', 'DSACSA1');
+INSERT INTO projektlabor.transportationplan (transportationID, startdepoID, endDepoID, fuelID, fuelAmount, startDate, endDdate, operatorID, pipeID) VALUES ('3', 'DSA', 'BSA', 2, 4000, '2020-11-16 16:00:00', '2020-11-16 18:00:00', 'AD123', 'BSADSA2');
+
+-- TRANSPORTAIONPLANS Nincs elég idő
+INSERT INTO projektlabor.transportationplan (transportationID, startdepoID, endDepoID, fuelID, fuelAmount, startDate, endDdate, operatorID, pipeID) VALUES ('1', 'BSA', 'DSA', 1, 5000, '2020-11-16 13:00:00', '2020-11-16 14:00:00', 'AD123', 'BSADSA1');
+INSERT INTO projektlabor.transportationplan (transportationID, startdepoID, endDepoID, fuelID, fuelAmount, startDate, endDdate, operatorID, pipeID) VALUES ('2', 'DSA', 'CSA', 2, 1000, '2020-11-16 14:00:00', '2020-11-16 16:00:00', 'AD123', 'DSACSA1');
+INSERT INTO projektlabor.transportationplan (transportationID, startdepoID, endDepoID, fuelID, fuelAmount, startDate, endDdate, operatorID, pipeID) VALUES ('3', 'DSA', 'BSA', 1, 2000, '2020-11-16 16:00:00', '2020-11-16 18:00:00', 'AD123', 'BSADSA2');
+
+-- TRANSPORTAIONPLANS Nincs elég üzemanyago hogy át lehessen tolni
+INSERT INTO projektlabor.transportationplan (transportationID, startdepoID, endDepoID, fuelID, fuelAmount, startDate, endDdate, operatorID, pipeID) VALUES ('1', 'BSA', 'DSA', 1, 3000, '2020-11-16 13:00:00', '2020-11-16 15:00:00', 'AD123', 'BSADSA1');
+INSERT INTO projektlabor.transportationplan (transportationID, startdepoID, endDepoID, fuelID, fuelAmount, startDate, endDdate, operatorID, pipeID) VALUES ('2', 'DSA', 'CSA', 2, 1000, '2020-11-16 14:00:00', '2020-11-16 16:00:00', 'AD123', 'DSACSA1');
+INSERT INTO projektlabor.transportationplan (transportationID, startdepoID, endDepoID, fuelID, fuelAmount, startDate, endDdate, operatorID, pipeID) VALUES ('3', 'BSA', 'DSA', 2, 4000, '2020-11-16 16:00:00', '2020-11-16 18:00:00', 'AD123', 'BSADSA2');
+
+-- TRANSPORTATIONPLANS Hibátlan lefuttás
+INSERT INTO projektlabor.transportationplan (transportationID, startdepoID, endDepoID, fuelID, fuelAmount, startDate, endDdate, operatorID, pipeID) VALUES ('1', 'BSA', 'DSA', 1, 3000, '2020-11-16 13:00:00', '2020-11-16 15:00:00', 'AD123', 'BSADSA1');
+INSERT INTO projektlabor.transportationplan (transportationID, startdepoID, endDepoID, fuelID, fuelAmount, startDate, endDdate, operatorID, pipeID) VALUES ('2', 'DSA', 'CSA', 2, 1000, '2020-11-16 14:00:00', '2020-11-16 16:00:00', 'AD123', 'DSACSA1');
+INSERT INTO projektlabor.transportationplan (transportationID, startdepoID, endDepoID, fuelID, fuelAmount, startDate, endDdate, operatorID, pipeID) VALUES ('3', 'DSA', 'BSA', 1, 2000, '2020-11-16 16:00:00', '2020-11-16 17:30:00', 'AD123', 'BSADSA2');
