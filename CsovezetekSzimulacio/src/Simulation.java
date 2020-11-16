@@ -17,6 +17,7 @@ public class Simulation  {
     private Map<String, DepoConnection> depoConnections;
     private int currentHours, currentMinutes;
     private List<String> errorMessages;
+    private boolean stop;
 
     public Simulation() {
         transportationPlans = new ArrayList<>();
@@ -25,6 +26,7 @@ public class Simulation  {
         errorMessages = new ArrayList<>();
         readData();
         setVelocity();
+        this.stop = false;
     }
     public List<String> getErrorMessages() {
         return errorMessages;
@@ -44,6 +46,9 @@ public class Simulation  {
     public List<Depo> getDepos() {
         return depos;
     }
+    public void stopSimulation() {
+        this.stop = true;
+    }
     public void runSimulation(){
 //        try {
 //            Thread.currentThread().sleep(2000);
@@ -61,9 +66,11 @@ public class Simulation  {
 //                    }
 //                }
             }else {
-                System.out.println("Hibás lefutás az adatbázis nem módosult");
-                for (String s : errorMessages){
-                    System.out.println(s);
+                if (!stop) {
+                    System.out.println("Hibás lefutás az adatbázis nem módosult");
+                    for (String s : errorMessages) {
+                        System.out.println(s);
+                    }
                 }
             }
         } catch (InterruptedException interruptedException) {
@@ -117,14 +124,14 @@ public class Simulation  {
 //            System.out.println("Current Hours: "+currentHours);
             currentMinutes = 0;
             while (currentMinutes < 60){
-                if (!run()) return false;
+                if (!run() || stop) return false;
                 currentMinutes++;
             }
             currentHours++;
         }
         currentMinutes = 0;
         while (currentMinutes < transportationPlans.get(transportationPlans.size()-1).getEndMinutes()){
-            if (!run()) return false;
+            if (!run() || stop) return false;
             currentMinutes++;
         }
         for (TransportationPlan t: transportationPlans){

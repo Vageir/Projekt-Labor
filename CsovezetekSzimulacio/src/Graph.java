@@ -15,7 +15,7 @@ public class Graph extends JFrame {
     public Graph(String windowName, Simulation simulation) {
         this.windowName = windowName;
         this.setTitle(windowName);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 //        this.setLocationRelativeTo(null);
         this.width = 60;
         this.height = 60;
