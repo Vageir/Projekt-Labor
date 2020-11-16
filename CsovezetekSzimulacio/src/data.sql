@@ -6,6 +6,16 @@ INSERT INTO projektlabor.connecteddepos (PipeID, LeftDepoID, RightDepoID, PipeLe
 INSERT INTO projektlabor.connecteddepos (PipeID, LeftDepoID, RightDepoID, PipeLength, PipeDiameter) VALUES ('BSADSA2', 'BSA', 'DSA', 5000, 1);
 INSERT INTO projektlabor.connecteddepos (PipeID, LeftDepoID, RightDepoID, PipeLength, PipeDiameter) VALUES ('DSACSA1', 'DSA', 'CSA', 6000, 1);
 INSERT INTO projektlabor.connecteddepos (PipeID, LeftDepoID, RightDepoID, PipeLength, PipeDiameter) VALUES ('DSACSA2', 'DSA', 'CSA', 6000, 1);
+
+INSERT INTO projektlabor.fuel (fuelID, fuelName) VALUES (1, 'Dízel');
+INSERT INTO projektlabor.fuel (fuelID, fuelName) VALUES (2, 'Benzin');
+
+INSERT INTO projektlabor.operator (OperatorID, OperatorName, OperatorBirth) VALUES ('AD123', 'Adam', '1956-10-25');
+INSERT INTO projektlabor.operator (OperatorID, OperatorName, OperatorBirth) VALUES ('JSP23', 'Joseph', '1998-10-25');
+
+INSERT INTO projektlabor.user (uname, password) VALUES ('Adam', 'adampa55');
+INSERT INTO projektlabor.user (uname, password) VALUES ('Joseph', 'josephpa55');
+
 -- CONTAINERS
 INSERT INTO projektlabor.depocontainer (depoID, containerID, CurrentCapacity, MaxCapacity, fuelID) VALUES ('BSA', 'BSA1M15000', 8000, 15000, 1);
 INSERT INTO projektlabor.depocontainer (depoID, containerID, CurrentCapacity, MaxCapacity, fuelID) VALUES ('BSA', 'BSA2M9000', 4000, 9000, 2);
