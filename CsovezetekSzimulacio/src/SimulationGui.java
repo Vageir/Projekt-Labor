@@ -4,10 +4,10 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class SimulationGui {
-    private static Simulation simulation;
-    private static Graph frame;
+    private Simulation simulation;
+    private Graph frame;
 
-    private static void setGUIatStart() {
+    public void setGUIatStart() {
         simulation = new Simulation();
         frame = new Graph("A szimuláció állapota:", simulation);
         frame.setSize(1200, 900);
@@ -15,7 +15,7 @@ public class SimulationGui {
         frame.loadGraph();
     }
 
-    private static void drawSimulation() {
+    public void drawSimulation() {
         TimerTask repaintTask = new TimerTask() {
             public void run() {
                 frame.repaint();
@@ -26,7 +26,7 @@ public class SimulationGui {
         repaintTask.cancel();
     }
 
-    private static void popUp() {
+    public void popUp() {
         List<String> errorMessages = simulation.getErrorMessages();
         if (!errorMessages.isEmpty())
             JOptionPane.showMessageDialog(frame, errorMessages, "Hiba!", JOptionPane.ERROR_MESSAGE);
