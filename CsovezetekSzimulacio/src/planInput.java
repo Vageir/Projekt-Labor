@@ -153,6 +153,8 @@ public class planInput extends JFrame {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 if ((startDepoComboBox.getSelectedIndex() != 0) && (endDepoComboBox.getSelectedIndex() != 0)) {
+                    pipeComboBox.removeAllItems();
+                    pipeComboBox.addItem(new ComboItem(""));
                     // ha mindkét depo ki van választva
                     LinkedHashMap<Integer, ArrayList<String>> result = new LinkedHashMap<>();
                     result = new DataBaseHandler().readRecords("connecteddepos");
