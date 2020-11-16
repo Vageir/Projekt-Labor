@@ -30,3 +30,5 @@ workspace.xml
 Projekt-Labor.iml
 #/CsovezetekSzimulacio/
 #/CsovezetekSzimulacio/
+out/production/Projekt-labor/data.sql
+out/production/Projekt-labor/databaseFormat.sql
