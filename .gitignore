@@ -30,3 +30,8 @@ workspace.xml
 Projekt-Labor.iml
 #/CsovezetekSzimulacio/
 #/CsovezetekSzimulacio/
+out/production/Projekt-labor/data.sql
+out/production/Projekt-labor/databaseFormat.sql
+.idea/dataSources.local.xml
+.idea/dataSources.xml
+.idea/libraries/mysql_connector_java_8_0_21.xml
