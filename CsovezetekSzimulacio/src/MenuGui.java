@@ -38,8 +38,17 @@ public class MenuGui extends JFrame {
         simulationButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                Simulation s = new Simulation();
-                s.runSimulation();
+                SimulationGui simulationGui = new SimulationGui();
+                Runnable runnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        simulationGui.setGUIatStart();
+                        simulationGui.drawSimulation();
+                        simulationGui.popUp();
+                    }
+                };
+                Thread thread = new Thread(runnable);
+                thread.start();
             }
         });
 
