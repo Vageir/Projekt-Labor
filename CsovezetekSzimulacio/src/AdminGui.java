@@ -84,8 +84,20 @@ public class AdminGui extends JFrame {
         connectDeposButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
+                String pipeID = "" + connectDepoOneBox.getSelectedItem().toString() + connectDepoTwoBox.getSelectedItem().toString();
+                int num = 0;
+                LinkedHashMap<Integer,ArrayList<String>> result = new LinkedHashMap<>();
+                result = new DataBaseHandler().readRecords("connecteddepos");
+                for (Map.Entry<Integer,ArrayList<String>> entry : result.entrySet()){
+                    if ((entry.getValue().get(1).equals(connectDepoOneBox.getSelectedItem().toString()))
+                            && (entry.getValue().get(2).equals(connectDepoTwoBox.getSelectedItem().toString()))) {
+                        num++;
+                    }
+                }
+                pipeID += String.valueOf(++num);
                 ArrayList<String> tmp = new ArrayList<>();
                 tmp.addAll(Arrays.asList(
+                        pipeID,
                         connectDepoOneBox.getSelectedItem().toString(),
                         connectDepoTwoBox.getSelectedItem().toString(),
                         connectPipeLengthField.getText(),

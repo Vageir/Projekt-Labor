@@ -3,11 +3,11 @@ import javax.swing.*;
 public class Main {
 
     public static void main(String[] args) {
-//        JFrame frame = new LoginGui("Login");
-        JFrame frame = new MenuGui("Menü");
-//        JFrame frame = new AdminGui("Admin");
-//        JFrame frame = new AlterDatabaseGui("Adatok");
-//        JFrame frame = new planInput("Plan input");
-        frame.setVisible(true);
+//        JFrame window = new LoginGui("Login");
+        JFrame window = new MenuGui("Menü");
+//        JFrame window = new AdminGui("Admin");
+//        JFrame window = new AlterDatabaseGui("Adatok");
+//        JFrame window = new planInput("Plan input");
+        window.setVisible(true);
     }
 }
