@@ -40,15 +40,21 @@ public class AdminGui extends JFrame {
                 Date birth = new Date();
                 try {
                     birth = new SimpleDateFormat("yyyy-MM-dd").parse(operatorBirthField.getText());
+
+                    ArrayList<String> tmp = new ArrayList<>();
+                    tmp.addAll(Arrays.asList(
+                            operatorIDField.getText(),
+                            operatorNameField.getText(),
+                            operatorBirthField.getText()));
+                    new DataBaseHandler().insertRecord("operator", tmp);
+                    operatorIDField.setText("");
+                    operatorNameField.setText("");
+                    operatorBirthField.setText("");
                 } catch (ParseException parseException) {
                     parseException.printStackTrace();
+                    JOptionPane.showMessageDialog(null, "Hibás dátumformátum!");
                 }
-                ArrayList<String> tmp = new ArrayList<>();
-                tmp.addAll(Arrays.asList(
-                        operatorIDField.getText(),
-                        operatorNameField.getText(),
-                        operatorBirthField.getText()));
-                new DataBaseHandler().insertRecord("operator", tmp);
+
             }
         });
 
@@ -61,6 +67,10 @@ public class AdminGui extends JFrame {
                         depoNameField.getText(),
                         depoLocationField.getText()));
                 new DataBaseHandler().insertRecord("depo", tmp);
+                depoIDField.setText("");
+                depoNameField.setText("");
+                depoLocationField.setText("");
+                setComboBoxes();
             }
         });
 
@@ -77,6 +87,9 @@ public class AdminGui extends JFrame {
                         containerCapacityField.getText(),   // max capacity
                         String.valueOf(containerFluidBox.getSelectedIndex() + 1)));
                 new DataBaseHandler().insertRecord("depocontainer", tmp);
+                containerCapacityField.setText("");
+                containerDepoBox.setSelectedIndex(0);
+                containerFluidBox.setSelectedIndex(0);
             }
         });
 
@@ -102,6 +115,10 @@ public class AdminGui extends JFrame {
                         connectPipeLengthField.getText(),
                         connectPipeDiameterField.getText()));
                 new DataBaseHandler().insertRecord("connecteddepos", tmp);
+                connectPipeLengthField.setText("");
+                connectPipeDiameterField.setText("");
+                connectDepoOneBox.setSelectedIndex(0);
+                connectDepoTwoBox.setSelectedIndex(0);
             }
         });
 
@@ -116,6 +133,10 @@ public class AdminGui extends JFrame {
     }
 
     private void setComboBoxes() {
+        containerFluidBox.removeAllItems();
+        containerDepoBox.removeAllItems();
+        connectDepoOneBox.removeAllItems();
+        connectDepoTwoBox.removeAllItems();
         LinkedHashMap<Integer,ArrayList<String>> result = new LinkedHashMap<>();
         result = new DataBaseHandler().readRecords("fuel");
         for (Map.Entry<Integer,ArrayList<String>> entry : result.entrySet()){
