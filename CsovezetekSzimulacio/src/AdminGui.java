@@ -81,6 +81,7 @@ public class AdminGui extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 ArrayList<String> tmp = new ArrayList<>();
                 tmp.addAll(Arrays.asList(
+                        null,
                         fluidNameField.getText()));
                 new DataBaseHandler().insertRecord("fuel", tmp);
                 fluidNameField.setText("");
