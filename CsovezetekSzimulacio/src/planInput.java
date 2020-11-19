@@ -50,16 +50,7 @@ public class planInput extends JFrame {
         clearButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                pipeLengthField.setText("");
-                pipeDiameterField.setText("");
-                startDepoComboBox.setSelectedIndex(0);
-                endDepoComboBox.setSelectedIndex(1);
-                volumeField.setText("");
-                startHourSpinner.setValue(LocalTime.now().getHour());
-                startMinuteSpinner.setValue(LocalTime.now().getMinute());
-                endHourSpinner.setValue(LocalTime.now().getHour());
-                endMinuteSpinner.setValue(LocalTime.now().getMinute());
-                fluidComboBox.setSelectedIndex(0);
+                clearInput();
             }
         });
 
@@ -141,6 +132,8 @@ public class planInput extends JFrame {
                                             operatorIDComboBox.getSelectedItem().toString(),
                                             pipeComboBox.getSelectedItem().toString()));
                                     new DataBaseHandler().insertRecord("transportationplan", tmp);
+                                    showMessageDialog(null, "Szállítási terv sikeresen felvéve!");
+                                    clearInput();
                                 } else showMessageDialog(null, "A befejezési dátumnak későbbinek kell lennie a kezdődátumnál!");
                             } else showMessageDialog(null, "A kezdési dátum nem lehet a mai dátumnál korábban!");
                         } else showMessageDialog(null, "A szállított mennyiség nem lehet nulla");
@@ -248,6 +241,19 @@ public class planInput extends JFrame {
         startDepoComboBox.setSelectedIndex(0);
         endDepoComboBox.setSelectedIndex(0);
         pipeComboBox.setSelectedIndex(0);
+    }
+
+    private void clearInput() {
+        pipeLengthField.setText("");
+        pipeDiameterField.setText("");
+        startDepoComboBox.setSelectedIndex(0);
+        endDepoComboBox.setSelectedIndex(0);
+        volumeField.setText("");
+        startHourSpinner.setValue(LocalTime.now().getHour());
+        startMinuteSpinner.setValue(LocalTime.now().getMinute());
+        endHourSpinner.setValue(LocalTime.now().getHour());
+        endMinuteSpinner.setValue(LocalTime.now().getMinute());
+        fluidComboBox.setSelectedIndex(0);
     }
 
     private class ComboItem {
