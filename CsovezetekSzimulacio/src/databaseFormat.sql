@@ -7,7 +7,7 @@ CREATE TABLE `depo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `fuel` (
-                        `fuelID` int NOT NULL,
+                        `fuelID` int NOT NULL NULL AUTO_INCREMENT,
                         `fuelName` varchar(20) DEFAULT NULL,
                         PRIMARY KEY (`fuelID`),
                         UNIQUE KEY `fuelID_UNIQUE` (`fuelID`)

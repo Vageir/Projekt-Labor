@@ -25,6 +25,8 @@ public class AdminGui extends JFrame {
     private JComboBox connectDepoTwoBox;
     private JButton connectDeposButton;
     private JButton menuButton;
+    private JTextField fluidNameField;
+    private JButton addFluidButton;
 
     public AdminGui(String title) {
         super(title);
@@ -71,6 +73,17 @@ public class AdminGui extends JFrame {
                 depoNameField.setText("");
                 depoLocationField.setText("");
                 setComboBoxes();
+            }
+        });
+
+        addFluidButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ArrayList<String> tmp = new ArrayList<>();
+                tmp.addAll(Arrays.asList(
+                        fluidNameField.getText()));
+                new DataBaseHandler().insertRecord("fuel", tmp);
+                fluidNameField.setText("");
             }
         });
 
