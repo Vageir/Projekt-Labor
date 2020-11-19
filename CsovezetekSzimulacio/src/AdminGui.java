@@ -85,6 +85,7 @@ public class AdminGui extends JFrame {
                         fluidNameField.getText()));
                 new DataBaseHandler().insertRecord("fuel", tmp);
                 fluidNameField.setText("");
+                setComboBoxes();
             }
         });
 
