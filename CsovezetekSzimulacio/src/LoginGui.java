@@ -30,8 +30,8 @@ public class LoginGui extends JFrame {
                 result = new DataBaseHandler().readRecords("user");
                 for (Map.Entry<Integer,ArrayList<String>> entry : result.entrySet()){
                     if (entry.getValue().get(0).equals(name)) {
-                        String pw = entry.getValue().get(1);        // kivesszük a jelszót db-ből
-                        char [] ch = pw.toCharArray();              // belerakjuk karaktertömbbe
+                        String pw = entry.getValue().get(1);
+                        char [] ch = pw.toCharArray();
                         if (Arrays.equals(ch, pass)) {
 //                            showMessageDialog(null, "Sikeres bejelentkezés!");
                             JFrame menu = new MenuGui("Menü");

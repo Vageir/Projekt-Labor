@@ -38,14 +38,11 @@ public class planInput extends JFrame {
 
     public planInput(String title) {
         super(title);
-//        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setContentPane(mainPanel);
         this.pack();
         this.setLocationRelativeTo(null);
         setGUIatStart();
-//        Simulation s = new Simulation();
-//        s.runSimulation();
 
         clearButton.addActionListener(new ActionListener() {
             @Override
@@ -76,14 +73,7 @@ public class planInput extends JFrame {
                 } catch (ParseException parseException) {
                     parseException.printStackTrace();
                 }
-//                System.out.println(start.getTime());
-//                System.out.println(end.getTime());
-//                if (end.after(start)){
-//                    System.out.println("yeet");
-//                }
-//                else{
-//                    System.out.println("wtf");
-//                }
+
                 LocalDateTime time = LocalDateTime.now();
                 String rn = time.getYear() + "-" + time.getMonth().getValue() + "-" + time.getDayOfMonth() + " "
                         + time.getHour() + ":" + time.getMinute();

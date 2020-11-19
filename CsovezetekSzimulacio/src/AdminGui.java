@@ -17,7 +17,6 @@ public class AdminGui extends JFrame {
     private JButton addDepoButton;
     private JComboBox containerFluidBox;
     private JTextField containerCapacityField;
-
     private JComboBox containerDepoBox;
     private JButton addContainerButton;
     private JTextField connectPipeLengthField;

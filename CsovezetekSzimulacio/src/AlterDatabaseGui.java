@@ -47,7 +47,6 @@ public class AlterDatabaseGui extends JFrame {
                     String val1 = operatorTable.getValueAt(operatorTable.getSelectedRow(),0).toString();
                     String col2 = operatorTable.getColumnName(1);
                     String val2 = operatorTable.getValueAt(operatorTable.getSelectedRow(),1).toString();
-//                    System.out.println(col1); System.out.println(val1); System.out.println(col2); System.out.println(val2);
                     deleteOrAlterPopup("operator", col1, val1, col2 ,val2);
                     operatorTable.clearSelection();
                 }
@@ -62,7 +61,6 @@ public class AlterDatabaseGui extends JFrame {
                     String val1 = depoTable.getValueAt(depoTable.getSelectedRow(),0).toString();
                     String col2 = depoTable.getColumnName(1);
                     String val2 = depoTable.getValueAt(depoTable.getSelectedRow(),1).toString();
-//                    System.out.println(col1); System.out.println(val1); System.out.println(col2); System.out.println(val2);
                     deleteOrAlterPopup("depo", col1, val1, col2 ,val2);
                     depoTable.clearSelection();
                 }
@@ -77,7 +75,6 @@ public class AlterDatabaseGui extends JFrame {
                     String val1 = containerTable.getValueAt(containerTable.getSelectedRow(),0).toString();
                     String col2 = containerTable.getColumnName(1);
                     String val2 = containerTable.getValueAt(containerTable.getSelectedRow(),1).toString();
-//                    System.out.println(col1); System.out.println(val1); System.out.println(col2); System.out.println(val2);
                     deleteOrAlterPopup("depocontainer", col1, val1, col2 ,val2);
                     containerTable.clearSelection();
                 }
@@ -92,7 +89,6 @@ public class AlterDatabaseGui extends JFrame {
                     String val1 = connectionsTable.getValueAt(connectionsTable.getSelectedRow(),0).toString();
                     String col2 = connectionsTable.getColumnName(1);
                     String val2 = connectionsTable.getValueAt(connectionsTable.getSelectedRow(),1).toString();
-//                    System.out.println(col1); System.out.println(val1); System.out.println(col2); System.out.println(val2);
                     deleteOrAlterPopup("connecteddepos", col1, val1, col2 ,val2);
                     connectionsTable.clearSelection();
                 }
@@ -107,7 +103,6 @@ public class AlterDatabaseGui extends JFrame {
                     String val1 = fuelTable.getValueAt(fuelTable.getSelectedRow(),0).toString();
                     String col2 = fuelTable.getColumnName(1);
                     String val2 = fuelTable.getValueAt(fuelTable.getSelectedRow(),1).toString();
-//                    System.out.println(col1); System.out.println(val1); System.out.println(col2); System.out.println(val2);
                     deleteOrAlterPopup("fuel", col1, val1, col2 ,val2);
                     fuelTable.clearSelection();
                 }
@@ -122,7 +117,6 @@ public class AlterDatabaseGui extends JFrame {
                     String val1 = planTable.getValueAt(planTable.getSelectedRow(),0).toString();
                     String col2 = planTable.getColumnName(1);
                     String val2 = planTable.getValueAt(planTable.getSelectedRow(),1).toString();
-//                    System.out.println(col1); System.out.println(val1); System.out.println(col2); System.out.println(val2);
                     deleteOrAlterPopup("transportationplan", col1, val1, col2 ,val2);
                     planTable.clearSelection();
                 }
@@ -261,11 +255,10 @@ public class AlterDatabaseGui extends JFrame {
                                                                         JOptionPane.YES_NO_OPTION,
                                                                         JOptionPane.QUESTION_MESSAGE);
                 if (result == JOptionPane.YES_OPTION) {
-//                    System.out.println("YES");
                     new DataBaseHandler().deleteRecord(tableName, condition);
                     fillTables();
                     dialog.dispose();
-                } else { /*System.out.println("NO"); */}
+                }
             }
         });
 
@@ -279,7 +272,6 @@ public class AlterDatabaseGui extends JFrame {
         alterButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-//                alterOperator(condition);
                 switch (tableName) {
                     case "operator":
                         alterOperator(condition);
@@ -343,14 +335,13 @@ public class AlterDatabaseGui extends JFrame {
                                                                                 JOptionPane.YES_NO_OPTION,
                                                                                 JOptionPane.QUESTION_MESSAGE);
                         if (result == JOptionPane.YES_OPTION) {
-//                          System.out.println("YES");
                             String alterCond = columns.get(0) + " = '" + record.get(0) + "'";
                             new DataBaseHandler().updateRecord("operator", columns.get(0), field1.getText(), alterCond);
                             new DataBaseHandler().updateRecord("operator", columns.get(1), field2.getText(), alterCond);
                             new DataBaseHandler().updateRecord("operator", columns.get(2), String.valueOf(field3.getText()), alterCond);
                             fillTables();
                             alterDia.dispose();
-                        } else { /*System.out.println("NO"); */}
+                        }
                     } else {
                         JOptionPane.showMessageDialog(alterDia, "A rekord nem módosult");
                         alterDia.dispose();
@@ -405,14 +396,13 @@ public class AlterDatabaseGui extends JFrame {
                                                                                 JOptionPane.YES_NO_OPTION,
                                                                                 JOptionPane.QUESTION_MESSAGE);
                         if (result == JOptionPane.YES_OPTION) {
-//                          System.out.println("YES");
                             String alterCond = columns.get(0) + " = '" + record.get(0) + "'";
                             new DataBaseHandler().updateRecord("depo", columns.get(0), field1.getText(), alterCond);
                             new DataBaseHandler().updateRecord("depo", columns.get(1), field2.getText(), alterCond);
                             new DataBaseHandler().updateRecord("depo", columns.get(2), field3.getText(), alterCond);
                             fillTables();
                             alterDia.dispose();
-                        } else { /*System.out.println("NO"); */}
+                        }
                     } else {
                         JOptionPane.showMessageDialog(alterDia, "A rekord nem módosult");
                         alterDia.dispose();
@@ -473,7 +463,6 @@ public class AlterDatabaseGui extends JFrame {
                                                                                 JOptionPane.YES_NO_OPTION,
                                                                                 JOptionPane.QUESTION_MESSAGE);
                         if (result == JOptionPane.YES_OPTION) {
-//                          System.out.println("YES");
                             String alterCond = columns.get(0) + " = '" + record.get(0) + "' AND " + columns.get(1) + " = '" + record.get(1) + "'";
                             new DataBaseHandler().updateRecord("depocontainer", columns.get(0), field1.getText(), alterCond);
                             new DataBaseHandler().updateRecord("depocontainer", columns.get(1), field2.getText(), alterCond);
@@ -482,7 +471,7 @@ public class AlterDatabaseGui extends JFrame {
                             new DataBaseHandler().updateRecord("depocontainer", columns.get(4), field5.getText(), alterCond);
                             fillTables();
                             alterDia.dispose();
-                        } else { /*System.out.println("NO"); */}
+                        }
                     } else {
                         JOptionPane.showMessageDialog(alterDia, "A rekord nem módosult");
                         alterDia.dispose();
@@ -543,7 +532,6 @@ public class AlterDatabaseGui extends JFrame {
                                                                                 JOptionPane.YES_NO_OPTION,
                                                                                 JOptionPane.QUESTION_MESSAGE);
                         if (result == JOptionPane.YES_OPTION) {
-//                          System.out.println("YES");
                             String alterCond = columns.get(0) + " = '" + record.get(0) + "'";
                             new DataBaseHandler().updateRecord("connecteddepos", columns.get(0), field1.getText(), alterCond);
                             new DataBaseHandler().updateRecord("connecteddepos", columns.get(1), field2.getText(), alterCond);
@@ -552,7 +540,7 @@ public class AlterDatabaseGui extends JFrame {
                             new DataBaseHandler().updateRecord("connecteddepos", columns.get(4), field5.getText(), alterCond);
                             fillTables();
                             alterDia.dispose();
-                        } else { /*System.out.println("NO"); */}
+                        }
                     } else {
                         JOptionPane.showMessageDialog(alterDia, "A rekord nem módosult");
                         alterDia.dispose();
@@ -605,13 +593,12 @@ public class AlterDatabaseGui extends JFrame {
                                 JOptionPane.YES_NO_OPTION,
                                 JOptionPane.QUESTION_MESSAGE);
                         if (result == JOptionPane.YES_OPTION) {
-//                          System.out.println("YES");
                             String alterCond = columns.get(0) + " = '" + record.get(0) + "'";
                             new DataBaseHandler().updateRecord("fuel", columns.get(0), field1.getText(), alterCond);
                             new DataBaseHandler().updateRecord("fuel", columns.get(1), field2.getText(), alterCond);
                             fillTables();
                             alterDia.dispose();
-                        } else { /*System.out.println("NO"); */}
+                        }
                     } else {
                         JOptionPane.showMessageDialog(alterDia, "A rekord nem módosult");
                         alterDia.dispose();
@@ -727,7 +714,7 @@ public class AlterDatabaseGui extends JFrame {
                                             new DataBaseHandler().updateRecord("transportationplan", columns.get(8), pipeidField.getText(), alterCond);
                                             fillTables();
                                             alterDia.dispose();
-                                        } else { /*System.out.println("NO"); */}
+                                        }
                                     } else JOptionPane.showMessageDialog(null, "A befejezési dátumnak későbbinek kell lennie a kezdődátumnál!");
                                 } else JOptionPane.showMessageDialog(null, "A kezdési dátum nem lehet a mai dátumnál korábban!");
                             } else JOptionPane.showMessageDialog(null, "A megadott mennyiség helytelen!");

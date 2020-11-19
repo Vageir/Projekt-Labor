@@ -45,10 +45,4 @@ public class SimulationGui {
             JOptionPane.showMessageDialog(frame, "Minden szállítási terv teljesíthető.", "Sikeres lefutás!", JOptionPane.INFORMATION_MESSAGE);
         frame.dispose();
     }
-
-//    public static void main(String[] args) {
-//        setGUIatStart();
-//        drawSimulation();
-//        popUp();
-//    }
 }
